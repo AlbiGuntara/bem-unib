@@ -1,0 +1,37 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.1.17",
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.11.0",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^2.0.0",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.17",
+        "vite": "^7.0.4"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.19",
+        "@fullcalendar/daygrid": "^6.1.19",
+        "@fullcalendar/interaction": "^6.1.19",
+        "@fullcalendar/vue3": "^6.1.19",
+        "@inertiajs/vue3": "^2.1.5",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "@vueup/vue-quill": "^1.2.0",
+        "aos": "^2.3.4",
+        "chart.js": "^4.5.1",
+        "leaflet": "^1.9.4",
+        "lucide-vue-next": "^0.544.0",
+        "sweetalert2": "^11.26.3",
+        "vue": "^3.5.21",
+        "vue-chartjs": "^5.3.3",
+        "vue-datepicker-next": "^1.0.3",
+        "ziggy-js": "^2.6.0"
+    }
+}

@@ -1,0 +1,8 @@
+exit
+$user = User::first();
+$user->assignRole('super-admin');
+$user->getGuardName();
+exit
+$user->assignRole('super-admin');
+$user = User::first();
+$user->assignRole('super-admin');

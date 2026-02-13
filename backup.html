@@ -1,0 +1,88 @@
+<!-- BUTTON TAMBAH -->
+<div class="flex justify-end mb-4">
+    <button
+        @click="openAdd = true"
+        class="px-4 py-2 bg-green-600 text-white rounded-xl shadow hover:bg-green-700"
+    >
+        Tambah Transaksi
+    </button>
+</div>
+
+<!-- TABLE -->
+<div class="bg-white dark:bg-gray-900 rounded-xl shadow p-4">
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b">
+                <th class="py-3 text-left">Tanggal</th>
+                <th>Uraian</th>
+                <th>Jenis</th>
+                <th>Nominal</th>
+                <th>Kategori</th>
+                <th>Bukti</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr
+                v-for="item in props.transaksi.data"
+                :key="item.id"
+                class="border-b hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+            >
+                <td class="py-3">{{ tanggal(item.tanggal) }}</td>
+                <td>{{ item.uraian }}</td>
+                <td>
+                    <span
+                        :class="
+                                    item.jenis === 'Debet'
+                                        ? 'text-green-600 font-semibold'
+                                        : 'text-red-600 font-semibold'
+                                "
+                    >
+                        {{ item.jenis }}
+                    </span>
+                </td>
+
+                <td>Rp {{ Number(item.nominal).toLocaleString("id-ID") }}</td>
+                <td>{{ item.kategori?.kategori }}</td>
+
+                <td>
+                    <span
+                        v-if="item.bukti_transaksi"
+                        class="text-blue-600 underline cursor-pointer"
+                        @click="
+                                    window.open(
+                                        '/storage/' + item.bukti_transaksi
+                                    )
+                                "
+                        >Lihat</span
+                    >
+                </td>
+
+                <td class="text-right">
+                    <button
+                        @click="openEditModal(item)"
+                        class="text-blue-600 hover:underline mr-3"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        @click="
+                                    router.delete(
+                                        `/admin/kas-kegiatan/transaksi/${item.id}`
+                                    )
+                                "
+                        class="text-red-600 hover:underline"
+                    >
+                        Hapus
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="mt-4">
+        <component :is="props.transaksi.links"></component>
+    </div>
+</div>

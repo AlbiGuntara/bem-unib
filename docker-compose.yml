@@ -1,0 +1,38 @@
+services:
+    app:
+        user: "1000:1000"
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: bem_unib_app
+        ports:
+            - "8001:80"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+        networks:
+            - bem_unib_net
+
+    mysql:
+        image: mysql:latest
+        container_name: bem_unib_db
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: bem_unib
+            MYSQL_USER: bemunib
+            MYSQL_PASSWORD: bemunib
+        ports:
+            - "3309:3306"
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - bem_unib_net
+
+volumes:
+    mysql_data:
+
+networks:
+    bem_unib_net:
+        driver: bridge
