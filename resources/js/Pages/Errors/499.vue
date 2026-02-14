@@ -55,11 +55,8 @@
                 <!-- Home -->
                 <Link
                     href="/"
-                    class="relative px-7 py-3.5 bg-electric-blue hover:bg-coral text-white font-semibold rounded-xl flex items-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    class="relative px-7 py-3.5 bg-electric-blue hover:bg-coral text-white font-semibold rounded-xl flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300 group"
                 >
-                    <div
-                        class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                    ></div>
                     <Home class="w-4 h-4" />
                     <span>Beranda</span>
                 </Link>

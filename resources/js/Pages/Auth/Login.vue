@@ -1,109 +1,97 @@
 <template>
     <Head title="Login | IKSASS Banten" />
 
-    <div
-        class="h-screen flex flex-col md:flex-row bg-gradient-to-br from-green-900 via-green-800 to-green-900 md:bg-none"
-    >
-        <!-- LEFT / HERO -->
-        <div
-            class="relative md:w-1/2 md:min-h-screen flex flex-col justify-center items-center text-white px-6 py-12 md:py-0 overflow-hidden bg-gradient-to-b from-green-800 to-green-900"
-        >
-            <!-- MOBILE DECORATION -->
+    <div class="flex flex-col md:flex-row h-screen">
+        <img
+            src="/public/images/login.jpg"
+            class="absolute inset-0 w-full h-full object-cover"
+            alt="Login Background"
+        />
+
+        <!-- <div class="absolute inset-0 bg-black/80"></div> -->
+
+        <!-- LEFT SIDE (IMAGE HERO) -->
+        <div class="relative md:w-1/2 hidden md:block">
+            <!-- Overlay -->
+
             <div
-                class="md:hidden absolute -top-20 -left-20 w-72 h-72 bg-green-500/30 rounded-full blur-3xl"
-            ></div>
-            <div
-                class="md:hidden absolute bottom-0 -right-20 w-72 h-72 bg-emerald-400/20 rounded-full blur-3xl"
-            ></div>
+                class="relative z-10 p-10 h-full flex flex-col justify-between text-cream"
+            >
+                <div>
+                    <button
+                        @click="router.get('/')"
+                        class="text-sm text-cream/80 hover:text-coral transition"
+                    >
+                        <ChevronLeft class="w-4 h-4 inline" />
+                        Back to Home
+                    </button>
+                </div>
 
-            <img
-                src="/public/images/logo.png"
-                class="h-20 mb-6 relative z-10"
-                alt="Logo"
-            />
+                <div>
+                    <h1 class="text-4xl font-bold leading-tight mb-4">
+                        Akses Sistem Internal<br />
+                        BEM Universitas Ibrahimy
+                    </h1>
 
-            <div class="text-center relative z-10">
-                <h1
-                    class="text-xl font-semibold leading-snug md:text-xl md:font-bold"
-                >
-                    Selamat Datang di Website Resmi
-                </h1>
-
-                <p class="text-3xl font-bold mt-2 md:text-5xl md:font-bold">
-                    Rayon IKSASS Banten
-                </p>
-
-                <!-- DESKTOP TEXT -->
-                <p
-                    class="hidden md:block mt-4 text-white/80 max-w-md mx-auto text-sm"
-                >
-                    Silakan login untuk mengakses sistem dan fitur internal
-                    organisasi.
-                </p>
+                    <p class="text-cream/80 max-w-md">
+                        Silakan login untuk mengelola data organisasi, anggota,
+                        dan sistem administrasi secara terintegrasi.
+                    </p>
+                </div>
             </div>
-
-            <!-- DESKTOP WAVE -->
-            <div
-                class="hidden md:block absolute top-0 right-0 h-full w-24 bg-white"
-                style="
-                    clip-path: polygon(100% 0, 0 0, 100% 100%);
-                    filter: drop-shadow(-4px 0 6px rgba(0, 0, 0, 0.15));
-                "
-            ></div>
         </div>
 
-        <!-- FORM SECTION -->
+        <!-- RIGHT SIDE (FORM) -->
         <div
-            class="w-full md:w-1/2 flex items-center justify-center px-4 pb-10 md:pb-0 bg-transparent md:bg-white"
+            class="m-4 z-10 rounded-2xl md:w-2xl h-screen md:h-auto flex items-center justify-center bg-cream p-8"
         >
-            <!-- CARD -->
-            <div
-                class="w-full max-w-md bg-white/90 md:bg-white backdrop-blur-xl md:backdrop-blur-0 rounded-2xl md:rounded-none shadow-2xl md:shadow-none p-6 md:p-8"
-            >
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                    Login ke Akun Anda
+            <div class="w-full max-w-md">
+                <img
+                    src="/public/images/logo.png"
+                    alt="Logo BEM Unib"
+                    class="w-15 md:w-20 mx-auto mb-4 md:mb-6"
+                />
+                <h2 class="text-3xl font-bold text-deep-blue mb-2 text-center">
+                    Welcome Back!
                 </h2>
+                <p class="text-sm text-deep-blue/60 mb-8 text-center">
+                    Login untuk melanjutkan ke dashboard sistem.
+                </p>
 
-                <form @submit.prevent="submit">
-                    <!-- Username -->
-                    <div class="mb-4">
-                        <label class="block text-gray-700 mb-1 text-sm">
+                <form @submit.prevent="submit" class="space-y-5">
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm mb-1 text-deep-blue">
                             Username / Email
                         </label>
-                        <div class="relative">
-                            <User
-                                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
-                            />
-                            <input
-                                v-model="form.username"
-                                type="text"
-                                class="w-full border border-gray-300 rounded-xl md:rounded-lg pl-10 pr-3 py-2.5 md:py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                placeholder="username atau email"
-                                required
-                            />
-                        </div>
+                        <input
+                            v-model="form.username"
+                            type="text"
+                            class="w-full border border-deep-blue/20 rounded-lg px-4 py-3 focus:ring-2 focus:ring-electric-blue focus:outline-none"
+                            placeholder="Masukkan username atau email"
+                            required
+                        />
                     </div>
 
                     <!-- Password -->
-                    <div class="mb-6">
-                        <label class="block text-gray-700 mb-1 text-sm">
+                    <div>
+                        <label class="block text-sm mb-1 text-deep-blue">
                             Password
                         </label>
+
                         <div class="relative">
-                            <Lock
-                                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"
-                            />
                             <input
                                 v-model="form.password"
                                 :type="showPassword ? 'text' : 'password'"
-                                class="w-full border border-gray-300 rounded-xl md:rounded-lg pl-10 pr-10 py-2.5 md:py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
-                                placeholder="password"
+                                class="w-full border border-deep-blue/20 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-electric-blue focus:outline-none"
+                                placeholder="Masukkan password"
                                 required
                             />
+
                             <button
                                 type="button"
                                 @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-700 transition"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-deep-blue/50 hover:text-coral"
                             >
                                 <Eye v-if="!showPassword" class="w-5 h-5" />
                                 <EyeOff v-else class="w-5 h-5" />
@@ -111,23 +99,50 @@
                         </div>
                     </div>
 
-                    <!-- Actions -->
-                    <div class="flex flex-col md:flex-row-reverse gap-3">
-                        <button
-                            type="submit"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 md:py-2 rounded-xl md:rounded-lg font-semibold transition shadow-md md:shadow-none"
+                    <!-- Remember + Forgot -->
+                    <div class="flex items-center justify-between text-sm">
+                        <label
+                            class="flex items-center gap-2 text-deep-blue/70"
                         >
-                            Login
-                        </button>
+                            <input
+                                type="checkbox"
+                                class="accent-electric-blue"
+                            />
+                            Remember me
+                        </label>
 
-                        <button
-                            type="button"
-                            @click="router.get('/')"
-                            class="w-full border border-gray-300 text-gray-700 py-2.5 md:py-2 rounded-xl md:rounded-lg hover:bg-green-600 hover:text-white transition"
+                        <a
+                            href="#"
+                            class="text-electric-blue hover:text-coral transition"
                         >
-                            Kembali
-                        </button>
+                            Lupa Password?
+                        </a>
                     </div>
+
+                    <!-- Login Button -->
+                    <button
+                        type="submit"
+                        class="w-full bg-electric-blue hover:bg-deep-blue text-cream py-3 rounded-full font-semibold transition"
+                    >
+                        Login
+                    </button>
+
+                    <!-- Divider -->
+                    <div
+                        class="flex items-center gap-4 text-xs text-deep-blue/40"
+                    >
+                        <div class="flex-1 h-px bg-deep-blue/20"></div>
+                        Or continue with
+                        <div class="flex-1 h-px bg-deep-blue/20"></div>
+                    </div>
+
+                    <!-- Google Button -->
+                    <button
+                        type="button"
+                        class="w-full border border-deep-blue/20 py-3 rounded-full hover:bg-white transition text-sm"
+                    >
+                        Continue with Google
+                    </button>
                 </form>
             </div>
         </div>
@@ -137,7 +152,7 @@
 <script setup>
 import { Head, router } from "@inertiajs/vue3";
 import { reactive, ref } from "vue";
-import { User, Lock, Eye, EyeOff } from "lucide-vue-next";
+import { Eye, EyeOff, ChevronLeft } from "lucide-vue-next";
 
 const form = reactive({
     username: "",

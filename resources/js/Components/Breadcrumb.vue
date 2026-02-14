@@ -48,36 +48,18 @@ const pageTitle = computed(() => {
     if (breadcrumbs.value.length === 0) return "Home";
     return breadcrumbs.value[breadcrumbs.value.length - 1].name;
 });
-
-// Fungsi tombol kembali
-const goBack = () => {
-    if (window.history.length > 1) {
-        window.history.back();
-    } else {
-        window.location.href = "/admin";
-    }
-};
 </script>
 
 <template>
     <div
-        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:bg-deep-blue/40 backdrop-blur-sm rounded-xl dark:p-4 transition-all duration-300"
+        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:bg-gray-900 dark:border border-electric-blue/20 backdrop-blur-sm rounded-2xl dark:p-4 transition-all duration-300"
     >
         <!-- ================= LEFT ================= -->
         <div>
             <!-- ===== TITLE ===== -->
             <h1
-                class="text-2xl font-bold text-deep-blue dark:text-cream mb-3 flex items-center gap-3 transition-all duration-300"
+                class="text-2xl font-bold text-deep-blue dark:text-cream mb-1 flex items-center gap-3 transition-all duration-300"
             >
-                <!-- Tombol Kembali -->
-                <button
-                    v-if="pageTitle !== 'Home'"
-                    @click="goBack"
-                    class="inline-flex items-center justify-center p-2.5 rounded-xl bg-electric-blue hover:bg-coral text-cream shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95"
-                >
-                    <ArrowLeft class="w-5 h-5" />
-                </button>
-
                 {{ pageTitle }}
             </h1>
 
@@ -88,10 +70,10 @@ const goBack = () => {
             >
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
                     <!-- HOME -->
-                    <li>
+                    <li class="mr-0">
                         <Link
                             href="/admin"
-                            class="inline-flex items-center px-2 py-1 rounded-lg hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 hover:text-electric-blue dark:hover:text-electric-blue"
+                            class="inline-flex items-center py-1 rounded-lg hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 hover:text-electric-blue dark:hover:text-electric-blue"
                         >
                             <Home class="w-4 h-4 mr-1" />
                             Home

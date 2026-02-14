@@ -4,11 +4,11 @@
 
         <!-- CONTAINER -->
         <div
-            class="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-xs border border-gray-200 dark:border-gray-700 space-y-6"
+            class="p-6 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-2xl shadow-sm border border-electric-blue/20 transition-all duration-300"
         >
             <!-- HEADER -->
             <div
-                class="flex flex-col md:flex-row gap-4 justify-between items-center"
+                class="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-6"
             >
                 <!-- SEARCH -->
                 <div class="relative w-full md:w-80">
@@ -19,164 +19,269 @@
                         v-model="filters.search"
                         @input="applyFilters"
                         placeholder="Cari role..."
-                        class="pl-10 pr-4 py-2 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-green-600 outline-none transition-all"
+                        class="pl-10 pr-4 py-2 w-full rounded-xl bg-cream dark:bg-[#1F1F1F] border border-electric-blue/30 text-deep-blue dark:text-cream placeholder-deep-blue/40 dark:placeholder-cream/40 focus:ring-2 focus:ring-electric-blue focus:outline-none transition-all duration-300 shadow-sm hover:shadow-md"
                     />
                 </div>
 
-                <!-- Add Role -->
+                <!-- ADD ROLE -->
                 <form @submit.prevent="submit" class="flex w-full md:w-auto">
-                    <!-- INPUT -->
                     <input
                         v-model="form.name"
                         placeholder="Nama role"
-                        class="flex-1 pl-5 pr-4 py-2 rounded-l-xl border border-gray-200 dark:border-gray-700 focus:border-green-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none placeholder-gray-400"
+                        class="flex-1 pl-4 pr-4 py-2 rounded-l-xl bg-cream dark:bg-[#1F1F1F] border border-electric-blue/30 text-deep-blue dark:text-cream focus:border-deep-blue focus:outline-none transition-all duration-300 shadow-sm"
                     />
-
-                    <!-- BUTTON + -->
                     <button
                         type="submit"
                         :disabled="!form.name"
-                        class="px-4 rounded-r-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                        class="px-4 rounded-r-xl bg-gradient-to-r from-deep-blue to-electric-blue text-white hover:opacity-90 disabled:opacity-40 transition-all duration-300"
                     >
-                        <Plus class="w-5 h-5 text-white" />
+                        <Plus class="w-5 h-5" />
                     </button>
                 </form>
             </div>
 
-            <!-- FLASH -->
+            <!-- TABLE CONTAINER -->
             <div
-                v-if="flash.success"
-                class="bg-green-100 text-green-700 px-4 py-2 rounded-lg"
+                class="bg-white dark:bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-200 dark:border-electric-blue/30 shadow-sm overflow-hidden"
             >
-                {{ flash.success }}
-            </div>
+                <!-- DESKTOP TABLE -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <thead>
+                            <tr
+                                class="bg-gradient-to-r from-deep-blue to-electric-blue text-cream uppercase text-xs tracking-wide"
+                            >
+                                <th class="px-4 py-3">No</th>
 
-            <!-- TABLE -->
-            <div
-                class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg"
-            >
-                <table class="min-w-full text-sm">
-                    <thead
-                        class="bg-gradient-to-r from-green-600 to-green-700 text-white uppercase text-xs"
+                                <th
+                                    class="px-4 py-3 cursor-pointer select-none"
+                                    @click="sort('name')"
+                                >
+                                    <div class="flex items-center gap-1">
+                                        <span>Role</span>
+                                        <ArrowUp
+                                            v-if="
+                                                filters.sort_by === 'name' &&
+                                                filters.sort_direction === 'asc'
+                                            "
+                                            class="w-3 h-3 text-cream/70"
+                                        />
+                                        <ArrowDown
+                                            v-else-if="
+                                                filters.sort_by === 'name' &&
+                                                filters.sort_direction ===
+                                                    'desc'
+                                            "
+                                            class="w-3 h-3 text-cream/70"
+                                        />
+                                        <ChevronsUpDown
+                                            v-else
+                                            class="w-3 h-3 opacity-40"
+                                        />
+                                    </div>
+                                </th>
+
+                                <th class="px-4 py-3">Permission</th>
+                                <th class="px-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr
+                                v-for="(role, index) in roles.data"
+                                :key="role.id"
+                                class="border-b border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 transition-all"
+                            >
+                                <td
+                                    class="px-4 py-3 text-gray-900 dark:text-gray-100"
+                                >
+                                    {{ roles.from + index }}
+                                </td>
+
+                                <!-- ROLE NAME -->
+                                <td
+                                    class="px-4 py-3 text-gray-900 dark:text-gray-100 font-medium"
+                                >
+                                    <input
+                                        v-if="editId === role.id"
+                                        v-model="editName"
+                                        class="px-3 py-2 rounded-lg border border-electric-blue/30 bg-cream dark:bg-[#1F1F1F] w-full focus:ring-1 focus:ring-electric-blue outline-none"
+                                    />
+                                    <span v-else>
+                                        {{ role.name }}
+                                    </span>
+                                </td>
+
+                                <!-- PERMISSION COUNT -->
+                                <td class="px-4 py-3">
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20"
+                                    >
+                                        {{ role.permissions?.length ?? 0 }}
+                                        hak akses
+                                    </span>
+                                </td>
+
+                                <!-- ACTIONS -->
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <button
+                                            v-if="editId === role.id"
+                                            @click="update(role)"
+                                            class="text-green-600 hover:scale-110 transition"
+                                        >
+                                            <Save class="w-5 h-5" />
+                                        </button>
+
+                                        <button
+                                            v-else
+                                            @click="startEdit(role)"
+                                            class="text-blue-600 hover:scale-110 transition"
+                                        >
+                                            <Edit class="w-5 h-5" />
+                                        </button>
+
+                                        <button
+                                            @click="openPermission(role)"
+                                            class="text-indigo-600 hover:scale-110 transition"
+                                        >
+                                            <ShieldCheck class="w-5 h-5" />
+                                        </button>
+
+                                        <button
+                                            v-if="role.name !== 'super-admin'"
+                                            @click="destroy(role)"
+                                            class="text-red-600 hover:scale-110 transition"
+                                        >
+                                            <Trash2 class="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MOBILE CARD -->
+                <div
+                    class="md:hidden space-y-4 p-4 bg-cream dark:bg-[#1f1f1f] rounded-b-lg"
+                >
+                    <div
+                        v-for="(role, index) in roles.data"
+                        :key="role.id"
+                        class="group relative bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-xl transition-all duration-300"
                     >
-                        <tr class="text-center">
-                            <th class="px-4 py-3">No</th>
-                            <th
-                                class="px-4 py-3 text-left cursor-pointer"
-                                @click="sort('name')"
-                            >
-                                Role
-                                <ArrowUp
-                                    v-if="
-                                        filters.sort_by === 'name' &&
-                                        filters.sort_direction === 'asc'
-                                    "
-                                    class="inline w-3 h-3"
-                                />
-                                <ArrowDown
-                                    v-else-if="
-                                        filters.sort_by === 'name' &&
-                                        filters.sort_direction === 'desc'
-                                    "
-                                    class="inline w-3 h-3"
-                                />
-                            </th>
-                            <th class="px-4 py-3 text-left">Permission</th>
-                            <th class="px-4 py-3 text-left">Aksi</th>
-                        </tr>
-                    </thead>
+                        <!-- TOP SECTION -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <!-- ICON CIRCLE -->
+                                <div
+                                    class="w-12 h-12 flex items-center justify-center rounded-xl bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20"
+                                >
+                                    <ShieldCheck class="w-6 h-6" />
+                                </div>
 
-                    <tbody>
-                        <tr
-                            v-for="(role, index) in roles.data"
-                            :key="role.id"
-                            class="text-center border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                <div>
+                                    <div class="w-full">
+                                        <input
+                                            v-if="editId === role.id"
+                                            v-model="editName"
+                                            class="w-full px-3 py-2 rounded-xl border border-electric-blue/30 bg-cream dark:bg-[#1F1F1F] text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-electric-blue outline-none"
+                                        />
+                                        <h3
+                                            v-else
+                                            class="text-lg font-semibold text-gray-900 dark:text-gray-100"
+                                        >
+                                            {{ role.name }}
+                                        </h3>
+                                    </div>
+
+                                    <p
+                                        class="text-xs text-gray-500 dark:text-gray-400"
+                                    >
+                                        Role ID #{{ roles.from + index }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INFO SECTION -->
+                        <div
+                            class="flex items-center justify-between mb-4 p-3 rounded-xl bg-electric-blue/5 dark:bg-electric-blue/10 border border-electric-blue/10"
                         >
-                            <td class="px-4 py-3">
-                                {{ roles.from + index }}
-                            </td>
-
-                            <td class="px-4 py-3 text-left">
-                                <input
-                                    v-if="editId === role.id"
-                                    v-model="editName"
-                                    class="px-2 py-1 rounded border w-full"
-                                />
-                                <span v-else class="font-medium">
-                                    {{ role.name }}
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-3 text-left text-gray-500">
-                                {{ role.permissions?.length ?? 0 }} permission
-                            </td>
-
-                            <!-- ACTION ICON -->
-                            <td class="px-4 py-3 flex justify-start gap-3">
-                                <button
-                                    v-if="editId === role.id"
-                                    @click="update(role)"
-                                    class="text-green-600 hover:scale-110"
-                                    title="Simpan"
-                                >
-                                    <ShieldCheck class="w-5 h-5" />
-                                </button>
-
-                                <button
-                                    v-else
-                                    @click="startEdit(role)"
-                                    class="text-blue-600 hover:scale-110"
-                                    title="Edit"
-                                >
-                                    <Edit class="w-5 h-5" />
-                                </button>
-
-                                <button
-                                    @click="openPermission(role)"
-                                    class="text-indigo-600 hover:scale-110"
-                                    title="Permission"
-                                >
-                                    <ShieldCheck class="w-5 h-5" />
-                                </button>
-
-                                <button
-                                    v-if="role.name !== 'super-admin'"
-                                    @click="destroy(role)"
-                                    class="text-red-600 hover:scale-110"
-                                    title="Hapus"
-                                >
-                                    <Trash2 class="w-5 h-5" />
-                                </button>
-                            </td>
-                        </tr>
-
-                        <tr v-if="roles.data.length === 0">
-                            <td
-                                colspan="3"
-                                class="py-6 text-center text-gray-500"
+                            <div
+                                class="text-sm text-gray-600 dark:text-gray-300"
                             >
-                                Tidak ada data role
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                Total Hak Akses
+                            </div>
+
+                            <div
+                                class="text-sm font-semibold text-electric-blue"
+                            >
+                                {{ role.permissions?.length ?? 0 }}
+                            </div>
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <!-- EDIT / SAVE -->
+                            <button
+                                v-if="editId === role.id"
+                                @click="update(role)"
+                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:scale-105 transition-all"
+                            >
+                                <Save class="w-4 h-4" />
+                                <span class="text-[11px]">Save</span>
+                            </button>
+
+                            <button
+                                v-else
+                                @click="startEdit(role)"
+                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:scale-105 transition-all"
+                            >
+                                <Edit class="w-4 h-4" />
+                                <span class="text-[11px]">Edit</span>
+                            </button>
+
+                            <!-- PERMISSION -->
+                            <button
+                                @click="openPermission(role)"
+                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:scale-105 transition-all"
+                            >
+                                <ShieldCheck class="w-4 h-4" />
+                                <span class="text-[11px]">Permission</span>
+                            </button>
+
+                            <!-- DELETE -->
+                            <button
+                                v-if="role.name !== 'super-admin'"
+                                @click="destroy(role)"
+                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:scale-105 transition-all"
+                            >
+                                <Trash2 class="w-4 h-4" />
+                                <span class="text-[11px]">Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- PAGINATION -->
             <div
                 v-if="roles.data.length"
-                class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4"
+                class="flex justify-between items-center mt-6"
             >
-                <!-- SHOW PER PAGE -->
-                <div class="flex items-center gap-2">
-                    <label class="text-sm text-gray-600 dark:text-gray-300">
+                <div class="flex items-center gap-4">
+                    <span
+                        class="hidden md:block text-sm text-gray-900 dark:text-gray-100"
+                    >
                         Show
-                    </label>
+                    </span>
 
                     <select
                         v-model="filters.per_page"
                         @change="applyFilters"
-                        class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                        class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-electric-blue focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer"
                     >
                         <option value="10">10</option>
                         <option value="25">25</option>
@@ -185,31 +290,25 @@
                     </select>
                 </div>
 
-                <!-- PAGINATION BUTTON -->
                 <div class="flex gap-1">
                     <button
                         v-for="(link, index) in roles.links"
                         :key="index"
                         @click="link.url && router.visit(link.url)"
                         :disabled="!link.url"
-                        class="flex items-center justify-center w-10 h-10 rounded-xl border transition-all font-medium"
+                        class="flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-200 font-medium"
                         :class="[
                             link.active
-                                ? 'bg-green-600 text-white border-green-700 shadow-lg scale-105'
-                                : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 hover:bg-gray-100 hover:shadow',
+                                ? 'bg-electric-blue text-white border-deep-blue shadow-lg scale-105'
+                                : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 hover:shadow-md',
                             !link.url ? 'opacity-40 cursor-not-allowed' : '',
                         ]"
                     >
-                        <!-- PREV -->
                         <ChevronLeft v-if="index === 0" class="w-4 h-4" />
-
-                        <!-- NEXT -->
                         <ChevronRight
                             v-else-if="index === roles.links.length - 1"
                             class="w-4 h-4"
                         />
-
-                        <!-- NUMBER -->
                         <span v-else v-html="link.label"></span>
                     </button>
                 </div>
@@ -219,18 +318,18 @@
         <!-- MODAL PERMISSION -->
         <div
             v-if="showPermissionModal"
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-60 flex items-center justify-center"
         >
             <div
-                class="bg-white dark:bg-gray-900 w-full max-w-3xl rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col max-h-[85vh]"
+                class="bg-cream dark:bg-deep-blue w-full max-w-3xl rounded-3xl shadow-2xl border border-electric-blue/30 flex flex-col max-h-[85vh]"
             >
                 <!-- HEADER -->
                 <div
-                    class="px-6 py-4 rounded-t-2xl border-b border-gray-200 dark:border-gray-700 flex items-center justify-between sticky top-0 bg-white dark:bg-gray-900 z-10"
+                    class="px-6 py-4 rounded-t-3xl border-b border-electric-blue/20 flex items-center justify-between sticky top-0 bg-cream dark:bg-deep-blue z-10"
                 >
                     <div>
                         <h2
-                            class="text-lg font-bold text-gray-800 dark:text-gray-100"
+                            class="text-lg font-bold text-deep-blue dark:text-cream"
                         >
                             Kelola Permission
                         </h2>
@@ -244,7 +343,7 @@
 
                     <button
                         @click="toggleSelectAll"
-                        class="text-sm px-4 py-2 rounded-xl border border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition"
+                        class="text-sm px-4 py-2 rounded-xl border border-electric-blue text-electric-blue hover:bg-electric-blue hover:text-white transition"
                     >
                         {{ isAllSelected ? "Lepas Semua" : "Pilih Semua" }}
                     </button>
@@ -256,11 +355,11 @@
                         <label
                             v-for="permission in permissions"
                             :key="permission.id"
-                            class="flex items-center gap-3 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-gray-800 cursor-pointer transition"
+                            class="flex items-center gap-3 px-3 py-2 rounded-xl border border-electric-blue/20 hover:bg-electric-blue/10 cursor-pointer transition"
                         >
                             <input
                                 type="checkbox"
-                                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                                class="w-4 h-4 text-electric-blue border-electric-blue/40 rounded focus:ring-electric-blue"
                                 :value="permission.name"
                                 v-model="selectedPermissions"
                             />
@@ -275,7 +374,7 @@
 
                 <!-- FOOTER -->
                 <div
-                    class="px-6 py-4 rounded-b-2xl border-t border-gray-200 dark:border-gray-700 flex justify-between items-center sticky bottom-0 bg-white dark:bg-gray-900"
+                    class="px-6 py-4 rounded-b-3xl border-t border-electric-blue/20 flex justify-between items-center sticky bottom-0 bg-cream dark:bg-deep-blue"
                 >
                     <span class="text-sm text-gray-500">
                         Dipilih: {{ selectedPermissions.length }} /
@@ -285,16 +384,17 @@
                     <div class="flex gap-3">
                         <button
                             @click="showPermissionModal = false"
-                            class="px-5 py-2 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                            class="px-5 py-2 rounded-xl border border-electric-blue/40 hover:bg-electric-blue/10 transition"
                         >
                             Batal
                         </button>
 
                         <button
                             @click="savePermission"
-                            class="px-5 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 transition shadow"
+                            class="px-5 py-2 rounded-xl bg-electric-blue text-white hover:bg-deep-blue transition shadow"
                         >
-                            Simpan Perubahan
+                            Simpan
+                            <span class="hidden md:inline">Perubahan</span>
                         </button>
                     </div>
                 </div>
@@ -317,11 +417,13 @@ import {
     ArrowDown,
     ChevronLeft,
     ChevronRight,
+    ChevronsUpDown,
+    Save,
 } from "lucide-vue-next";
 
 /* PROPS */
 const props = defineProps({
-    roles: Object, // PAGINATED
+    roles: Object,
     permissions: Array,
     filters: Object,
 });
@@ -356,8 +458,8 @@ function sort(column) {
             filters.value.sort_direction === "asc"
                 ? "desc"
                 : filters.value.sort_direction === "desc"
-                ? ""
-                : "asc";
+                  ? ""
+                  : "asc";
 
         if (!filters.value.sort_direction) {
             filters.value.sort_by = "";
@@ -412,7 +514,7 @@ function savePermission() {
     router.post(
         route("roles.sync-permissions", activeRole.value.id),
         { permissions: selectedPermissions.value },
-        { onSuccess: () => (showPermissionModal.value = false) }
+        { onSuccess: () => (showPermissionModal.value = false) },
     );
 }
 

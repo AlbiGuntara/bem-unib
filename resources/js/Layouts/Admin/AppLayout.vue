@@ -1,10 +1,10 @@
 <template>
     <div
-        class="min-h-screen flex flex-col bg-cream dark:bg-[#1F1F1F] transition-colors duration-300"
+        class="min-h-screen flex flex-col bg-cream dark:bg-gray-950 transition-colors duration-300"
     >
         <Alert />
 
-        <!-- ================= NAVBAR (FIXED) ================= -->
+        <!-- ================= NAVBAR ================= -->
         <Navbar
             class="fixed top-0 left-0 right-0 z-50"
             :isMobileOpen="isMobileOpen"
@@ -36,10 +36,10 @@
 
                 <!-- ================= FOOTER ================= -->
                 <footer
-                    class="mt-10 pt-6 pb-4 text-center text-sm text-deep-blue/70 dark:text-cream/60 border-t border-electric-blue/20 dark:border-electric-blue/20 transition-all duration-300"
+                    class="mt-10 pt-6 pb-4 text-center md:text-left text-sm text-deep-blue/70 dark:text-cream/60 border-t border-electric-blue/20 dark:border-electric-blue/20 transition-all duration-300"
                 >
                     © 2026 BEM UNIB —
-                    <span id="protected-copyright">
+                    <span class="text-center">
                         <a
                             href="https://www.instagram.com/albyy_394"
                             class="text-italic"
@@ -113,7 +113,7 @@ onUnmounted(() => {
 
 onMounted(() => {
     const checkIntegrity = () => {
-        const el = document.querySelector("#protected-copyright a");
+        const el = document.querySelector("footer span.text-center a");
 
         if (!el) return;
 
