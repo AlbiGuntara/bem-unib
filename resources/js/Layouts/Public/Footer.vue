@@ -1,159 +1,173 @@
 <template>
-    <footer class="bg-green-950 text-white">
-        <!-- Main Footer -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Info -->
-                <div
-                    class="order-1 lg:order-2 col-span-1 md:col-span-2 flex flex-col justify-center text-left lg:text-center"
-                >
-                    <div
-                        class="flex items-center space-x-3 mb-4 lg:justify-center"
-                    >
-                        <img
-                            src="/public/images/p2s3.png"
-                            alt="Pesantren Logo"
-                            class="h-10 w-auto"
-                        />
-                        <img
-                            src="/public/images/logo.png"
-                            alt="Pesantren Logo"
-                            class="h-10 w-auto"
-                        />
-                    </div>
+    <footer class="bg-blue-950 text-white">
+        <!-- KONTAK -->
+        <section class="relative pb-28 text-white overflow-hidden bg-blue-900">
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-blue-900 via-blue-900 to-blue-950"
+            ></div>
 
-                    <p class="text-green-100 mb-4 max-w-md mx-0 lg:mx-auto">
-                        Organisasi terdepan dalam membina kader dan pengembangan
-                        kegiatan pesantren secara berkelanjutan.
+            <div class="relative max-w-5xl mx-auto px-4 text-center">
+                <div
+                    class="bg-white/10 backdrop-blur-xl rounded-3xl p-14 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+                    data-aos="zoom-in"
+                >
+                    <h2 class="text-4xl lg:text-5xl font-bold mb-4">
+                        Hubungi Kami
+                    </h2>
+
+                    <div
+                        class="w-24 h-1.5 bg-green-400 mx-auto rounded-full mb-8"
+                    ></div>
+
+                    <p class="text-white/70 text-lg mb-12 max-w-2xl mx-auto">
+                        Terhubung dengan kami melalui media sosial untuk
+                        mendapatkan informasi terbaru mengenai kegiatan, program
+                        kerja, dan kolaborasi Badan Eksekutif Mahasiswa
+                        Universitas Ibrahimy.
                     </p>
 
-                    <div class="flex space-x-4 lg:justify-center">
-                        <!-- social icons -->
-                    </div>
-                </div>
+                    <!-- SOCIAL MEDIA -->
+                    <div class="flex justify-center flex-wrap gap-6">
+                        <!-- Instagram -->
+                        <a
+                            href="#"
+                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-pink-500 transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                            <Instagram
+                                class="w-6 h-6 text-white group-hover:text-white"
+                            />
+                        </a>
 
-                <!-- Quick Links -->
-                <div class="order-2 lg:order-1 text-left lg:text-right">
-                    <h3 class="text-lg font-semibold mb-4 text-yellow-400">
-                        Tautan Cepat
-                    </h3>
-                    <ul class="space-y-2">
-                        <li v-for="link in quickLinks" :key="link.name">
-                            <Link
-                                :href="link.href"
-                                class="text-green-100 hover:text-white transition-colors duration-200"
-                            >
-                                {{ link.name }}
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+                        <!-- Facebook -->
+                        <a
+                            href="#"
+                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-blue-600 transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                            <Facebook class="w-6 h-6 text-white" />
+                        </a>
 
-                <!-- Contact Info -->
-                <div class="order-3 lg:order-3 text-left">
-                    <h3 class="text-lg font-semibold mb-4 text-yellow-400">
-                        Kontak
-                    </h3>
-                    <div class="space-y-2 text-green-100">
-                        <p class="flex items-center">
-                            <svg
-                                class="h-5 w-5 mr-2 text-yellow-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                />
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                            </svg>
-                            Jl. Contoh No. 123, Jakarta
-                        </p>
-                        <p class="flex items-center">
-                            <svg
-                                class="h-5 w-5 mr-2 text-yellow-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                                />
-                            </svg>
-                            +62 21 1234 5678
-                        </p>
-                        <p class="flex items-center">
-                            <svg
-                                class="h-5 w-5 mr-2 text-yellow-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                            </svg>
-                            info@iksass.com
-                        </p>
+                        <!-- TikTok -->
+                        <a
+                            href="#"
+                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-black transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                            <Music class="w-6 h-6 text-white" />
+                        </a>
+
+                        <!-- YouTube -->
+                        <a
+                            href="#"
+                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                            <Youtube class="w-6 h-6 text-white" />
+                        </a>
+
+                        <!-- Email -->
+                        <a
+                            href="mailto:bem@ibrahimy.ac.id"
+                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-yellow-500 transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                            <Mail class="w-6 h-6 text-white" />
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Bottom Footer -->
         <div class="border-t border-green-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="md:flex md:items-center md:justify-between">
                     <p class="text-center md:text-left text-green-200">
-                        &copy; 2025 IKSASS Banten.
-                        <a
-                            href="https://www.instagram.com/albyy_394"
-                            class="text-italic"
-                            ><em>@mas_al</em></a
-                        >
+                        &copy; 2026 Badan Eksekutif Mahasiswa Universitas
+                        Ibrahimy.
                     </p>
                     <div
-                        class="mt-4 md:mt-0 flex justify-center md:justify-end space-x-6 text-sm text-green-200"
+                        class="mt-4 md:mt-0 flex justify-center md:justify-end space-x-2 text-sm text-green-200"
                     >
+                        <span>developed by</span>
                         <Link
-                            href="/privacy"
+                            href="https://www.instagram.com/albyy_394"
                             class="hover:text-white transition-colors duration-200"
-                            >Kebijakan Privasi</Link
                         >
-                        <Link
-                            href="/terms"
-                            class="hover:text-white transition-colors duration-200"
-                            >Syarat & Ketentuan</Link
-                        >
+                            @el_gntara
+                        </Link>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- SCROLL TO TOP -->
+        <Transition name="fade-scroll">
+            <button
+                v-if="showScrollTop"
+                @click="scrollToTop"
+                class="fixed bottom-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-green-500/90 backdrop-blur-md text-white shadow-xl hover:bg-green-600 hover:scale-110 transition-all duration-300"
+            >
+                <ArrowUp class="w-5 h-5" />
+            </button>
+        </Transition>
     </footer>
 </template>
 
 <script setup>
 import { Link } from "@inertiajs/vue3";
+import { ref, onMounted, onUnmounted } from "vue";
+import {
+    Mail,
+    Instagram,
+    Facebook,
+    Youtube,
+    Music,
+    ArrowUp,
+} from "lucide-vue-next";
 
-const quickLinks = [
-    { name: "Tentang Kami", href: "/about" },
-    { name: "Program Kerja", href: "/program-kerja" },
-    { name: "Prestasi", href: "/prestasi" },
-    { name: "Media", href: "/media" },
-    { name: "Kontak", href: "/kontak" },
-];
+// Scroll to Top
+const showScrollTop = ref(false);
+
+const handleScroll = () => {
+    showScrollTop.value = window.scrollY > 300;
+};
+
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+};
+
+onMounted(() => {
+    window.addEventListener("scroll", handleScroll);
+});
+
+onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+});
 </script>
+
+<style scoped>
+.fade-scroll-enter-active,
+.fade-scroll-leave-active {
+    transition: all 0.35s ease;
+}
+
+.fade-scroll-enter-from {
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+.fade-scroll-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-scroll-leave-from {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-scroll-leave-to {
+    opacity: 0;
+    transform: translateY(15px);
+}
+</style>

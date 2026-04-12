@@ -21,10 +21,12 @@
 @theme {
     --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-logo: "Brittany Signature", cursive;
-    --color-deep-blue: #001bb7;
-    --color-electric-blue: #0046ff;
-    --color-coral: #ff8040;
-    --color-cream: #f5f1dc;
+
+    /* Pallet Warna Monochromatic */
+    --color-biru-tua: #0f3757;
+    --color-biru-sedang: #1f6dad;
+    --color-biru-muda: #52a0e0;
+    --color-biru-cerah: #a8d0f0;
 }
 
 /* Style Tambahan */

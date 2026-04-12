@@ -1,976 +1,1018 @@
 <template>
     <AppLayout>
-        <Head title="Beranda | IKSASS Banten" />
+        <Head title="Beranda | BEM UNIB" />
 
         <!-- HERO SECTION -->
         <section
-            class="relative min-h-[88vh] bg-cover bg-center overflow-hidden flex items-center"
-            style="background-image: url('/images/white-green-bg.jpg')"
+            class="relative min-h-[90vh] bg-cover bg-right lg:bg-center overflow-hidden flex items-center"
+            style="background-image: url(&quot;/images/bg-hero.png&quot;)"
         >
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-white/80 backdrop-blur-[2px]"></div>
-
-            <!-- Decorative Shape -->
-            <div
-                class="absolute -top-32 -right-32 w-96 h-96 bg-green-200 rounded-full blur-3xl opacity-40"
-            ></div>
-            <div
-                class="absolute bottom-0 -left-32 w-96 h-96 bg-yellow-200 rounded-full blur-3xl opacity-30"
-            ></div>
-
-            <div
-                class="relative max-w-7xl mx-auto my-12 lg:my-0 px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-0 items-center"
-            >
-                <!-- LOGO / VISUAL -->
+            <div class="relative z-20 max-w-7xl mx-auto w-full px-4 lg:px-8">
                 <div
-                    class="relative flex justify-center lg:justify-end order-2"
-                    data-aos="zoom-in"
+                    class="flex justify-center lg:justify-start"
+                    data-aos="fade-up"
+                    data-aos-duration="1000"
                 >
-                    <div
-                        class="relative bg-white rounded-3xl p-8 shadow-2xl group"
-                    >
-                        <!-- IMAGE -->
+                    <div class="text-center lg:text-left">
                         <img
-                            src="/public/images/logo.png"
-                            alt="Logo IKSASS Banten"
-                            aria-label="Logo IKSASS"
-                            class="w-72 sm:w-80 lg:w-96 relative z-10 transform transition duration-500 group-hover:rotate-3"
+                            src="/public/images/logo-kabinet.png"
+                            class="w-56 lg:w-80 mx-auto lg:mx-0 drop-shadow-2xl"
+                            alt="Logo Kabinet"
                         />
 
-                        <!-- TOOLTIP CARD -->
-                        <div
-                            class="hidden lg:block pointer-events-none absolute -bottom-20 left-1/2 -translate-x-1/2 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 group-focus-within:opacity-100 group-focus-within:scale-100 transition-all duration-300 delay-300"
-                        >
-                            <div
-                                class="relative bg-white text-gray-800 px-4 py-3 rounded-xl shadow-xl border border-green-100 w-max"
+                        <div class="mt-6 text-center lg:text-left">
+                            <p
+                                class="text-white lg:text-gray-600 font-bold text-xl lg:text-3xl tracking-widest"
                             >
-                                <!-- Arrow -->
-                                <div
-                                    class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-l border-t border-green-100 rotate-45"
-                                ></div>
+                                KABINET
+                                <span class="text-yellow-600 animate-pulse">
+                                    TRANSFORMASI
+                                </span>
+                            </p>
 
-                                <!-- Content -->
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center"
-                                    >
-                                        <Info class="w-5 h-5 text-green-700" />
-                                    </div>
-
-                                    <div class="text-left">
-                                        <p class="font-semibold text-sm">
-                                            Logo IKSASS
-                                        </p>
-                                        <p
-                                            class="text-xs text-gray-500 leading-snug"
-                                        >
-                                            Identitas resmi IKSASS
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <p
+                                class="text-white/80 lg:text-gray-600 text-lg lg:text-xl mt-3 font-light"
+                            >
+                                Badan Eksekutif Mahasiswa <br />
+                                Universitas Ibrahimy
+                            </p>
                         </div>
-                    </div>
-
-                    <!-- Glow -->
-                    <div
-                        class="hidden lg:block absolute -inset-6 bg-gradient-to-r from-green-300 to-yellow-300 rounded-3xl blur-2xl opacity-40"
-                    ></div>
-                </div>
-
-                <!-- TEXT CONTENT -->
-                <div
-                    class="order-1 text-center lg:text-left"
-                    data-aos="fade-right"
-                >
-                    <span
-                        class="inline-block mb-4 px-4 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold tracking-wide"
-                    >
-                        IKSASS BANTEN
-                    </span>
-
-                    <h1
-                        class="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight"
-                    >
-                        Ikatan Santri <br />
-                        <span class="text-green-700">
-                            Salafiyyah Syafi’iyah
-                        </span>
-                        <span class="text-yellow-500"> Banten</span>
-                    </h1>
-
-                    <p
-                        class="mt-6 text-xl text-gray-700 font-medium italic max-w-xl mx-auto lg:mx-0"
-                    >
-                        “Berjuang Bersama, Mengabdi Tanpa Batas”
-                    </p>
-
-                    <div
-                        class="mt-10 flex gap-4 flex-wrap justify-center lg:justify-start"
-                    >
-                        <Link
-                            href="/tentang"
-                            class="inline-flex items-center gap-2 bg-green-700 text-white px-7 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-800 hover:shadow-xl transition-all duration-300"
-                        >
-                            <Info class="w-5 h-5" />
-                            Tentang IKSASS
-                        </Link>
-
-                        <Link
-                            href="/kontak"
-                            class="inline-flex items-center gap-2 border-2 border-green-700 text-green-700 px-7 py-3 rounded-xl font-semibold hover:bg-green-700 hover:text-white transition-all duration-300"
-                        >
-                            <Phone class="w-5 h-5" />
-                            Kontak Kami
-                        </Link>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Sekilas Tentang IKSASS -->
-        <section class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- SAMBUTAN SECTION -->
+        <section class="py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4">
                 <div class="text-center mb-16" data-aos="fade-up">
-                    <h2
-                        class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+                    <span
+                        class="text-green-600 font-semibold tracking-wider text-sm"
+                        >SAPA HANGAT</span
                     >
-                        Sekilas Tentang
-                        <span class="text-green-600">IKSASS</span>
+                    <h2
+                        class="text-4xl lg:text-5xl font-bold text-blue-900 mt-2 mb-4"
+                    >
+                        Sambutan Pimpinan
                     </h2>
-                    <div class="w-24 h-1 bg-yellow-500 mx-auto mb-6"></div>
+                    <div
+                        class="w-24 h-1.5 bg-gradient-to-r from-green-500 to-blue-600 mx-auto rounded-full"
+                    ></div>
                 </div>
 
                 <div
-                    class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                    class="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto"
                 >
+                    <!-- FOTO SECTION (Modern Card) -->
                     <div data-aos="fade-right">
-                        <div
-                            class="bg-gradient-to-br from-green-50 to-yellow-50 rounded-2xl p-8 shadow-lg"
-                        >
-                            <p
-                                class="text-lg text-gray-700 leading-relaxed mb-6"
+                        <div class="flex justify-center mb-8">
+                            <div
+                                class="bg-white p-1.5 rounded-full shadow-md flex gap-1 border border-gray-100"
                             >
-                                Ikatan Santri Salafiyyah Syafi'iyah (IKSASS)
-                                Banten merupakan organisasi yang berlandaskan
-                                nilai-nilai Islam Ahlus Sunnah Wal Jama'ah.
-                                Berawal dari jaringan santri Pondok Pesantren
-                                Salafiyyah Syafi'iyah Sukorejo, IKSASS
-                                berkembang sebagai wadah pengkaderan dan
-                                pengabdian masyarakat.
-                            </p>
-                            <p class="text-lg text-gray-700 leading-relaxed">
-                                Organisasi ini lahir dari semangat untuk menjaga
-                                tradisi keilmuan salaf sekaligus menjawab
-                                tantangan zaman dengan inovasi dan
-                                progresivitas.
-                            </p>
+                                <button
+                                    @click="activeLeader = 'presiden'"
+                                    :class="[
+                                        'px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300',
+                                        activeLeader === 'presiden'
+                                            ? 'bg-blue-700 text-white shadow-lg shadow-blue-700/30'
+                                            : 'text-gray-600 hover:bg-gray-100',
+                                    ]"
+                                >
+                                    Presiden
+                                </button>
+
+                                <button
+                                    @click="activeLeader = 'wapres'"
+                                    :class="[
+                                        'px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300',
+                                        activeLeader === 'wapres'
+                                            ? 'bg-blue-700 text-white shadow-lg shadow-blue-700/30'
+                                            : 'text-gray-600 hover:bg-gray-100',
+                                    ]"
+                                >
+                                    Wapres
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="relative rounded-xl overflow-hidden shadow-2xl aspect-[3/4] w-full max-w-sm mx-auto"
+                        >
+                            <img
+                                :src="currentLeader.photo"
+                                class="w-full h-full object-cover"
+                            />
+
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/60 to-transparent"
+                            ></div>
+
+                            <div
+                                class="absolute bottom-0 left-0 p-8 text-white w-full"
+                            >
+                                <h3 class="text-3xl font-bold tracking-tight">
+                                    {{ currentLeader.name }}
+                                </h3>
+                                <p
+                                    class="text-green-400 font-medium text-lg mt-1"
+                                >
+                                    {{ currentLeader.position }}
+                                </p>
+                                <div
+                                    class="w-12 h-1 bg-yellow-500 rounded-full mt-4"
+                                ></div>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- SAMBUTAN TEXT -->
                     <div data-aos="fade-left">
                         <div class="relative">
-                            <div
-                                class="bg-green-600 rounded-2xl p-8 text-white shadow-xl"
+                            <!-- Quote Icon -->
+                            <svg
+                                class="w-12 h-12 text-blue-200 mb-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
                             >
-                                <h3 class="text-2xl font-bold mb-6">
-                                    Keterkaitan dengan Pesantren Sukorejo
-                                </h3>
-                                <p class="text-lg leading-relaxed mb-6">
-                                    IKSASS memiliki hubungan erat dengan Pondok
-                                    Pesantren Salafiyyah Syafi'iyah Sukorejo
-                                    sebagai basis utama pengkaderan dan
-                                    pengembangan SDM santri.
-                                </p>
-                                <p class="text-lg leading-relaxed">
-                                    Nilai-nilai yang diajarkan di pesantren
-                                    menjadi fondasi utama dalam setiap program
-                                    dan kegiatan IKSASS.
-                                </p>
-                            </div>
-                            <div
-                                class="absolute -bottom-4 -right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg"
+                                <path
+                                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"
+                                />
+                            </svg>
+
+                            <h3 class="text-2xl font-bold text-blue-800 mb-6">
+                                Sambutan {{ currentLeader.position }}
+                            </h3>
+
+                            <p
+                                class="text-gray-700 leading-relaxed text-lg italic mb-8 border-l-4 border-yellow-500 pl-6"
                             >
-                                <Link
-                                    href="/about"
-                                    class="font-semibold text-lg flex items-center gap-2"
-                                >
-                                    Baca Selengkapnya
-                                    <ArrowRight class="h-5 w-5" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Visi & Misi -->
-        <section class="py-20 bg-gradient-to-br from-green-50 to-yellow-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16" data-aos="fade-up">
-                    <h2
-                        class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
-                    >
-                        Visi & <span class="text-green-600">Misi</span>
-                    </h2>
-                    <div class="w-24 h-1 bg-yellow-500 mx-auto mb-6"></div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Visi -->
-                    <div data-aos="fade-right">
-                        <div
-                            class="bg-white rounded-2xl p-8 shadow-lg h-full border-l-4 border-green-600"
-                        >
-                            <div class="flex items-center mb-6">
-                                <div
-                                    class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4"
-                                >
-                                    <Target class="h-6 w-6 text-green-600" />
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900">
-                                    Visi IKSASS
-                                </h3>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed text-lg">
-                                Terbentuknya kader santri yang bertaqwa, berilmu
-                                amaliah, inovatif, mandiri, progresif, serta
-                                bertanggung jawab terhadap agama, bangsa, dan
-                                negara.
+                                "{{ currentLeader.message }}"
                             </p>
-                        </div>
-                    </div>
 
-                    <!-- Misi -->
-                    <div data-aos="fade-left">
-                        <div
-                            class="bg-white rounded-2xl p-8 shadow-lg h-full border-l-4 border-yellow-500"
-                        >
-                            <div class="flex items-center mb-6">
-                                <div
-                                    class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mr-4"
-                                >
-                                    <ListChecks
-                                        class="h-6 w-6 text-yellow-600"
-                                    />
+                            <div class="text-right lg:text-left">
+                                <div class="text-gray-800 font-bold text-lg">
+                                    {{ currentLeader.name }}
                                 </div>
-                                <h3 class="text-2xl font-bold text-gray-900">
-                                    Misi IKSASS
-                                </h3>
+                                <div class="text-gray-500">
+                                    {{ currentLeader.position }}
+                                </div>
                             </div>
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <CheckCircle
-                                        class="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0"
-                                    />
-                                    <span class="text-gray-700"
-                                        >Meningkatkan dan mengembangkan SDM
-                                        anggota</span
-                                    >
-                                </li>
-                                <li class="flex items-start">
-                                    <CheckCircle
-                                        class="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0"
-                                    />
-                                    <span class="text-gray-700"
-                                        >Melakukan pengkaderan secara
-                                        sistematis</span
-                                    >
-                                </li>
-                                <li class="flex items-start">
-                                    <CheckCircle
-                                        class="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0"
-                                    />
-                                    <span class="text-gray-700"
-                                        >Meningkatkan kesejahteraan anggota dan
-                                        masyarakat</span
-                                    >
-                                </li>
-                                <li class="flex items-start">
-                                    <CheckCircle
-                                        class="h-5 w-5 text-green-600 mt-1 mr-3 flex-shrink-0"
-                                    />
-                                    <span class="text-gray-700"
-                                        >Mengaktualisasikan nilai-nilai Islam
-                                        Ahlus Sunnah Wal Jamaah dan
-                                        kebangsaan</span
-                                    >
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Berita & Informasi Terbaru -->
-        <section class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- TENTANG KAMI -->
+        <section
+            class="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-green-700 text-white relative overflow-hidden"
+        >
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
                 <div
-                    class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 mb-12"
-                    data-aos="fade-up"
-                >
-                    <div
-                        class="lg:block flex flex-col items-center justify-center"
+                    class="absolute top-0 left-0 w-full h-full bg-[url('/images/pattern.png')] bg-repeat"
+                ></div>
+            </div>
+
+            <div class="relative max-w-7xl mx-auto px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <span
+                        class="text-green-300 font-semibold tracking-wider text-sm"
+                        >PROFIL ORGANISASI</span
                     >
-                        <h2
-                            class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2"
-                        >
-                            Berita &
-                            <span class="text-green-600">Informasi</span>
-                        </h2>
-                        <p class="text-gray-600">
-                            Informasi terbaru seputar kegiatan IKSASS
+                    <h2 class="text-4xl lg:text-5xl font-bold mt-2 mb-4">
+                        Tentang Kami
+                    </h2>
+                    <div
+                        class="w-24 h-1.5 bg-yellow-500 mx-auto rounded-full"
+                    ></div>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <div data-aos="fade-right">
+                        <h3 class="text-2xl font-bold mb-4 text-yellow-400">
+                            BEM UNIB
+                        </h3>
+
+                        <p class="text-white/90 leading-relaxed mb-6">
+                            Badan Eksekutif Mahasiswa Universitas Ibrahimy (BEM
+                            UNIB) adalah organisasi kemahasiswaan yang bertugas
+                            menjalankan fungsi eksekutif.
+                        </p>
+
+                        <h3 class="text-2xl font-bold mb-4 text-yellow-400">
+                            Kabinet Transformasi
+                        </h3>
+
+                        <p class="text-white/90 leading-relaxed">
+                            Kabinet Transformasi hadir sebagai wujud semangat
+                            perubahan menuju organisasi yang adaptif dan
+                            inovatif.
                         </p>
                     </div>
-                    <Link
-                        href="/news"
-                        class="text-green-600 font-semibold hover:text-green-700 flex items-center gap-2"
-                    >
-                        Lihat Semua Berita
-                        <ArrowRight class="h-5 w-5" />
-                    </Link>
-                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div
-                        v-for="(news, index) in latestNews"
-                        :key="news.id"
-                        :data-aos="'fade-up'"
-                        :data-aos-delay="index * 100"
-                        class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group border border-green-100"
-                    >
-                        <div
-                            class="h-48 bg-gradient-to-r from-green-400 to-yellow-400 relative overflow-hidden"
-                        >
+                    <div data-aos="fade-left">
+                        <h3 class="text-2xl font-bold mb-4 text-yellow-400">
+                            Visi & Misi
+                        </h3>
+
+                        <div class="space-y-4">
                             <div
-                                class="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-all duration-300"
-                            ></div>
-                            <div class="absolute top-4 left-4">
-                                <span
-                                    class="bg-white text-green-700 px-3 py-1 rounded-full text-sm font-semibold"
-                                >
-                                    {{ news.category }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <h3
-                                class="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors duration-300"
+                                class="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
                             >
-                                {{ news.title }}
-                            </h3>
-                            <p class="text-gray-600 mb-4 line-clamp-2">
-                                {{ news.excerpt }}
-                            </p>
-                            <div
-                                class="flex items-center justify-between text-sm text-gray-500"
-                            >
-                                <span>{{ news.date }}</span>
-                                <Link
-                                    :href="`/news/${news.id}`"
-                                    class="text-green-600 hover:text-green-700 font-semibold flex items-center gap-1"
-                                >
-                                    Baca Selengkapnya
-                                    <ArrowRight class="h-4 w-4" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dokumentasi Visual IKSASS -->
-        <section
-            class="relative py-20 overflow-hidden bg-gradient-to-b from-white via-green-50/30 to-yellow-50/20"
-        >
-            <!-- Background decorative elements -->
-            <div
-                class="absolute top-0 left-0 w-72 h-72 bg-green-200/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"
-            ></div>
-            <div
-                class="absolute bottom-0 right-0 w-96 h-96 bg-yellow-200/20 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"
-            ></div>
-
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <!-- Section Header with Animation -->
-                <div
-                    class="text-center mb-20"
-                    data-aos="fade-up"
-                    data-aos-duration="800"
-                >
-                    <div
-                        class="inline-flex items-center gap-3 bg-gradient-to-r from-green-100 to-yellow-100 px-6 py-2 rounded-full mb-4"
-                    >
-                        <Grid3x3 class="w-5 h-5 text-green-600" />
-                        <span class="text-green-700 font-semibold"
-                            >Dokumentasi Visual</span
-                        >
-                    </div>
-                    <h2
-                        class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight"
-                    >
-                        Galeri
-                        <span class="relative inline-block">
-                            <span class="relative z-10 text-green-600"
-                                >Kegiatan</span
-                            >
-                            <span
-                                class="absolute bottom-2 left-0 w-full h-3 bg-yellow-300/40 -rotate-1"
-                            ></span>
-                        </span>
-                        IKSASS
-                    </h2>
-                    <p
-                        class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
-                    >
-                        Jejak perjuangan dan pengabdian dalam setiap momen
-                        berharga. Dokumentasi lengkap berbagai program dan
-                        aktivitas IKSASS Banten.
-                    </p>
-                </div>
-
-                <!-- Enhanced Slider Container -->
-                <div class="relative" data-aos="fade-up" data-aos-delay="300">
-                    <!-- Navigation Buttons -->
-                    <button
-                        @click="scrollLeft"
-                        :disabled="currentIndex === 0"
-                        :class="[
-                            'absolute top-1/4 left-0 lg:top-1/2 lg:-left-12 transform -translate-y-1/2 z-20 w-14 h-14 rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center',
-                            currentIndex === 0
-                                ? 'bg-gray-200 cursor-not-allowed'
-                                : 'bg-white hover:bg-green-50',
-                        ]"
-                    >
-                        <ChevronLeft
-                            :class="[
-                                'w-6 h-6',
-                                currentIndex === 0
-                                    ? 'text-gray-400'
-                                    : 'text-green-600',
-                            ]"
-                        />
-                    </button>
-
-                    <button
-                        @click="scrollRight"
-                        :disabled="
-                            currentIndex >= latestDocs.length - cardsPerView
-                        "
-                        :class="[
-                            'absolute top-1/4 right-0 lg:top-1/2 lg:-right-12 transform -translate-y-1/2 z-20 w-14 h-14 rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center',
-                            currentIndex >= latestDocs.length - cardsPerView
-                                ? 'bg-gray-200 cursor-not-allowed'
-                                : 'bg-white hover:bg-green-50',
-                        ]"
-                    >
-                        <ChevronRight
-                            :class="[
-                                'w-6 h-6',
-                                currentIndex >= latestDocs.length - cardsPerView
-                                    ? 'text-gray-400'
-                                    : 'text-green-600',
-                            ]"
-                        />
-                    </button>
-
-                    <!-- Slider with enhanced cards -->
-                    <div
-                        ref="sliderRef"
-                        class="flex overflow-x-auto gap-8 pb-10 snap-x snap-mandatory scrollbar-hide"
-                        style="scroll-behavior: smooth"
-                    >
-                        <div
-                            v-for="(doc, index) in latestDocs"
-                            :key="doc.id"
-                            class="snap-center flex-shrink-0 w-[calc(100%-2rem)] md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]"
-                        >
-                            <div
-                                class="group bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-500 h-full flex flex-col border border-green-100/50"
-                            >
-                                <!-- Image Container -->
-                                <div class="relative h-72 overflow-hidden">
-                                    <!-- Main Media -->
-                                    <div class="relative h-full">
-                                        <img
-                                            v-if="
-                                                doc.photo &&
-                                                !doc.photo.match(
-                                                    /\.(mp4|webm|mov)$/i
-                                                )
-                                            "
-                                            :src="doc.photo"
-                                            :alt="doc.title"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                        />
-                                        <!-- Overlay Gradient -->
-                                        <div
-                                            class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                                        ></div>
-                                    </div>
-                                </div>
-
-                                <!-- Card Content -->
-                                <div class="p-6 flex-1 flex flex-col">
-                                    <!-- Date & Location -->
+                                <div class="flex items-start gap-3">
                                     <div
-                                        class="flex items-center gap-4 text-sm text-gray-500 mb-4"
-                                    >
-                                        <div class="flex items-center gap-2">
-                                            <Calendar
-                                                class="w-4 h-4 text-green-600"
-                                            />
-                                            <span>{{ doc.date }}</span>
-                                        </div>
-                                    </div>
+                                        class="w-2 h-2 bg-yellow-500 rounded-full mt-2"
+                                    ></div>
 
-                                    <!-- Title -->
-                                    <h3
-                                        class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors duration-300"
-                                    >
-                                        {{ doc.title }}
-                                    </h3>
-
-                                    <!-- Description -->
-                                    <p
-                                        class="text-gray-600 mb-6 flex-1 line-clamp-3"
-                                    >
-                                        {{ doc.description }}
-                                    </p>
-
-                                    <!-- Footer with Actions -->
-                                    <div
-                                        class="flex items-center justify-end pt-4 border-t border-gray-100"
-                                    >
-                                        <button
-                                            @click="openPreview(doc)"
-                                            class="group flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl hover:from-green-700 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                                        >
-                                            <span class="font-semibold"
-                                                >Detail</span
-                                            >
-                                            <ArrowRight
-                                                class="w-4 h-4 group-hover:translate-x-1 transition-transform"
-                                            />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Scroll Indicator -->
-                    <div class="flex justify-center items-center gap-2">
-                        <div
-                            v-for="n in Math.ceil(
-                                latestDocs.length / cardsPerView
-                            )"
-                            :key="n"
-                            @click="currentIndex = (n - 1) * cardsPerView"
-                            :class="[
-                                'w-2 h-2 rounded-full transition-all duration-300 cursor-pointer',
-                                Math.floor(currentIndex / cardsPerView) ===
-                                n - 1
-                                    ? 'w-8 bg-green-600'
-                                    : 'bg-gray-300 hover:bg-gray-400',
-                            ]"
-                        ></div>
-                    </div>
-                </div>
-
-                <!-- View All Button -->
-                <div
-                    class="text-center mt-10"
-                    data-aos="fade-up"
-                    data-aos-delay="400"
-                >
-                    <Link
-                        href="/documentation"
-                        class="relative inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-600 via-lime-600 to-yellow-500 text-white rounded-2xl overflow-hidden transition-all duration-300 shadow-xl group"
-                    >
-                        <!-- Hover animation layer -->
-                        <div
-                            class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                        ></div>
-
-                        <!-- Content -->
-                        <Grid3x3 class="w-5 h-5 relative z-10" />
-                        <span class="text-lg font-bold relative z-10">
-                            Lihat Semua Dokumentasi
-                        </span>
-                        <ArrowRight
-                            class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform"
-                        />
-                    </Link>
-                </div>
-            </div>
-        </section>
-
-        <!-- Preview Modal -->
-        <teleport to="body">
-            <transition name="modal-fade">
-                <div
-                    v-if="preview"
-                    class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                    @click.self="preview = null"
-                >
-                    <!-- Backdrop -->
-                    <div
-                        class="absolute inset-0 bg-black/80 backdrop-blur-sm"
-                    ></div>
-
-                    <!-- Modal Container -->
-                    <div
-                        class="relative w-full max-w-3xl max-h-[85vh] animate-modalIn"
-                        @click.stop
-                    >
-                        <!-- Close Button -->
-                        <button
-                            @click="preview = null"
-                            class="absolute -top-3 -right-3 z-50 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-all duration-300 hover:rotate-90 shadow border border-white/20"
-                        >
-                            <X class="w-5 h-5" />
-                        </button>
-
-                        <!-- Modal Content -->
-                        <div
-                            class="bg-white rounded-xl overflow-hidden shadow-lg"
-                        >
-                            <!-- Top Bar -->
-                            <div class="px-5 py-3 border-b border-gray-100">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-green-100 rounded-xl">
-                                        <ImageIcon
-                                            class="w-4 h-4 text-green-600"
-                                        />
-                                    </div>
                                     <div>
-                                        <h3
-                                            class="text-md font-bold text-gray-900"
-                                        >
-                                            {{ preview.title }}
-                                        </h3>
-                                        <div
-                                            class="flex items-center gap-2 text-gray-500 text-xs"
-                                        >
-                                            <Calendar class="w-3 h-3" />
-                                            {{ preview.date }}
-                                        </div>
+                                        <h4 class="font-bold text-lg mb-2">
+                                            Visi
+                                        </h4>
+
+                                        <p class="text-white/90">
+                                            Menjadi lembaga eksekutif mahasiswa
+                                            yang progresif, inovatif dan
+                                            religius.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Media Area -->
                             <div
-                                class="relative h-[40vh] bg-gradient-to-br from-green-900 to-gray-900"
+                                class="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
                             >
-                                <div class="relative h-full overflow-hidden">
-                                    <img
-                                        v-if="preview.photo && !isVideo"
-                                        :src="preview.photo"
-                                        :alt="preview.title"
-                                        class="w-full h-full object-contain bg-black"
-                                    />
+                                <div class="flex items-start gap-3">
                                     <div
-                                        v-else
-                                        class="h-full flex items-center justify-center text-white"
-                                    >
-                                        <div class="text-center">
-                                            <ImageIcon
-                                                class="w-16 h-16 mx-auto mb-2 opacity-50"
-                                            />
-                                            <p class="text-gray-400 text-sm">
-                                                Gambar tidak tersedia
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                        class="w-2 h-2 bg-yellow-500 rounded-full mt-2"
+                                    ></div>
 
-                            <!-- Content Area -->
-                            <div class="p-6 overflow-y-auto max-h-[35vh]">
-                                <!-- Description -->
-                                <div class="mb-6">
-                                    <h4
-                                        class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2"
-                                    >
-                                        <span
-                                            class="w-6 h-px bg-green-500"
-                                        ></span>
-                                        Deskripsi Kegiatan
-                                    </h4>
-                                    <p
-                                        class="text-gray-700 leading-relaxed text-base"
-                                    >
-                                        {{
-                                            preview.description ||
-                                            "Tidak ada deskripsi untuk dokumentasi ini."
-                                        }}
-                                    </p>
-                                </div>
+                                    <div>
+                                        <h4 class="font-bold text-lg mb-2">
+                                            Misi
+                                        </h4>
 
-                                <!-- Additional Info -->
-                                <div
-                                    class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
-                                >
-                                    <div
-                                        v-if="preview.participants"
-                                        class="bg-green-50 rounded-2xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-2 mb-2"
+                                        <ul
+                                            class="list-disc list-inside text-white/90 space-y-1"
                                         >
-                                            <Users
-                                                class="w-4 h-4 text-green-600"
-                                            />
-                                            <span
-                                                class="font-semibold text-gray-900"
-                                                >Peserta</span
-                                            >
-                                        </div>
-                                        <p
-                                            class="text-xl font-bold text-green-600"
-                                        >
-                                            {{ preview.participants }}
-                                        </p>
-                                    </div>
-                                    <div
-                                        v-if="preview.category"
-                                        class="bg-yellow-50 rounded-2xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-2 mb-2"
-                                        >
-                                            <Grid3x3
-                                                class="w-4 h-4 text-yellow-600"
-                                            />
-                                            <span
-                                                class="font-semibold text-gray-900"
-                                                >Kategori</span
-                                            >
-                                        </div>
-                                        <span
-                                            class="inline-block px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-semibold"
-                                        >
-                                            {{ preview.category }}
-                                        </span>
-                                    </div>
-                                    <div
-                                        v-if="preview.organizer"
-                                        class="bg-green-50 rounded-2xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-2 mb-2"
-                                        >
-                                            <Users
-                                                class="w-4 h-4 text-green-600"
-                                            />
-                                            <span
-                                                class="font-semibold text-gray-900"
-                                                >Penanggung Jawab</span
-                                            >
-                                        </div>
-                                        <p class="text-sm text-gray-700">
-                                            {{ preview.organizer }}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Link / File -->
-                                <div
-                                    v-if="preview.link || preview.file"
-                                    class="border-t border-gray-100 pt-4"
-                                >
-                                    <h4
-                                        class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2"
-                                    >
-                                        <span
-                                            class="w-6 h-px bg-green-500"
-                                        ></span>
-                                        Unduhan & Link
-                                    </h4>
-                                    <div class="flex flex-wrap gap-3">
-                                        <a
-                                            v-if="preview.link"
-                                            :href="preview.link"
-                                            target="_blank"
-                                            class="group flex-1 min-w-[250px] flex items-center gap-3 p-3 bg-green-50 hover:bg-green-100 rounded-xl transition"
-                                        >
-                                            <div
-                                                class="p-2 bg-white rounded-lg shadow-sm"
-                                            >
-                                                <ExternalLink
-                                                    class="w-5 h-5 text-green-600"
-                                                />
-                                            </div>
-                                            <div class="flex-1">
-                                                <p
-                                                    class="font-semibold text-gray-900 mb-1"
-                                                >
-                                                    Lihat Dokumentasi Lengkap
-                                                </p>
-                                                <p
-                                                    class="text-sm text-gray-600 truncate"
-                                                >
-                                                    {{ preview.link }}
-                                                </p>
-                                            </div>
-                                            <ArrowRight
-                                                class="w-4 h-4 text-gray-400 group-hover:text-green-600 transition"
-                                            />
-                                        </a>
-                                        <a
-                                            v-if="preview.file"
-                                            :href="preview.file"
-                                            download
-                                            class="group flex-1 min-w-[250px] flex items-center gap-3 p-3 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition"
-                                        >
-                                            <div
-                                                class="p-2 bg-white rounded-lg shadow-sm"
-                                            >
-                                                <Download
-                                                    class="w-5 h-5 text-yellow-600"
-                                                />
-                                            </div>
-                                            <div class="flex-1">
-                                                <p
-                                                    class="font-semibold text-gray-900 mb-1"
-                                                >
-                                                    Unduh File Lengkap
-                                                </p>
-                                                <p
-                                                    class="text-sm text-gray-600"
-                                                >
-                                                    Klik untuk mengunduh
-                                                </p>
-                                            </div>
-                                        </a>
+                                            <li>
+                                                Meningkatkan kualitas akademik
+                                            </li>
+                                            <li>
+                                                Memperjuangkan aspirasi
+                                                mahasiswa
+                                            </li>
+                                            <li>Mengembangkan kepemimpinan</li>
+                                            <li>
+                                                Mewujudkan sinergi mahasiswa
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </transition>
-        </teleport>
+            </div>
+        </section>
 
-        <!-- Struktur Pengurus -->
-        <section class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16" data-aos="fade-up">
-                    <h2
-                        class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+        <!-- KEGIATAN & BERITA -->
+        <section class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-16">
+                    <span
+                        class="text-green-600 font-semibold tracking-wider text-sm"
+                        >UPDATE TERKINI</span
                     >
-                        Struktur <span class="text-green-600">Pengurus</span>
+                    <h2
+                        class="text-4xl lg:text-5xl font-bold text-blue-900 mt-2 mb-4"
+                    >
+                        Kegiatan & Berita
                     </h2>
-                    <div class="w-24 h-1 bg-yellow-500 mx-auto mb-6"></div>
+                    <div
+                        class="w-24 h-1.5 bg-gradient-to-r from-green-500 to-blue-600 mx-auto rounded-full"
+                    ></div>
                 </div>
 
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 lg:px-50"
-                >
-                    <div
-                        v-for="(officer, index) in strukturPengurus"
-                        :key="index"
-                        :data-aos="'fade-up'"
-                        :data-aos-delay="index * 100"
-                        class="text-center"
+                <!-- Highlight Kegiatan Sebelumnya -->
+                <div class="mb-20">
+                    <h3
+                        class="text-2xl font-bold text-blue-800 mb-8 flex items-center gap-2"
                     >
-                        <div class="relative inline-block mb-6">
+                        Highlight Kegiatan
+                    </h3>
+
+                    <div class="relative event-swiper-wrapper">
+                        <!-- Navigation Button -->
+                        <div class="swiper-button-prev custom-nav"></div>
+                        <div class="swiper-button-next custom-nav"></div>
+
+                        <Swiper
+                            :modules="[
+                                Navigation,
+                                Pagination,
+                                Autoplay,
+                                EffectCoverflow,
+                            ]"
+                            effect="coverflow"
+                            :grab-cursor="true"
+                            :centered-slides="true"
+                            :loop="true"
+                            :slides-per-view="'auto'"
+                            :coverflow-effect="{
+                                rotate: 0,
+                                stretch: 0,
+                                depth: 150,
+                                modifier: 2,
+                                slideShadows: false,
+                            }"
+                            :navigation="{
+                                nextEl: '.swiper-button-next',
+                                prevEl: '.swiper-button-prev',
+                            }"
+                            :pagination="{ clickable: true }"
+                            :autoplay="{
+                                delay: 3500,
+                                disableOnInteraction: false,
+                            }"
+                            class="pb-14"
+                        >
+                            <SwiperSlide
+                                v-for="(event, index) in pastEvents"
+                                :key="index"
+                                class="custom-slide"
+                            >
+                                <!-- MOBILE VERSION -->
+                                <div
+                                    class="lg:hidden bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 h-full flex flex-col"
+                                >
+                                    <!-- Image -->
+                                    <div class="h-40 overflow-hidden">
+                                        <img
+                                            :src="event.image"
+                                            class="w-full h-full object-cover hover:scale-105 transition duration-500"
+                                        />
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="p-6 mb-4 flex flex-col flex-1">
+                                        <h4
+                                            class="font-bold text-lg text-blue-900 mb-2"
+                                        >
+                                            {{ event.title }}
+                                        </h4>
+
+                                        <p
+                                            class="text-gray-500 text-sm mb-2 flex items-center gap-1"
+                                        >
+                                            <MapPin class="w-4 h-4" />
+                                            {{ event.location }}
+                                        </p>
+
+                                        <p class="text-gray-600 text-sm mb-3">
+                                            {{ event.date }}
+                                        </p>
+
+                                        <p
+                                            class="text-gray-600 text-sm line-clamp-3 flex-grow"
+                                        >
+                                            {{ event.description }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- DESKTOP VERSION -->
+                                <div
+                                    class="hidden lg:block relative h-[220px] rounded-[20px] overflow-hidden cursor-pointer group transition-all duration-400 ease-in-out"
+                                >
+                                    <!-- Image -->
+                                    <img
+                                        :src="event.image"
+                                        class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                                    />
+
+                                    <!-- Overlay -->
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent text-white p-5 flex flex-col justify-end opacity-0 translate-y-5 transition-all duration-400 ease-in-out group-hover:opacity-100 group-hover:translate-y-0"
+                                    >
+                                        <h4 class="font-bold text-[16px]">
+                                            {{ event.title }}
+                                        </h4>
+
+                                        <p class="text-[12px] opacity-80 mb-1">
+                                            {{ event.date }}
+                                        </p>
+
+                                        <p class="text-[13px] leading-[1.4]">
+                                            {{ event.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        </Swiper>
+                    </div>
+                </div>
+
+                <!-- UPCOMING EVENT CARD -->
+                <div
+                    class="mb-20 bg-gradient-to-r from-blue-700 to-green-600 text-white rounded-3xl p-8 lg:p-12 shadow-xl relative overflow-hidden"
+                >
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <!-- Info Event -->
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-2 mb-3">
+                                <Calendar class="w-5 h-5" />
+                                <span
+                                    class="uppercase tracking-wider text-sm font-semibold"
+                                    >Kegiatan Mendatang</span
+                                >
+                            </div>
+
+                            <h3 class="text-3xl lg:text-4xl font-bold mb-2">
+                                {{ nextEvent.title }}
+                            </h3>
+
+                            <p
+                                class="flex items-center gap-2 text-blue-100 mb-1"
+                            >
+                                <MapPin class="w-4 h-4" />
+                                {{ nextEvent.location }}
+                            </p>
+
+                            <p class="text-blue-100 mb-6">
+                                {{ nextEvent.date }}
+                            </p>
+
+                            <a
+                                href="/program-kerja"
+                                class="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-700 font-semibold rounded-full hover:scale-105 transition"
+                            >
+                                Lihat Kalender Kegiatan
+                                <ChevronRight class="w-4 h-4" />
+                            </a>
+                        </div>
+
+                        <!-- Countdown -->
+                        <div
+                            class="bg-white/10 backdrop-blur-md rounded-2xl p-6 text-center border border-white/20"
+                        >
+                            <p
+                                class="text-sm uppercase tracking-wider mb-4 text-blue-100"
+                                v-if="!isOngoing"
+                            >
+                                Hitung Mundur
+                            </p>
+
                             <div
-                                class="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-green-600 shadow-lg"
+                                v-if="isOngoing"
+                                class="text-2xl font-bold text-white animate-pulse"
+                            >
+                                Acara Sedang Berlangsung
+                            </div>
+
+                            <div v-else class="flex justify-center gap-6">
+                                <div>
+                                    <p class="text-4xl font-bold">
+                                        {{ countdown.days }}
+                                    </p>
+                                    <span class="text-sm text-blue-100"
+                                        >Hari</span
+                                    >
+                                </div>
+
+                                <div>
+                                    <p class="text-4xl font-bold">
+                                        {{ countdown.hours }}
+                                    </p>
+                                    <span class="text-sm text-blue-100"
+                                        >Jam</span
+                                    >
+                                </div>
+
+                                <div>
+                                    <p class="text-4xl font-bold">
+                                        {{ countdown.minutes }}
+                                    </p>
+                                    <span class="text-sm text-blue-100"
+                                        >Menit</span
+                                    >
+                                </div>
+
+                                <div>
+                                    <p class="text-4xl font-bold">
+                                        {{ countdown.seconds }}
+                                    </p>
+                                    <span class="text-sm text-blue-100"
+                                        >Detik</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Grid -->
+                <div>
+                    <h3 class="text-2xl font-bold text-blue-800 mb-8">
+                        Berita Terbaru
+                    </h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div
+                            v-for="(news, index) in newsList"
+                            :key="index"
+                            class="group bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300"
+                        >
+                            <div
+                                class="h-48 bg-gray-200 relative overflow-hidden"
                             >
                                 <img
-                                    v-if="officer.photo"
-                                    :src="officer.photo"
-                                    :alt="'Foto ' + officer.name"
-                                    class="w-full h-full object-cover"
+                                    :src="news.image"
+                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 />
-                                <div
-                                    v-else
-                                    class="w-full h-full bg-gradient-to-br from-green-400 to-yellow-400 flex items-center justify-center"
+                                <span
+                                    class="absolute top-4 left-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full"
+                                    >{{ news.category }}</span
                                 >
-                                    <User class="h-20 w-20 text-white" />
-                                </div>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-gray-500 text-sm mb-2">
+                                    {{ news.date }}
+                                </p>
+                                <h4
+                                    class="font-bold text-xl text-blue-900 mb-2 group-hover:text-blue-600 transition-colors"
+                                >
+                                    {{ news.title }}
+                                </h4>
+                                <p class="text-gray-600 line-clamp-3">
+                                    {{ news.excerpt }}
+                                </p>
+                                <button
+                                    class="mt-4 text-blue-600 font-semibold flex items-center gap-1 hover:gap-2 transition-all"
+                                >
+                                    Baca Selengkapnya
+                                    <ChevronRight class="w-4 h-4" />
+                                </button>
                             </div>
                         </div>
-
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">
-                            {{ officer.name }}
-                        </h3>
-                        <p class="text-green-600 font-semibold">
-                            {{ officer.role }} {{ officer.iksass }} Banten
-                        </p>
-
-                        <p class="text-gray-600">Periode {{ periode }}</p>
                     </div>
                 </div>
 
-                <div
-                    class="text-center mt-10"
-                    data-aos="fade-up"
-                    data-aos-delay="400"
-                >
-                    <Link
-                        href="/structure"
-                        class="relative inline-flex items-center gap-3 px-6 py-3 bg-green-600 text-white rounded-2xl overflow-hidden transition-all duration-300 shadow-xl group"
+                <div class="text-center mt-16">
+                    <button
+                        class="px-10 py-4 bg-gradient-to-r from-blue-700 to-green-600 text-white rounded-full hover:from-blue-800 hover:to-green-700 transition-all duration-300 font-bold text-lg shadow-lg shadow-blue-700/20 hover:scale-105"
                     >
-                        <!-- Hover animation layer -->
-                        <div
-                            class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                        ></div>
+                        Lihat Semua Berita
+                    </button>
+                </div>
+            </div>
+        </section>
 
-                        <!-- Content -->
-                        <Users class="w-5 h-5 relative z-10" />
-                        <span class="text-lg font-bold relative z-10">
-                            Lihat Struktur Lengkap
-                        </span>
-                        <ArrowRight
-                            class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform"
+        <!-- KOLABORASI -->
+        <section class="py-28 bg-blue-900 text-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-4">
+                    Kolaborasi & Kemitraan
+                </h2>
+
+                <div
+                    class="w-24 h-1.5 bg-green-400 mx-auto rounded-full mb-6"
+                ></div>
+
+                <p class="text-white/70 max-w-2xl mx-auto">
+                    BEM Universitas aktif menjalin kolaborasi dengan berbagai
+                    organisasi mahasiswa baik internal maupun eksternal untuk
+                    menciptakan kegiatan yang berdampak luas.
+                </p>
+            </div>
+
+            <!-- EXTERNAL -->
+            <div class="relative overflow-hidden w-full mb-12 logo-marquee">
+                <div class="flex w-max animate-scroll logo-track">
+                    <div
+                        v-for="(logo, index) in externalPartners"
+                        :key="'ext1' + index"
+                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
+                    >
+                        <img
+                            :src="logo"
+                            class="max-h-[90px] object-contain drop-shadow-lg"
                         />
-                    </Link>
+                    </div>
+
+                    <!-- DUPLICATE -->
+                    <div
+                        v-for="(logo, index) in externalPartners"
+                        :key="'ext2' + index"
+                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
+                    >
+                        <img
+                            :src="logo"
+                            class="max-h-[90px] object-contain drop-shadow-lg"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERNAL -->
+            <div class="relative overflow-hidden w-full logo-marquee reverse">
+                <div class="flex w-max animate-scroll-reverse logo-track">
+                    <div
+                        v-for="(logo, index) in internalPartners"
+                        :key="'int1' + index"
+                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
+                    >
+                        <img
+                            :src="logo"
+                            class="max-h-[90px] object-contain drop-shadow-lg"
+                        />
+                    </div>
+
+                    <!-- DUPLICATE -->
+                    <div
+                        v-for="(logo, index) in internalPartners"
+                        :key="'int2' + index"
+                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
+                    >
+                        <img
+                            :src="logo"
+                            class="max-h-[90px] object-contain drop-shadow-lg"
+                        />
+                    </div>
                 </div>
             </div>
         </section>
     </AppLayout>
 </template>
 
+<style scoped>
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #1f6dad;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #0f3757;
+}
+
+/* Swiper Customization */
+.event-swiper-wrapper {
+    position: relative;
+    padding: 0 50px;
+}
+
+/* Custom Navigation */
+/* Navigation wrapper */
+.swiper-button-prev,
+.swiper-button-next {
+    width: auto !important;
+    height: auto !important;
+    color: #1f6dad !important;
+    transition: all 0.35s ease;
+}
+
+/* Hilangkan default icon */
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    font-size: 26px !important;
+    font-weight: 300;
+}
+
+/* Hover effect */
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+    color: #0f3757 !important;
+    transform: scale(1.15);
+}
+
+/* Posisi tombol */
+.swiper-button-prev {
+    left: -10px !important;
+}
+
+.swiper-button-next {
+    right: -10px !important;
+}
+
+/* posisi tombol */
+.swiper-button-prev {
+    left: 0 !important;
+}
+
+.swiper-button-next {
+    right: 0 !important;
+}
+
+/* Pagination */
+.swiper-pagination-bullet {
+    background: #1e3a8a !important;
+    opacity: 0.4;
+}
+.swiper-pagination-bullet-active {
+    background: #16a34a !important;
+    opacity: 1;
+}
+
+/* Slide ukuran auto biar bisa landscape */
+.custom-slide {
+    width: 260px;
+}
+
+@media (min-width: 1024px) {
+    .custom-slide {
+        width: 420px; /* LANDSCAPE */
+    }
+}
+
+/* Efek slide samping */
+.swiper-slide {
+    transition: all 0.4s ease;
+    opacity: 0.5;
+    transform: scale(0.85);
+}
+
+/* Slide aktif (tengah) */
+.swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 10;
+}
+
+/* Sedikit efek ke tetangga */
+.swiper-slide-next,
+.swiper-slide-prev {
+    opacity: 0.7;
+    transform: scale(0.9);
+}
+
+/* FADE EDGE */
+.logo-marquee::before,
+.logo-marquee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 120px;
+    height: 100%;
+    z-index: 2;
+}
+
+.logo-marquee::before {
+    left: 0;
+    background: linear-gradient(to right, #1e3a8a, transparent);
+}
+
+.logo-marquee::after {
+    right: 0;
+    background: linear-gradient(to left, #1e3a8a, transparent);
+}
+
+/* ANIMATION */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scrollReverse {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.animate-scroll {
+    animation: scroll 28s linear infinite;
+}
+
+.animate-scroll-reverse {
+    animation: scrollReverse 28s linear infinite;
+}
+
+/* Line Clamp Utility */
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+
 <script setup>
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
-import { Link, Head } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import { ref, computed, onMounted } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import {
-    Users,
-    Phone,
-    ArrowRight,
-    X,
-    ExternalLink,
-    ChevronLeft,
-    ChevronRight,
-    Calendar,
-    MapPin,
-    Download,
-    PlayCircle,
-    Image as ImageIcon,
-    Grid3x3,
-    Maximize2,
-    Heart,
-    Share2,
-    Target,
-    ListChecks,
-    CheckCircle,
-    User,
-    Crown,
-    Info,
-    Newspaper,
-} from "lucide-vue-next";
+import { Calendar, ChevronRight, MapPin } from "lucide-vue-next";
 
-// Inisialisasi AOS
+// SwiperJS
+import { Swiper, SwiperSlide } from "swiper/vue";
+import {
+    Navigation,
+    Pagination,
+    Autoplay,
+    EffectCoverflow,
+} from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-coverflow";
+
+// Sambutan
+const activeLeader = ref("presiden");
+
+const leaders = {
+    presiden: {
+        name: "Baitul Anam",
+        position: "Presiden BEM UNIB",
+        photo: "/images/profile33.png",
+        message:
+            "Assalamu'alaikum warahmatullahi wabarakatuh. Mari kita bersama-sama membangun organisasi yang bermanfaat bagi seluruh mahasiswa Universitas Ibrahimy. Transformasi bukan hanya slogan, tapi komitmen kita bersama untuk terus berkembang.",
+    },
+
+    wapres: {
+        name: "Aisyah Putri",
+        position: "Wakil Presiden BEM UNIB",
+        photo: "/public/images/default-avatar.jpg",
+        message:
+            "Wahai jiwa yang tenang, kembalilah kepada Tuhanmu dengan hati yang ridha dan diridhai. Mari jadikan BEM sebagai rumah kedua yang penuh manfaat dan keberkahan bagi kita semua.",
+    },
+};
+
+const currentLeader = computed(() => leaders[activeLeader.value]);
+
+// Data upcoming events
+const nextEvent = ref({
+    title: "Seminar Kebangsaan",
+    location: "Auditorium PP. Salafiyah Syafi'iyah",
+    date: "15 April 2026",
+    targetDate: "2026-04-15 08:00:00",
+    endDate: "2026-04-15 23:59:59",
+});
+
+const countdown = ref({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+});
+
+const isOngoing = ref(false);
+
+const updateCountdown = () => {
+    const now = new Date().getTime();
+    const start = new Date(nextEvent.value.targetDate).getTime();
+    const end = new Date(nextEvent.value.endDate).getTime();
+
+    // Acara sedang berlangsung
+    if (now >= start && now <= end) {
+        isOngoing.value = true;
+        return;
+    }
+
+    isOngoing.value = false;
+
+    // Jika acara sudah lewat
+    if (now > end) {
+        countdown.value.days = 0;
+        countdown.value.hours = 0;
+        countdown.value.minutes = 0;
+        countdown.value.seconds = 0;
+        return;
+    }
+
+    // Countdown sebelum acara
+    const diff = start - now;
+
+    countdown.value.days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    countdown.value.hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    countdown.value.minutes = Math.floor((diff / 1000 / 60) % 60);
+    countdown.value.seconds = Math.floor((diff / 1000) % 60);
+};
+
+onMounted(() => {
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
+
+// Data past events
+const pastEvents = ref([
+    {
+        title: "Orientasi Mahasiswa Baru 2024",
+        date: "20-25 Feb 2024",
+        description:
+            "Kegiatan pengenalan kehidupan kampus bagi mahasiswa baru UNIB.",
+        participants: "500+",
+        location: "Kampus UNIB",
+        image: "/images/bg-mesjid.jpg",
+    },
+    {
+        title: "Pelatihan Kepemimpinan",
+        date: "10-12 Mar 2024",
+        description:
+            "Program pengembangan soft skill dan leadership bagi pengurus BEM.",
+        participants: "100+",
+        location: "Gedung Serbaguna",
+        image: "/images/bg-login.jpg",
+    },
+    {
+        title: "Diskusi Publik: Peran Mahasiswa",
+        date: "5 Mar 2024",
+        description:
+            "Diskusi interaktif mengenai peran strategis mahasiswa di era digital.",
+        participants: "200+",
+        location: "Auditorium",
+        image: "/images/kas-umum-green.jpeg",
+    },
+    {
+        title: "Orientasi Mahasiswa Baru 2024",
+        date: "20-25 Feb 2024",
+        description:
+            "Kegiatan pengenalan kehidupan kampus bagi mahasiswa baru UNIB.",
+        participants: "500+",
+        location: "Kampus UNIB",
+        image: "/images/bg-mesjid.jpg",
+    },
+    {
+        title: "Pelatihan Kepemimpinan",
+        date: "10-12 Mar 2024",
+        description:
+            "Program pengembangan soft skill dan leadership bagi pengurus BEM.",
+        participants: "100+",
+        location: "Gedung Serbaguna",
+        image: "/images/bg-login.jpg",
+    },
+    {
+        title: "Diskusi Publik: Peran Mahasiswa",
+        date: "5 Mar 2024",
+        description:
+            "Diskusi interaktif mengenai peran strategis mahasiswa di era digital.",
+        participants: "200+",
+        location: "Auditorium",
+        image: "/images/kas-umum-green.jpeg",
+    },
+]);
+
+// Data news
+const newsList = ref([
+    {
+        title: "BEM UNIB Gelar Pengabdian Masyarakat",
+        date: "25 Maret 2024",
+        category: "Kegiatan",
+        excerpt:
+            "BEM UNIB bersama mahasiswa mengadakan kegiatan bakti sosial di Desa sekitar kampus...",
+        image: "/images/bg-mesjid.jpg",
+    },
+    {
+        title: "Rapat Kerja Kabinet Transformasi",
+        date: "20 Maret 2024",
+        category: "Organisasi",
+        excerpt:
+            "Seluruh pengurus BEM UNIB mengadakan rapat kerja untuk menyusun program kerja...",
+        image: "/images/bg-login.jpg",
+    },
+    {
+        title: "Prestasi Mahasiswa di Tingkat Nasional",
+        date: "15 Maret 2024",
+        category: "Prestasi",
+        excerpt:
+            "Mahasiswa UNIB berhasil meraih juara 1 dalam lomba karya tulis ilmiah nasional...",
+        image: "/images/kas-umum-green.jpeg",
+    },
+]);
+
+// Data partners
+const externalPartners = ref([
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+]);
+
+const internalPartners = ref([
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+    "/images/logo-bem.png",
+]);
+
 onMounted(() => {
     AOS.init({
         duration: 800,
@@ -978,195 +1020,4 @@ onMounted(() => {
         offset: 100,
     });
 });
-
-const props = defineProps({
-    strukturPengurus: Array,
-    periode: String,
-    documentation: Array,
-});
-
-// Batasi hanya 10 dokumentasi terbaru
-const latestDocs = computed(() => props.documentation.slice(0, 10));
-
-// Slider state
-const sliderRef = ref(null);
-const currentIndex = ref(0);
-const cardsPerView = ref(3);
-
-// Modal preview
-const preview = ref(null);
-const liked = ref(false);
-const isVideo = ref(false);
-
-// Responsive cards per view
-onMounted(() => {
-    updateCardsPerView();
-    window.addEventListener("resize", updateCardsPerView);
-});
-
-function updateCardsPerView() {
-    if (window.innerWidth < 768) {
-        cardsPerView.value = 1;
-    } else if (window.innerWidth < 1024) {
-        cardsPerView.value = 2;
-    } else {
-        cardsPerView.value = 3;
-    }
-}
-
-function openPreview(doc) {
-    preview.value = doc;
-    liked.value = false;
-    isVideo.value = doc.photo?.match(/\.(mp4|webm|mov)$/i) || false;
-}
-
-function scrollLeft() {
-    currentIndex.value = Math.max(0, currentIndex.value - 1);
-    if (sliderRef.value) {
-        const cardWidth = sliderRef.value.children[0].offsetWidth + 24; // width + gap
-        sliderRef.value.scrollTo({
-            left: currentIndex.value * cardWidth,
-            behavior: "smooth",
-        });
-    }
-}
-
-function scrollRight() {
-    const maxIndex = latestDocs.value.length - cardsPerView.value;
-    currentIndex.value = Math.min(maxIndex, currentIndex.value + 1);
-    if (sliderRef.value) {
-        const cardWidth = sliderRef.value.children[0].offsetWidth + 24;
-        sliderRef.value.scrollTo({
-            left: currentIndex.value * cardWidth,
-            behavior: "smooth",
-        });
-    }
-}
-
-function toggleLike() {
-    liked.value = !liked.value;
-}
-
-function shareDocument() {
-    if (navigator.share) {
-        navigator.share({
-            title: preview.value.title,
-            text: preview.value.description,
-            url: window.location.href,
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert("Link berhasil disalin!");
-    }
-}
-
-const stats = [
-    { value: "500+", label: "Anggota Aktif" },
-    { value: "50+", label: "Program Tahunan" },
-    { value: "100%", label: "Komitmen Dakwah" },
-    { value: "24/7", label: "Pengabdian" },
-];
-
-const latestNews = [
-    {
-        id: 1,
-        title: "Pekan Kreativitas Santri 2024",
-        excerpt:
-            "Kegiatan tahunan yang memfasilitasi bakat dan kreativitas santri dalam berbagai bidang...",
-        date: "15 Des 2024",
-        category: "Kegiatan",
-    },
-    {
-        id: 2,
-        title: "Pelatihan Kepemimpinan Santri",
-        excerpt:
-            "Program pengembangan kepemimpinan bagi kader IKSASS untuk membentuk pemimpin masa depan...",
-        date: "10 Des 2024",
-        category: "Pengkaderan",
-    },
-    {
-        id: 3,
-        title: "Bakti Sosial di Desa Binaan",
-        excerpt:
-            "Aksi sosial IKSASS dalam rangka meningkatkan kesejahteraan masyarakat sekitar...",
-        date: "5 Des 2024",
-        category: "Pengabdian",
-    },
-];
 </script>
-
-<style scoped>
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
-/* Line Clamp Utilities */
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.line-clamp-4 {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Modal Animations */
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-    opacity: 0;
-}
-
-@keyframes modalIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.9) translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.animate-modalIn {
-    animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Hover Effects */
-.group:hover .group-hover\:scale-110 {
-    transform: scale(1.1);
-}
-
-/* Custom scrollbar for modal */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb {
-    background: #10b981;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #059669;
-}
-</style>

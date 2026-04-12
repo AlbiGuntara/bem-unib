@@ -1,19 +1,23 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center">
+  <img src="/public/images/logo.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
+  <img src="/public/images/logo-kabinet.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
+  <img src="/public/images/log0-kps.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
+</p>
 
-# 📚 GLAM - Perpustakaan Ibrahimy
+# BEM Universitas Ibrahimy
 
-Sistem informasi **GLAM (Gallery, Library, Archives, and Museum)** adalah aplikasi berbasis web yang dikembangkan untuk mendukung layanan digital di **Perpustakaan Universitas Ibrahimy**.  
-Project ini bertujuan untuk meningkatkan literasi, pengelolaan arsip, serta menyediakan sistem informasi modern yang terintegrasi dengan kebutuhan civitas akademika.
+Official website **Badan Eksekutif Mahasiswa Universitas Ibrahimy**.
+website ini dibangun bertujuan untuk memudahkan manajemen orgnasisai, pengelolaan arsip, serta menyediakan sistem informasi modern yang terintegrasi dengan kebutuhan mahasiswa.
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
 
--   **Backend**: [Laravel 12](https://laravel.com/)
--   **Frontend**: [TailwindCSS](https://tailwindcss.com/) + [Inertia.js](https://inertiajs.com/) + [Vue 3](https://vuejs.org/)
--   **Database**: MySQL
--   **Server**: Apache (via Docker)
--   **Containerization**: Docker & Docker Compose
+- **Backend**: [Laravel 12](https://laravel.com/)
+- **Frontend**: [TailwindCSS](https://tailwindcss.com/) + [Inertia.js](https://inertiajs.com/) + [Vue 3](https://vuejs.org/)
+- **Database**: MySQL
+- **Server**: Apache (via Docker)
+- **Containerization**: Docker & Docker Compose
 
 ---
 
@@ -22,8 +26,8 @@ Project ini bertujuan untuk meningkatkan literasi, pengelolaan arsip, serta meny
 ### 1. Clone Repository
 
 ```bash
-git clone https://gitlab.com/ibrahimy-library/glam-i.git
-cd glam-i
+git clone https://github.com/AlbiGuntara/bem-unib.git
+cd bem-unib
 ```
 
 ### 2. Install TailwindCSS Vite
@@ -41,13 +45,6 @@ composer install
 ### 4. Konfigurasi Environment
 
 Atur koneksi database di file .env sesuai kebutuhan:
-
--   DB_CONNECTION=mysql
--   DB_HOST=mysql
--   DB_PORT=3306
--   DB_DATABASE=glam_db
--   DB_USERNAME=root
--   DB_PASSWORD=root
 
 ### 5. Jalankan Docker
 
@@ -73,4 +70,4 @@ php artisan migrate --seed
 ### 8. Akses Aplikasi
 
 Buka browser:
-👉 http://localhost:8000
+👉 http://localhost:8001

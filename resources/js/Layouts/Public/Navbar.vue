@@ -9,7 +9,7 @@
                 <div class="flex-shrink-0 flex items-center group">
                     <Link href="/" class="flex items-center space-x-4">
                         <img
-                            src="/public/images/logo.png"
+                            src="/public/images/logo-bem.png"
                             alt="IKSASS Logo"
                             class="relative h-12 w-12 lg:h-14 lg:w-14"
                         />
@@ -124,7 +124,7 @@
                         >
                             <div class="relative">
                                 <img
-                                    src="/public/images/logo.png"
+                                    src="/public/images/logo-bem.png"
                                     alt="IKSASS Logo"
                                     class="relative h-12 w-12"
                                 />
