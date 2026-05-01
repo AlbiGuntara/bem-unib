@@ -1,99 +1,87 @@
 <template>
     <nav
-        class="fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-b border-green-100 shadow-lg shadow-green-500/5 transition-all duration-300"
-        :class="{ 'shadow-2xl shadow-green-500/10': scrolled }"
+        class="fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-b border-blue-100 shadow-lg shadow-blue-500/5 transition-all duration-300"
+        :class="{ 'shadow-2xl shadow-blue-500/10': scrolled }"
     >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 lg:h-24">
                 <!-- Logo with Animation -->
-                <div class="flex-shrink-0 flex items-center group">
-                    <Link href="/" class="flex items-center space-x-4">
-                        <img
-                            src="/public/images/logo-bem.png"
-                            alt="IKSASS Logo"
-                            class="relative h-12 w-12 lg:h-14 lg:w-14"
-                        />
-                        <div>
+                <Link href="/" class="flex items-center space-x-4">
+                    <img
+                        src="/public/images/logo-kabinet-transformatif.png"
+                        alt="Kabinet Transformatif Logo"
+                        class="relative h-12 lg:h-14"
+                    />
+                </Link>
+
+                <div class="flex gap-4">
+                    <div class="hidden lg:flex items-center">
+                        <Link
+                            v-for="item in navigation"
+                            :key="item.name"
+                            :href="item.href"
+                            class="relative px-4 py-2 rounded-xl font-medium transition-all duration-300 group"
+                            :class="[
+                                route().current(item.route)
+                                    ? ' text-blue-700'
+                                    : 'text-gray-700 hover:text-blue-600',
+                            ]"
+                        >
+                            <span class="relative z-10">
+                                {{ item.name }}
+                            </span>
+                            <span
+                                v-if="item.href !== $page.url"
+                                class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-yellow-400 group-hover:w-8 transition-all duration-300"
+                            ></span>
+                        </Link>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="hidden lg:block relative">
+                        <Link
+                            :href="route('login')"
+                            class="relative px-6 py-3 bg-blue-600 text-white font-semibold rounded-2xl flex items-center gap-2 group"
+                        >
+                            <!-- Hover animation layer -->
                             <div
-                                class="font-logo text-xl font-bold text-gray-900"
-                            >
-                                IKSASS
-                            </div>
-                            <div
-                                class="mt-1 text-sm text-green-600 font-semibold"
-                            >
-                                BANTEN
-                            </div>
-                        </div>
-                    </Link>
-                </div>
+                                class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
+                            ></div>
+                            <LogIn
+                                class="w-4 h-4 group-hover:rotate-12 transition-transform"
+                            />
+                            <span>Login</span>
+                            <ChevronRight
+                                class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+                            />
+                        </Link>
+                    </div>
 
-                <div
-                    class="hidden lg:flex items-center space-x-2 bg-gradient-to-r from-green-50 to-yellow-50 rounded-2xl p-2 border border-green-100"
-                >
-                    <Link
-                        v-for="item in navigation"
-                        :key="item.name"
-                        :href="item.href"
-                        class="relative px-4 py-2 rounded-xl font-medium transition-all duration-300 group"
-                        :class="[
-                            route().current(item.route)
-                                ? 'bg-green-600 text-white shadow-lg shadow-green-500/30'
-                                : 'text-gray-700 hover:text-green-600 hover:bg-white hover:shadow-md',
-                        ]"
-                    >
-                        <span class="relative z-10">
-                            {{ item.name }}
-                        </span>
-                        <span
-                            v-if="item.href !== $page.url"
-                            class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-green-500 to-yellow-400 group-hover:w-8 transition-all duration-300"
-                        ></span>
-                    </Link>
-                </div>
-
-                <!-- CTA Button -->
-                <div class="hidden lg:block relative">
-                    <Link
-                        :href="route('login')"
-                        class="relative px-6 py-3 bg-green-600 text-white font-semibold rounded-2xl flex items-center gap-2 group"
-                    >
-                        <!-- Hover animation layer -->
-                        <div
-                            class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"
-                        ></div>
-                        <LogIn
-                            class="w-4 h-4 group-hover:rotate-12 transition-transform"
-                        />
-                        <span>Login</span>
-                        <ChevronRight
-                            class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
-                        />
-                    </Link>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="lg:hidden">
-                    <button
-                        @click="toggleSidebar"
-                        class="relative w-12 h-12 flex flex-col items-center justify-center gap-1.5 group"
-                        aria-label="Toggle menu"
-                    >
-                        <span
-                            class="w-6 h-0.5 bg-green-600 rounded-full transition-all duration-300"
-                            :class="{ 'rotate-45 translate-y-2': sidebarOpen }"
-                        ></span>
-                        <span
-                            class="w-6 h-0.5 bg-green-600 rounded-full transition-all duration-300"
-                            :class="{ 'opacity-0': sidebarOpen }"
-                        ></span>
-                        <span
-                            class="w-6 h-0.5 bg-green-600 rounded-full transition-all duration-300"
-                            :class="{
-                                '-rotate-45 -translate-y-2': sidebarOpen,
-                            }"
-                        ></span>
-                    </button>
+                    <!-- Mobile Menu Button -->
+                    <div class="lg:hidden">
+                        <button
+                            @click="toggleSidebar"
+                            class="relative w-12 h-12 flex flex-col items-center justify-center gap-1.5 group"
+                            aria-label="Toggle menu"
+                        >
+                            <span
+                                class="w-6 h-0.5 bg-blue-600 rounded-full transition-all duration-300"
+                                :class="{
+                                    'rotate-45 translate-y-2': sidebarOpen,
+                                }"
+                            ></span>
+                            <span
+                                class="w-6 h-0.5 bg-blue-600 rounded-full transition-all duration-300"
+                                :class="{ 'opacity-0': sidebarOpen }"
+                            ></span>
+                            <span
+                                class="w-6 h-0.5 bg-blue-600 rounded-full transition-all duration-300"
+                                :class="{
+                                    '-rotate-45 -translate-y-2': sidebarOpen,
+                                }"
+                            ></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,7 +100,7 @@
 
                 <!-- Sidebar Panel -->
                 <div
-                    class="absolute top-0 right-0 h-full w-80 max-w-full bg-gradient-to-b from-white via-white to-green-50 shadow-2xl shadow-green-900/20 border-l border-green-100 overflow-y-auto"
+                    class="absolute top-0 right-0 h-full w-80 max-w-full bg-gradient-to-b from-white via-white to-blue-50 shadow-2xl shadow-blue-900/20 border-l border-blue-100 overflow-y-auto"
                     @click.stop
                 >
                     <!-- Sidebar Header -->
@@ -124,22 +112,10 @@
                         >
                             <div class="relative">
                                 <img
-                                    src="/public/images/logo-bem.png"
-                                    alt="IKSASS Logo"
-                                    class="relative h-12 w-12"
+                                    src="/public/images/logo-kabinet-transformatif.png"
+                                    alt="BEM UNIB Logo"
+                                    class="relative h-12"
                                 />
-                            </div>
-                            <div>
-                                <div
-                                    class="font-logo text-xl font-bold text-gray-900"
-                                >
-                                    IKSASS
-                                </div>
-                                <div
-                                    class="mt-1 text-sm text-green-600 font-semibold"
-                                >
-                                    BANTEN
-                                </div>
                             </div>
                         </Link>
                         <button
@@ -161,32 +137,13 @@
                                 class="flex items-center gap-4 p-4 rounded-xl transition-all duration-300 group"
                                 :class="[
                                     item.href === $page.url
-                                        ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg'
-                                        : 'text-gray-700 hover:bg-green-50 hover:text-green-600',
+                                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
+                                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600',
                                 ]"
                             >
-                                <div
-                                    class="w-10 h-10 rounded-lg flex items-center justify-center transition-all"
-                                    :class="[
-                                        item.href === $page.url
-                                            ? 'bg-white/20'
-                                            : 'bg-green-100 group-hover:bg-green-200 text-green-600',
-                                    ]"
-                                >
-                                    <component
-                                        :is="item.icon"
-                                        class="w-5 h-5"
-                                    />
-                                </div>
                                 <div class="flex-1">
                                     <div class="font-medium">
                                         {{ item.name }}
-                                    </div>
-                                    <div
-                                        v-if="item.description"
-                                        class="text-xs opacity-75 mt-1"
-                                    >
-                                        {{ item.description }}
                                     </div>
                                 </div>
                                 <ChevronRight
@@ -201,7 +158,7 @@
                         <!-- Divider -->
                         <div class="my-6 px-4">
                             <div
-                                class="h-px bg-gradient-to-r from-transparent via-green-200 to-transparent"
+                                class="h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"
                             ></div>
                         </div>
 
@@ -210,7 +167,7 @@
                             <Link
                                 :href="route('login')"
                                 @click="sidebarOpen = false"
-                                class="flex items-center justify-center gap-3 p-4 border-2 border-green-600 text-green-600 rounded-xl"
+                                class="flex items-center justify-center gap-3 p-4 border-2 border-blue-600 text-blue-600 rounded-xl"
                             >
                                 <LogIn class="w-5 h-5" />
                                 <span class="font-semibold">Login Anggota</span>
@@ -223,7 +180,7 @@
 
         <!-- Progress Indicator -->
         <div
-            class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-green-500 to-yellow-400 transition-all duration-300"
+            class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-yellow-400 transition-all duration-300"
             :style="{ width: `${scrollProgress}%` }"
         ></div>
     </nav>
@@ -244,8 +201,6 @@ import {
     ChevronRight,
     X,
     Phone,
-    Mail,
-    Image as ImageIcon,
     BookOpen,
 } from "lucide-vue-next";
 import { route } from "ziggy-js";
@@ -272,9 +227,9 @@ const navigation = [
         description: "Halaman utama",
     },
     {
-        name: "Tentang Kami",
-        route: "tentang-kami",
-        href: "/tentang-kami",
+        name: "Profil",
+        route: "profil",
+        href: "/profil",
         icon: Users,
         description: "Profil & sejarah",
     },
@@ -286,16 +241,9 @@ const navigation = [
         description: "Agenda & kegiatan",
     },
     {
-        name: "Prestasi",
-        route: "prestasi",
-        href: "/prestasi",
-        icon: Trophy,
-        description: "Penghargaan & capaian",
-    },
-    {
-        name: "Media",
-        route: "media",
-        href: "/media",
+        name: "Berita",
+        route: "berita",
+        href: "/berita",
         icon: BookOpen,
         description: "Berita & karya",
     },

@@ -23,7 +23,7 @@
             <!-- Logo & Title -->
             <div class="flex items-center gap-3">
                 <img
-                    src="/public/images/logo.png"
+                    src="/public/images/logo-bem.png"
                     class="w-10 h-10 transition-transform duration-300"
                 />
                 <div>

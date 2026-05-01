@@ -51,7 +51,16 @@
                             href="#"
                             class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-black transition-all duration-300 hover:scale-110 shadow-lg"
                         >
-                            <Music class="w-6 h-6 text-white" />
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="white"
+                                class="w-6 h-6"
+                            >
+                                <path
+                                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-1.8V14.3a5.18 5.18 0 1 1-4.48-5.13v2.67a2.54 2.54 0 1 0 1.77 2.43V2h2.71a7.6 7.6 0 0 0 3.77 3.18v1.51z"
+                                />
+                            </svg>
                         </a>
 
                         <!-- YouTube -->
