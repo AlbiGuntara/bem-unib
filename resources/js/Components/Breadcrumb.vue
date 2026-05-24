@@ -52,7 +52,7 @@ const pageTitle = computed(() => {
 
 <template>
     <div
-        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:bg-gray-900 dark:border border-electric-blue/20 backdrop-blur-sm rounded-2xl dark:p-4 transition-all duration-300"
+        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:border-electric-blue/20 backdrop-blur-sm rounded-2xl dark:text-white transition-all duration-300"
     >
         <!-- ================= LEFT ================= -->
         <div>

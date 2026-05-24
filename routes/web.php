@@ -37,6 +37,11 @@ Route::get('/tentang-kami', function () {
         'title' => 'Tentang Kami',
     ]);
 })->name('tentang-kami');
+Route::get('/profil', function () {
+    return Inertia::render('Public/Profile', [
+        'title' => 'Profil',
+    ]);
+})->name('profil');
 Route::get('/program-kerja', [ProkerController::class, 'index'])->name('program-kerja');
 Route::get('/prestasi', [PrestasisController::class, 'prestasi'])->name('prestasi');
 

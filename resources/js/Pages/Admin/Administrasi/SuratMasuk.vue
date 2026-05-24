@@ -237,7 +237,7 @@
                                                         <li
                                                             @click="
                                                                 goToEdit(
-                                                                    item.id
+                                                                    item.id,
                                                                 )
                                                             "
                                                             class="px-4 py-2 hover:bg-green-50 dark:hover:bg-green-900/20 cursor-pointer"
@@ -471,7 +471,7 @@
             >
                 <div
                     v-if="openModal"
-                    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+                    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-51"
                     @click="closeModal"
                 ></div>
             </Transition>
@@ -487,7 +487,7 @@
             >
                 <div
                     v-if="openModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 p-4"
+                    class="fixed inset-0 flex items-center justify-center z-52 p-4"
                     @click="closeModal"
                 >
                     <div
@@ -718,8 +718,8 @@ function sort(column) {
             filters.value.sort_direction === "asc"
                 ? "desc"
                 : filters.value.sort_direction === "desc"
-                ? ""
-                : "asc";
+                  ? ""
+                  : "asc";
     } else {
         filters.value.sort_by = column;
         filters.value.sort_direction = "asc";

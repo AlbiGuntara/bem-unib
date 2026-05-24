@@ -32,7 +32,7 @@ class SuratMasukController extends Controller
         $perPage = $request->per_page ?? 10;
         $surat = $query->paginate($perPage)->withQueryString();
 
-        return Inertia::render('Admin/SuratMasuk', [
+        return Inertia::render('Admin/Administrasi/SuratMasuk', [
             'surat' => $surat,
             'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
             'totalMasuk' => SuratMasuk::count(),
@@ -46,44 +46,66 @@ class SuratMasukController extends Controller
             'no_surat' => 'required',
             'asal' => 'required',
             'perihal' => 'required',
-            "tanggal" => "nullable|date",
-            'foto' => 'nullable|image',
+            'tanggal' => 'nullable|date',
+
+            // SUPPORT IMAGE + PDF + WORD
+            'foto' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
         ]);
 
-        $data = $request->only(['no_surat', 'asal', 'perihal', 'tanggal']);
+        $data = $request->only([
+            'no_surat',
+            'asal',
+            'perihal',
+            'tanggal'
+        ]);
 
         if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('surat_masuk', 'public');
+            $data['foto'] = $request->file('foto')
+                ->store('surat_masuk', 'public');
         }
 
         SuratMasuk::create($data);
 
-        return redirect()->route('surat-masuk.index')->with('success', 'Surat Masuk berhasil ditambahkan');
+        return redirect()
+            ->route('surat-masuk.index')
+            ->with('success', 'Surat Masuk berhasil ditambahkan');
     }
 
-    public function update(Request $request, SuratMasuk $surat_masuk)
-    {
-        $request->validate([
-            'no_surat' => 'required',
-            'asal' => 'required',
-            'perihal' => 'required',
-            "tanggal" => "nullable|date",
-            'foto' => 'nullable|image',
-        ]);
+public function update(Request $request, SuratMasuk $surat_masuk)
+{
+    $request->validate([
+        'no_surat' => 'required',
+        'asal' => 'required',
+        'perihal' => 'required',
+        'tanggal' => 'nullable|date',
 
-        $data = $request->only(['no_surat', 'asal', 'perihal', 'tanggal']);
+        // SUPPORT IMAGE + PDF + WORD
+        'foto' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120',
+    ]);
 
-        if ($request->hasFile('foto')) {
-            if ($surat_masuk->foto) {
-                Storage::disk('public')->delete($surat_masuk->foto);
-            }
-            $data['foto'] = $request->file('foto')->store('surat_masuk', 'public');
+    $data = $request->only([
+        'no_surat',
+        'asal',
+        'perihal',
+        'tanggal'
+    ]);
+
+    if ($request->hasFile('foto')) {
+
+        if ($surat_masuk->foto) {
+            Storage::disk('public')
+                ->delete($surat_masuk->foto);
         }
 
-        $surat_masuk->update($data);
-
-        return back()->with('success', 'Surat Masuk berhasil diperbarui');
+        $data['foto'] = $request->file('foto')
+            ->store('surat_masuk', 'public');
     }
+
+    $surat_masuk->update($data);
+
+    return back()
+        ->with('success', 'Surat Masuk berhasil diperbarui');
+}
 
     public function destroy(SuratMasuk $surat_masuk)
     {

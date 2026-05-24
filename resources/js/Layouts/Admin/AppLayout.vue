@@ -24,28 +24,37 @@
             <!-- ================= CONTENT ================= -->
             <main
                 :class="[
-                    'p-4 flex flex-col flex-1 transition-all duration-500 ease-in-out',
+                    'flex flex-col flex-1 transition-all duration-500 ease-in-out',
                     collapsed ? 'md:ml-20' : 'md:ml-64',
                 ]"
             >
-                <Breadcrumb />
+                <!-- Content Wrapper -->
+                <div class="flex-1 p-4">
+                    <Breadcrumb />
 
-                <div class="mt-4 flex-1">
-                    <slot />
+                    <div class="mt-4">
+                        <slot />
+                    </div>
                 </div>
 
                 <!-- ================= FOOTER ================= -->
                 <footer
-                    class="mt-10 pt-6 pb-4 text-center md:text-left text-sm text-deep-blue/70 dark:text-cream/60 border-t border-electric-blue/20 dark:border-electric-blue/20 transition-all duration-300"
+                    class="relative z-10 min-h-[89px] px-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 footer-shadow transition-all duration-300 flex items-center"
                 >
-                    © 2026 BEM UNIB —
-                    <span class="text-center">
+                    <div
+                        class="flex flex-col md:flex-row items-center justify-between gap-2 text-sm w-full"
+                    >
+                        <p class="text-gray-600 dark:text-gray-400">
+                            © {{ currentYear }} BEM UNIB
+                        </p>
+
                         <a
                             href="https://www.instagram.com/albyy_394"
-                            class="text-italic"
-                            ><em>@mas_al</em></a
+                            class="italic text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
                         >
-                    </span>
+                            @mas_al
+                        </a>
+                    </div>
                 </footer>
             </main>
         </div>
@@ -55,7 +64,7 @@
             <button
                 v-if="showScroll"
                 @click="scrollToTop"
-                class="fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-electric-blue hover:bg-coral text-cream shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 active:scale-95"
+                class="fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-b hover:bg-coral text-cream shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 active:scale-95"
             >
                 <ChevronUp class="w-5 h-5" />
             </button>
@@ -168,5 +177,18 @@ watch(collapsed, (val) => {
 .fade-slide-leave-from {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Footer Style */
+.footer-shadow {
+    box-shadow:
+        0 -4px 12px rgba(0, 0, 0, 0.04),
+        0 -1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.dark .footer-shadow {
+    box-shadow:
+        0 -4px 14px rgba(0, 0, 0, 0.3),
+        0 -1px 4px rgba(0, 0, 0, 0.2);
 }
 </style>

@@ -3,7 +3,7 @@
 
     <div class="flex flex-col md:flex-row h-screen">
         <img
-            src="/public/images/bg-login.jpg"
+            src="/public/images/bg/login.jpg"
             class="absolute inset-0 w-full h-full object-cover"
             alt="Login Background"
         />
@@ -45,7 +45,7 @@
         >
             <div class="w-full max-w-md">
                 <img
-                    src="/public/images/logo-bem.png"
+                    src="/public/images/logo/bem.png"
                     alt="Logo BEM Unib"
                     class="w-15 md:w-20 mx-auto mb-4 md:mb-6"
                 />

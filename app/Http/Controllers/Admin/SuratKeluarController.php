@@ -35,7 +35,7 @@ class SuratKeluarController extends Controller
 
         $surat = $query->paginate($perPage)->withQueryString();
 
-        return Inertia::render('Admin/SuratKeluar', [
+        return Inertia::render('Admin/Administrasi/SuratKeluar', [
             'surat' => $surat,
             'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
             'totalMasuk' => SuratMasuk::count(),

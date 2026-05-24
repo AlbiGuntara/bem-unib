@@ -50,28 +50,18 @@ function handleClick(item) {
         <!-- Dropdown Button -->
         <button
             @click="toggle"
-            :class="[
-                'group flex items-center gap-4 px-4 py-3 rounded-xl w-full transition-all duration-300 cursor-pointer',
-                isActive
-                    ? 'bg-electric-blue'
-                    : 'hover:bg-white/10',
-            ]"
+            class="group flex items-center gap-4 px-4 py-3 rounded-xl w-full transition-all duration-300 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-800"
         >
             <!-- Icon -->
             <component
                 :is="icon"
-                :class="[
-                    'w-5 h-5 transition-all duration-300',
-                    isActive
-                        ? 'text-coral'
-                        : 'text-coral group-hover:scale-110',
-                ]"
+                class="w-5 h-5 transition-all duration-300 text-gray-500 dark:text-gray-400 group-hover:scale-110"
             />
 
             <!-- Label -->
             <span
                 v-if="!isDesktop || !collapsed"
-                class="text-sm font-medium text-cream text-left"
+                class="text-sm font-medium text-left transition-colors duration-300 text-blue-600 dark:text-blue-400 text-gray-700 dark:text-gray-200"
             >
                 {{ label }}
             </span>
@@ -80,19 +70,23 @@ function handleClick(item) {
             <ChevronDown
                 v-if="!isDesktop || !collapsed"
                 :class="[
-                    'w-4 h-4 ml-auto transition-transform duration-300 text-cream',
+                    'w-4 h-4 ml-auto transition-all duration-300',
                     open ? 'rotate-180' : '',
+                    isActive
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-gray-500 dark:text-gray-400',
                 ]"
             />
 
             <!-- Tooltip (collapsed desktop) -->
             <div
                 v-if="isDesktop && collapsed"
-                class="absolute left-full ml-4 px-3 py-2 bg-electric-blue text-cream text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 pointer-events-none z-50 whitespace-nowrap"
+                class="absolute left-full ml-4 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg text-gray-700 dark:text-gray-200 text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 pointer-events-none z-50 whitespace-nowrap"
             >
                 {{ label }}
+
                 <div
-                    class="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-electric-blue"
+                    class="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-white dark:border-r-gray-800"
                 />
             </div>
         </button>
@@ -108,7 +102,12 @@ function handleClick(item) {
         >
             <div
                 v-if="open && (!isDesktop || !collapsed)"
-                class="ml-6 mt-2 border-l-2 border-coral pl-3 space-y-1"
+                :class="[
+                    'ml-6 mt-2 pl-3 space-y-1 border-l-2',
+                    isActive
+                        ? 'border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700',
+                ]"
             >
                 <div
                     v-for="item in items"
@@ -117,16 +116,24 @@ function handleClick(item) {
                     :class="[
                         'group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm cursor-pointer transition-all duration-200',
                         activeMenu === item.name
-                            ? 'bg-electric-blue text-cream font-medium'
-                            : 'text-cream hover:bg-white/10',
+                            ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/20'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800',
                     ]"
                 >
                     <component
                         :is="item.icon"
-                        class="w-4 h-4 text-coral"
                         v-if="item.icon"
+                        :class="[
+                            'w-4 h-4 transition-colors duration-200',
+                            activeMenu === item.name
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : 'text-gray-400 dark:text-gray-500',
+                        ]"
                     />
-                    <span>{{ item.name }}</span>
+
+                    <span>
+                        {{ item.name }}
+                    </span>
                 </div>
             </div>
         </Transition>

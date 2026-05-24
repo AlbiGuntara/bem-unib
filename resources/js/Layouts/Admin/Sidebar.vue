@@ -20,7 +20,7 @@
         <aside
             v-show="isMobileOpen || isDesktop"
             :class="[
-                'fixed top-0 left-0 h-screen z-40 flex flex-col bg-deep-blue text-cream transition-all duration-500 ease-in-out pt-20',
+                'fixed top-0 left-0 h-screen z-40 flex flex-col bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-in-out pt-20',
                 isDesktop ? (collapsed ? 'w-20' : 'w-64') : 'w-64',
             ]"
         >
@@ -28,7 +28,7 @@
             <div class="relative flex-1 overflow-hidden">
                 <!-- Top Gradient -->
                 <div
-                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-deep-blue to-transparent z-10"
+                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-gray-900 to-transparent z-10"
                 />
 
                 <!-- Scrollable Menu -->
@@ -43,13 +43,18 @@
                         :class="[
                             'group relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300',
                             activeMenu === item.name
-                                ? 'bg-electric-blue'
-                                : 'hover:bg-white/10',
+                                ? 'bg-blue-600 text-white shadow-lg'
+                                : 'hover:bg-blue-50 dark:hover:bg-gray-800',
                         ]"
                     >
                         <component
                             :is="item.icon"
-                            class="w-5 h-5 text-coral group-hover:scale-110 transition-transform"
+                            :class="[
+                                'w-5 h-5 transition-transform group-hover:scale-110',
+                                activeMenu === item.name
+                                    ? 'text-white'
+                                    : 'text-gray-500 dark:text-gray-400',
+                            ]"
                         />
 
                         <span
@@ -64,7 +69,7 @@
                                 activeMenu === item.name &&
                                 (!collapsed || !isDesktop)
                             "
-                            class="absolute right-4 w-2 h-2 rounded-full bg-coral animate-pulse"
+                            class="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse"
                         />
                     </div>
 
@@ -138,12 +143,14 @@
 
                 <!-- Bottom Gradient -->
                 <div
-                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-deep-blue to-transparent"
+                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"
                 />
             </div>
 
             <!-- ================= USER SECTION ================= -->
-            <div class="flex-shrink-0 px-4 py-4 bg-black/10">
+            <div
+                class="flex-shrink-0 min-h-[89px] px-4 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative z-10 user-section-shadow flex items-center"
+            >
                 <div
                     :class="[
                         'flex items-center gap-3',
@@ -152,14 +159,18 @@
                 >
                     <img
                         :src="getAvatarUrl(user?.avatar)"
-                        class="w-11 h-11 rounded-xl object-cover border-2 border-coral"
+                        class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500"
                     />
 
                     <div v-if="!collapsed || !isDesktop" class="min-w-0">
-                        <p class="text-sm font-semibold truncate">
+                        <p
+                            class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate"
+                        >
                             {{ user?.name || "Guest" }}
                         </p>
-                        <p class="text-xs opacity-70 truncate">
+                        <p
+                            class="text-xs text-gray-500 dark:text-gray-400 truncate"
+                        >
                             {{ user?.email || "Belum login" }}
                         </p>
                     </div>
@@ -169,12 +180,80 @@
     </transition>
 </template>
 
+<style scoped>
+/* Scrollbar Custom */
+.sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 10px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+/* User Section Shadow */
+.user-section-shadow {
+    box-shadow:
+        0 -4px 12px rgba(0, 0, 0, 0.06),
+        0 -1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark Mode Shadow */
+.dark .user-section-shadow {
+    box-shadow:
+        0 -4px 14px rgba(0, 0, 0, 0.35),
+        0 -1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Mobile Sidebar Animation */
+/* Enter */
+.mobile-slide-enter-active {
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease;
+}
+
+.mobile-slide-enter-from {
+    transform: translateX(-110%) scale(0.98);
+    opacity: 0;
+}
+
+.mobile-slide-enter-to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+/* Leave */
+.mobile-slide-leave-active {
+    transition:
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease;
+}
+
+.mobile-slide-leave-from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+.mobile-slide-leave-to {
+    transform: translateX(-105%) scale(0.98);
+    opacity: 0;
+}
+</style>
+
 <script setup>
 import SidebarDropdown from "@/Components/SidebarDropdown.vue";
 import {
     LayoutDashboard,
     Users,
-    Search,
     FileCog,
     Wallet,
     UserCog,
@@ -260,7 +339,6 @@ const strukturalMenuItems = [
 const prokerMenuItems = [
     {
         name: "Program Kerja",
-        icon: Calendar,
         link: "/admin/program-kerja",
         permission: "view program-kerja",
     },
@@ -486,58 +564,3 @@ function getAvatarUrl(avatar) {
     return "/images/default-avatar.jpg";
 }
 </script>
-
-<style scoped>
-/* Scrollbar Custom */
-.sidebar-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb {
-    background: var(--color-coral);
-    border-radius: 10px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--color-electric-blue);
-}
-
-/* Mobile Sidebar Animation */
-/* Enter */
-.mobile-slide-enter-active {
-    transition:
-        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 0.35s ease;
-}
-
-.mobile-slide-enter-from {
-    transform: translateX(-110%) scale(0.98);
-    opacity: 0;
-}
-
-.mobile-slide-enter-to {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-}
-
-/* Leave */
-.mobile-slide-leave-active {
-    transition:
-        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.25s ease;
-}
-
-.mobile-slide-leave-from {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-}
-
-.mobile-slide-leave-to {
-    transform: translateX(-105%) scale(0.98);
-    opacity: 0;
-}
-</style>

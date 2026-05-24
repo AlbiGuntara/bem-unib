@@ -1,88 +1,5 @@
 <template>
     <footer class="bg-blue-950 text-white">
-        <!-- KONTAK -->
-        <section class="relative pb-28 text-white overflow-hidden bg-blue-900">
-            <div
-                class="absolute inset-0 bg-gradient-to-b from-blue-900 via-blue-900 to-blue-950"
-            ></div>
-
-            <div class="relative max-w-5xl mx-auto px-4 text-center">
-                <div
-                    class="bg-white/10 backdrop-blur-xl rounded-3xl p-14 border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-                    data-aos="zoom-in"
-                >
-                    <h2 class="text-4xl lg:text-5xl font-bold mb-4">
-                        Hubungi Kami
-                    </h2>
-
-                    <div
-                        class="w-24 h-1.5 bg-green-400 mx-auto rounded-full mb-8"
-                    ></div>
-
-                    <p class="text-white/70 text-lg mb-12 max-w-2xl mx-auto">
-                        Terhubung dengan kami melalui media sosial untuk
-                        mendapatkan informasi terbaru mengenai kegiatan, program
-                        kerja, dan kolaborasi Badan Eksekutif Mahasiswa
-                        Universitas Ibrahimy.
-                    </p>
-
-                    <!-- SOCIAL MEDIA -->
-                    <div class="flex justify-center flex-wrap gap-6">
-                        <!-- Instagram -->
-                        <a
-                            href="#"
-                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-pink-500 transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                            <Instagram
-                                class="w-6 h-6 text-white group-hover:text-white"
-                            />
-                        </a>
-
-                        <!-- Facebook -->
-                        <a
-                            href="#"
-                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-blue-600 transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                            <Facebook class="w-6 h-6 text-white" />
-                        </a>
-
-                        <!-- TikTok -->
-                        <a
-                            href="#"
-                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-black transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="white"
-                                class="w-6 h-6"
-                            >
-                                <path
-                                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-1.8V14.3a5.18 5.18 0 1 1-4.48-5.13v2.67a2.54 2.54 0 1 0 1.77 2.43V2h2.71a7.6 7.6 0 0 0 3.77 3.18v1.51z"
-                                />
-                            </svg>
-                        </a>
-
-                        <!-- YouTube -->
-                        <a
-                            href="#"
-                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                            <Youtube class="w-6 h-6 text-white" />
-                        </a>
-
-                        <!-- Email -->
-                        <a
-                            href="mailto:bem@ibrahimy.ac.id"
-                            class="group w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/20 backdrop-blur-md hover:bg-yellow-500 transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                            <Mail class="w-6 h-6 text-white" />
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Bottom Footer -->
         <div class="border-t border-green-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -122,14 +39,7 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 import { ref, onMounted, onUnmounted } from "vue";
-import {
-    Mail,
-    Instagram,
-    Facebook,
-    Youtube,
-    Music,
-    ArrowUp,
-} from "lucide-vue-next";
+import { ArrowUp } from "lucide-vue-next";
 
 // Scroll to Top
 const showScrollTop = ref(false);

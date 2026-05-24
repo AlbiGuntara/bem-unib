@@ -5,7 +5,7 @@
         <!-- HERO SECTION -->
         <section
             class="relative min-h-[90vh] bg-cover bg-right lg:bg-center overflow-hidden flex items-center"
-            style="background-image: url(&quot;/images/bg-hero.png&quot;)"
+            style="background-image: url(&quot;/images/bg/hero.png&quot;)"
         >
             <div class="relative z-20 max-w-7xl mx-auto w-full px-4 lg:px-8">
                 <div
@@ -15,7 +15,7 @@
                 >
                     <div class="text-center lg:text-left">
                         <img
-                            src="/public/images/logo-kabinet.png"
+                            src="/public/images/logo/kabinet.png"
                             class="w-56 lg:w-80 mx-auto lg:mx-0 drop-shadow-2xl"
                             alt="Logo Kabinet"
                         />
@@ -164,15 +164,19 @@
         </section>
 
         <!-- TENTANG KAMI -->
-        <section
-            class="py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-green-700 text-white relative overflow-hidden"
-        >
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 opacity-10">
-                <div
-                    class="absolute top-0 left-0 w-full h-full bg-[url('/images/pattern.png')] bg-repeat"
-                ></div>
-            </div>
+        <section class="py-24 text-white relative overflow-hidden">
+            <!-- Background Image -->
+            <div
+                class="absolute inset-0 bg-cover bg-center"
+                style="
+                    background-image: url(&quot;/images/bg/pattern-a.jpg&quot;);
+                "
+            ></div>
+
+            <!-- Blue Overlay -->
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-700/80 to-blue-800"
+            ></div>
 
             <div class="relative max-w-7xl mx-auto px-4">
                 <div class="text-center mb-16" data-aos="fade-up">
@@ -187,6 +191,7 @@
                         class="w-24 h-1.5 bg-yellow-500 mx-auto rounded-full"
                     ></div>
                 </div>
+
                 <div class="grid lg:grid-cols-2 gap-12">
                     <div data-aos="fade-right">
                         <h3 class="text-2xl font-bold mb-4 text-yellow-400">
@@ -567,77 +572,232 @@
         </section>
 
         <!-- KOLABORASI -->
-        <section class="py-28 bg-blue-900 text-white overflow-hidden">
-            <div class="max-w-7xl mx-auto px-4 text-center mb-16">
-                <h2 class="text-4xl lg:text-5xl font-bold mb-4">
-                    Kolaborasi & Kemitraan
-                </h2>
+        <section
+            class="relative overflow-hidden py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white"
+        >
+            <!-- White Light Decoration -->
+            <div
+                class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full blur-2xl opacity-40 md:opacity-10 transform translate-x-1/3 -translate-y-1/2"
+            ></div>
 
+            <div
+                class="absolute bottom-0 left-0 w-40 h-40 bg-white rounded-full blur-3xl opacity-20 md:opacity-10 transform -translate-x-1/3 translate-y-1/3"
+            ></div>
+
+            <div class="relative mx-auto max-w-7xl px-4">
+                <!-- Heading -->
+                <div class="mb-20 text-center">
+                    <span
+                        class="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm uppercase tracking-widest text-cyan-300 backdrop-blur-md"
+                    >
+                        Partnership & Networking
+                    </span>
+
+                    <h2 class="mt-6 text-4xl font-bold lg:text-6xl">
+                        Our Collaboration
+                    </h2>
+
+                    <p class="mx-auto mt-4 max-w-2xl text-white/70">
+                        Bersama membangun sinergi dan kolaborasi strategis untuk
+                        menciptakan organisasi mahasiswa yang progresif,
+                        inovatif, dan berdampak.
+                    </p>
+                </div>
+
+                <!-- EXTERNAL -->
                 <div
-                    class="w-24 h-1.5 bg-green-400 mx-auto rounded-full mb-6"
+                    class="group relative mb-14 w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]"
+                >
+                    <div
+                        class="flex w-max min-w-max items-center gap-10 animate-marquee group-hover:[animation-play-state:paused]"
+                    >
+                        <!-- ORIGINAL -->
+                        <div
+                            v-for="(logo, index) in externalPartners"
+                            :key="'ext1' + index"
+                            class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
+                        >
+                            <!-- Light Decoration -->
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 rounded-full bg-white blur-2xl opacity-20 transition-all duration-500 group-hover/card:opacity-40"
+                            ></div>
+
+                            <img
+                                :src="logo"
+                                class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                            />
+                        </div>
+
+                        <!-- DUPLICATE -->
+                        <div
+                            v-for="(logo, index) in externalPartners"
+                            :key="'ext2' + index"
+                            class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
+                        >
+                            <!-- Light Decoration -->
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 rounded-full bg-white blur-2xl opacity-20 transition-all duration-500 group-hover/card:opacity-40"
+                            ></div>
+
+                            <img
+                                :src="logo"
+                                class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INTERNAL -->
+                <div
+                    class="group relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]"
+                >
+                    <div
+                        class="flex w-max min-w-max items-center gap-10 animate-marquee-reverse group-hover:[animation-play-state:paused]"
+                    >
+                        <!-- ORIGINAL -->
+                        <div
+                            v-for="(logo, index) in internalPartners"
+                            :key="'int1' + index"
+                            class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
+                        >
+                            <!-- Light Decoration -->
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 rounded-full bg-white blur-2xl opacity-20 transition-all duration-500 group-hover/card:opacity-40"
+                            ></div>
+
+                            <img
+                                :src="logo"
+                                class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                            />
+                        </div>
+
+                        <!-- DUPLICATE -->
+                        <div
+                            v-for="(logo, index) in internalPartners"
+                            :key="'int2' + index"
+                            class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
+                        >
+                            <!-- Light Decoration -->
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 rounded-full bg-white blur-2xl opacity-20 transition-all duration-500 group-hover/card:opacity-40"
+                            ></div>
+
+                            <img
+                                :src="logo"
+                                class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOCIAL MEDIA -->
+            <div class="relative mt-24 flex flex-col items-center">
+                <!-- Divider -->
+                <div
+                    class="mb-10 h-px w-40 bg-gradient-to-r from-transparent via-white/40 to-transparent"
                 ></div>
 
-                <p class="text-white/70 max-w-2xl mx-auto">
-                    BEM Universitas aktif menjalin kolaborasi dengan berbagai
-                    organisasi mahasiswa baik internal maupun eksternal untuk
-                    menciptakan kegiatan yang berdampak luas.
+                <!-- Label -->
+                <div
+                    class="mb-8 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-5 py-2 backdrop-blur-xl"
+                >
+                    <div
+                        class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"
+                    ></div>
+
+                    <span
+                        class="text-xs font-medium uppercase tracking-[0.3em] text-white/70"
+                    >
+                        Connect With Us
+                    </span>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="flex flex-wrap items-center justify-center gap-5">
+                    <!-- Instagram -->
+                    <a
+                        href="#"
+                        class="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-pink-400/40 hover:bg-pink-500/20 hover:shadow-[0_10px_40px_rgba(236,72,153,0.35)]"
+                    >
+                        <!-- Glow -->
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        ></div>
+
+                        <Instagram
+                            class="relative h-7 w-7 text-white/90 transition-all duration-500 group-hover:scale-110 group-hover:text-white"
+                        />
+                    </a>
+
+                    <!-- Facebook -->
+                    <a
+                        href="#"
+                        class="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-blue-400/40 hover:bg-blue-500/20 hover:shadow-[0_10px_40px_rgba(59,130,246,0.35)]"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        ></div>
+
+                        <Facebook
+                            class="relative h-7 w-7 text-white/90 transition-all duration-500 group-hover:scale-110 group-hover:text-white"
+                        />
+                    </a>
+
+                    <!-- TikTok -->
+                    <a
+                        href="#"
+                        class="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-white/30 hover:bg-white/10 hover:shadow-[0_10px_40px_rgba(255,255,255,0.2)]"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        ></div>
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="relative h-7 w-7 text-white/90 transition-all duration-500 group-hover:scale-110 group-hover:text-white"
+                        >
+                            <path
+                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-1.8V14.3a5.18 5.18 0 1 1-4.48-5.13v2.67a2.54 2.54 0 1 0 1.77 2.43V2h2.71a7.6 7.6 0 0 0 3.77 3.18v1.51z"
+                            />
+                        </svg>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a
+                        href="#"
+                        class="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-red-400/40 hover:bg-red-500/20 hover:shadow-[0_10px_40px_rgba(239,68,68,0.35)]"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-red-400/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        ></div>
+
+                        <Youtube
+                            class="relative h-7 w-7 text-white/90 transition-all duration-500 group-hover:scale-110 group-hover:text-white"
+                        />
+                    </a>
+
+                    <!-- Email -->
+                    <a
+                        href="mailto:bem@ibrahimy.ac.id"
+                        class="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:border-yellow-400/40 hover:bg-yellow-500/20 hover:shadow-[0_10px_40px_rgba(234,179,8,0.35)]"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        ></div>
+
+                        <Mail
+                            class="relative h-7 w-7 text-white/90 transition-all duration-500 group-hover:scale-110 group-hover:text-white"
+                        />
+                    </a>
+                </div>
+
+                <!-- Bottom Text -->
+                <p class="mt-8 text-sm tracking-wide text-white/50">
+                    Follow our journey and stay connected with BEM UNIB
                 </p>
-            </div>
-
-            <!-- EXTERNAL -->
-            <div class="relative overflow-hidden w-full mb-12 logo-marquee">
-                <div class="flex w-max animate-scroll logo-track">
-                    <div
-                        v-for="(logo, index) in externalPartners"
-                        :key="'ext1' + index"
-                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
-                    >
-                        <img
-                            :src="logo"
-                            class="max-h-[90px] object-contain drop-shadow-lg"
-                        />
-                    </div>
-
-                    <!-- DUPLICATE -->
-                    <div
-                        v-for="(logo, index) in externalPartners"
-                        :key="'ext2' + index"
-                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
-                    >
-                        <img
-                            :src="logo"
-                            class="max-h-[90px] object-contain drop-shadow-lg"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <!-- INTERNAL -->
-            <div class="relative overflow-hidden w-full logo-marquee reverse">
-                <div class="flex w-max animate-scroll-reverse logo-track">
-                    <div
-                        v-for="(logo, index) in internalPartners"
-                        :key="'int1' + index"
-                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
-                    >
-                        <img
-                            :src="logo"
-                            class="max-h-[90px] object-contain drop-shadow-lg"
-                        />
-                    </div>
-
-                    <!-- DUPLICATE -->
-                    <div
-                        v-for="(logo, index) in internalPartners"
-                        :key="'int2' + index"
-                        class="w-[150px] h-[150px] mx-6 flex items-center justify-center bg-white/10 backdrop-blur-md rounded-xl border border-white/20"
-                    >
-                        <img
-                            :src="logo"
-                            class="max-h-[90px] object-contain drop-shadow-lg"
-                        />
-                    </div>
-                </div>
             </div>
         </section>
     </AppLayout>
@@ -749,52 +909,32 @@
     transform: scale(0.9);
 }
 
-/* FADE EDGE */
-.logo-marquee::before,
-.logo-marquee::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    width: 120px;
-    height: 100%;
-    z-index: 2;
-}
-
-.logo-marquee::before {
-    left: 0;
-    background: linear-gradient(to right, #1e3a8a, transparent);
-}
-
-.logo-marquee::after {
-    right: 0;
-    background: linear-gradient(to left, #1e3a8a, transparent);
-}
-
-/* ANIMATION */
-@keyframes scroll {
-    0% {
+@keyframes marquee {
+    from {
         transform: translateX(0);
     }
-    100% {
-        transform: translateX(-50%);
+
+    to {
+        transform: translateX(calc(-50% - 16px));
     }
 }
 
-@keyframes scrollReverse {
-    0% {
-        transform: translateX(-50%);
+@keyframes marqueeReverse {
+    from {
+        transform: translateX(calc(-50% - 16px));
     }
-    100% {
+
+    to {
         transform: translateX(0);
     }
 }
 
-.animate-scroll {
-    animation: scroll 28s linear infinite;
+.animate-marquee {
+    animation: marquee 30s linear infinite;
 }
 
-.animate-scroll-reverse {
-    animation: scrollReverse 28s linear infinite;
+.animate-marquee-reverse {
+    animation: marqueeReverse 30s linear infinite;
 }
 
 /* Line Clamp Utility */
@@ -812,7 +952,15 @@ import { Head } from "@inertiajs/vue3";
 import { ref, computed, onMounted } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { Calendar, ChevronRight, MapPin } from "lucide-vue-next";
+import {
+    Calendar,
+    ChevronRight,
+    MapPin,
+    Mail,
+    Instagram,
+    Facebook,
+    Youtube,
+} from "lucide-vue-next";
 
 // SwiperJS
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -914,7 +1062,7 @@ const pastEvents = ref([
             "Kegiatan pengenalan kehidupan kampus bagi mahasiswa baru UNIB.",
         participants: "500+",
         location: "Kampus UNIB",
-        image: "/images/bg-mesjid.jpg",
+        image: "/images/bg/pattern-a.jpg",
     },
     {
         title: "Pelatihan Kepemimpinan",
@@ -923,7 +1071,7 @@ const pastEvents = ref([
             "Program pengembangan soft skill dan leadership bagi pengurus BEM.",
         participants: "100+",
         location: "Gedung Serbaguna",
-        image: "/images/bg-login.jpg",
+        image: "/images/bg/login.jpg",
     },
     {
         title: "Diskusi Publik: Peran Mahasiswa",
@@ -941,7 +1089,7 @@ const pastEvents = ref([
             "Kegiatan pengenalan kehidupan kampus bagi mahasiswa baru UNIB.",
         participants: "500+",
         location: "Kampus UNIB",
-        image: "/images/bg-mesjid.jpg",
+        image: "/images/bg/pattern-a.jpg",
     },
     {
         title: "Pelatihan Kepemimpinan",
@@ -950,7 +1098,7 @@ const pastEvents = ref([
             "Program pengembangan soft skill dan leadership bagi pengurus BEM.",
         participants: "100+",
         location: "Gedung Serbaguna",
-        image: "/images/bg-login.jpg",
+        image: "/images/bg/login.jpg",
     },
     {
         title: "Diskusi Publik: Peran Mahasiswa",
@@ -971,7 +1119,7 @@ const newsList = ref([
         category: "Kegiatan",
         excerpt:
             "BEM UNIB bersama mahasiswa mengadakan kegiatan bakti sosial di Desa sekitar kampus...",
-        image: "/images/bg-mesjid.jpg",
+        image: "/images/bg/pattern-a.jpg",
     },
     {
         title: "Rapat Kerja Kabinet Transformasi",
@@ -979,7 +1127,7 @@ const newsList = ref([
         category: "Organisasi",
         excerpt:
             "Seluruh pengurus BEM UNIB mengadakan rapat kerja untuk menyusun program kerja...",
-        image: "/images/bg-login.jpg",
+        image: "/images/bg/login.jpg",
     },
     {
         title: "Prestasi Mahasiswa di Tingkat Nasional",
@@ -993,24 +1141,21 @@ const newsList = ref([
 
 // Data partners
 const externalPartners = ref([
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
+    "/images/logo/bem.png",
+    "/images/logo/iai.png",
+    "/images/logo/dema-iai.png",
+    "/images/logo/kabinet.png",
+    "/images/logo/bem-ti.png",
+    "/images/logo/mti.png",
 ]);
 
 const internalPartners = ref([
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
-    "/images/logo-bem.png",
+    "/images/logo/bem.png",
+    "/images/logo/iai.png",
+    "/images/logo/dema-iai.png",
+    "/images/logo/kabinet.png",
+    "/images/logo/bem-ti.png",
+    "/images/logo/mti.png",
 ]);
 
 onMounted(() => {

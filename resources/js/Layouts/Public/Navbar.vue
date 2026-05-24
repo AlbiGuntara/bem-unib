@@ -8,7 +8,7 @@
                 <!-- Logo with Animation -->
                 <Link href="/" class="flex items-center space-x-4">
                     <img
-                        src="/public/images/logo-kabinet-transformatif.png"
+                        src="/public/images/logo/kabinet-transformatif.png"
                         alt="Kabinet Transformatif Logo"
                         class="relative h-12 lg:h-14"
                     />
@@ -112,7 +112,7 @@
                         >
                             <div class="relative">
                                 <img
-                                    src="/public/images/logo-kabinet-transformatif.png"
+                                    src="/public/images/logo/kabinet-transformatif.png"
                                     alt="BEM UNIB Logo"
                                     class="relative h-12"
                                 />
