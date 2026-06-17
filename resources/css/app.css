@@ -33,6 +33,7 @@
 html,
 body {
     overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 @keyframes fade-in {
     from {

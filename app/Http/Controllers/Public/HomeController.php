@@ -3,64 +3,89 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Dokumentasi;
-use App\Models\Admin\Pengurus;
-use App\Models\Admin\Periode;
+use App\Models\ProgramKerja;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $latestPeriode = Periode::latest('tahun_mulai')->first();
-
-        // Jika belum ada periode
-        if (! $latestPeriode) {
-            return Inertia::render('Public/Home', [
-                'strukturPengurus' => [],
-                'periode' => null,
-                'documentation' => [],
-            ]);
-        }
-
-        $pengurus = Pengurus::with(['warga', 'jabatan'])
-            ->where('id_periode', $latestPeriode->id)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'name' => $item->warga->nama ?? '',
-                    'iksass' => $item->jabatan->IKSASS ?? '',
-                    'role' => $item->jabatan->nama_jabatan ?? '',
-                    'photo' => $item->warga->foto
-                        ? asset('storage/'.$item->warga->foto)
-                        : null,
-                ];
-            });
-
-        $dokumentasi = Dokumentasi::with('programKerja')
-            ->latest('created_at')
+        $pastEvents = ProgramKerja::with('dokumentasi')
+            ->where('is_public', true)
+            ->where('status', 'selesai') // sesuaikan dengan enum/status milikmu
+            ->whereDate('end_date', '<', now())
+            ->latest('end_date')
             ->take(10)
             ->get()
-            ->map(function ($doc) {
+            ->map(function ($item) {
+                $thumbnail =
+                    $item->dokumentasi->first()?->thumbnail_landscape
+                    ?? $item->dokumentasi->first()?->thumbnail_portrait;
+
                 return [
-                    'title' => $doc->programKerja->nama_kegiatan ?? 'Kegiatan',
-                    'date' => $doc->programKerja?->tanggal_mulai
-                        ? date('d M Y', strtotime($doc->programKerja->tanggal_mulai))
-                        : '',
-                    'description' => $doc->deskripsi
-                        ?? $doc->programKerja->deskripsi
-                        ?? '',
-                    'photo' => $doc->foto
-                        ? asset('storage/'.$doc->foto)
-                        : null,
-                    'link' => $doc->link,
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'date' => $item->start_date
+                        ? Carbon::parse($item->start_date)->translatedFormat('d M Y')
+                        : '-',
+                    'description' => $item->description,
+                    'location' => $item->location,
+                    'participants' => $item->realization_participants
+                        ?? $item->participants,
+                    'image' => $thumbnail
+                        ? asset('storage/' . $thumbnail)
+                        : '/images/default-event.jpg',
                 ];
             });
 
+        $ongoingEvent = ProgramKerja::query()
+            ->where('is_public', true)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->orderBy('start_date')
+            ->first();
+
+        $nextEvent = ProgramKerja::query()
+            ->where('is_public', true)
+            ->whereDate('start_date', '>', now())
+            ->orderBy('start_date')
+            ->first();
+
         return Inertia::render('Public/Home', [
-            'strukturPengurus' => $pengurus,
-            'periode' => $latestPeriode->periode,
-            'documentation' => $dokumentasi,
+            'pastEvents' => $pastEvents,
+
+            'ongoingEvent' => $ongoingEvent
+                ? [
+                    'id' => $ongoingEvent->id,
+                    'title' => $ongoingEvent->title,
+                    'location' => $ongoingEvent->location,
+                    'description' => $ongoingEvent->description,
+                    'start_date' => $ongoingEvent->start_date,
+                    'end_date' => $ongoingEvent->end_date,
+                ]
+                : null,
+
+            'nextEvent' => $nextEvent
+                ? [
+                    'id' => $nextEvent->id,
+                    'title' => $nextEvent->title,
+                    'location' => $nextEvent->location,
+                    'description' => $nextEvent->description,
+
+                    'date' => Carbon::parse(
+                        $nextEvent->start_date
+                    )->translatedFormat('d F Y'),
+
+                    'targetDate' => Carbon::parse(
+                        $nextEvent->start_date
+                    )->format('Y-m-d 00:00:00'),
+
+                    'endDate' => Carbon::parse(
+                        $nextEvent->end_date
+                    )->format('Y-m-d 23:59:59'),
+                ]
+                : null,
         ]);
     }
 }

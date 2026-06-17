@@ -52,20 +52,20 @@ const pageTitle = computed(() => {
 
 <template>
     <div
-        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:border-electric-blue/20 backdrop-blur-sm rounded-2xl dark:text-white transition-all duration-300"
+        class="flex flex-col md:flex-row md:items-center md:justify-between bg-transparent dark:border-blue-700/20 backdrop-blur-sm rounded-2xl dark:text-white transition-all duration-300"
     >
         <!-- ================= LEFT ================= -->
         <div>
             <!-- ===== TITLE ===== -->
             <h1
-                class="text-2xl font-bold text-deep-blue dark:text-cream mb-1 flex items-center gap-3 transition-all duration-300"
+                class="text-2xl font-bold text-gray-800 dark:text-white mb-1 flex items-center gap-3 transition-all duration-300"
             >
                 {{ pageTitle }}
             </h1>
 
             <!-- ===== BREADCRUMB ===== -->
             <nav
-                class="flex text-sm text-deep-blue/70 dark:text-cream/70 transition-all duration-200"
+                class="flex text-sm text-gray-800/70 dark:text-white/70 transition-all duration-200"
                 aria-label="Breadcrumb"
             >
                 <ol class="inline-flex items-center space-x-1 md:space-x-2">
@@ -73,7 +73,7 @@ const pageTitle = computed(() => {
                     <li class="mr-0">
                         <Link
                             href="/admin"
-                            class="inline-flex items-center py-1 rounded-lg hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 hover:text-electric-blue dark:hover:text-electric-blue"
+                            class="inline-flex items-center py-1 rounded-lg hover:text-blue-600 dark:hover:text-gray-50"
                         >
                             <Home class="w-4 h-4 mr-1" />
                             Home
@@ -87,14 +87,14 @@ const pageTitle = computed(() => {
                         class="flex items-center"
                     >
                         <ChevronRight
-                            class="w-4 h-4 mx-2 text-electric-blue/50 dark:text-cream/40 transition-all duration-300"
+                            class="w-4 h-4 mx-2 text-gray-800/50 dark:text-white/40 transition-all duration-300"
                         />
 
                         <!-- LINK -->
                         <Link
                             v-if="!bc.current"
                             :href="bc.href"
-                            class="px-2 py-1 rounded-lg hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 hover:text-electric-blue dark:hover:text-electric-blue transition-all duration-200"
+                            class="px-2 py-1 rounded-lg hover:bg-blue-700/20 dark:hover:bg-blue-700/30 hover:text-gray-800 dark:hover:text-gray-800 transition-all duration-200"
                         >
                             {{ bc.name }}
                         </Link>
@@ -102,7 +102,7 @@ const pageTitle = computed(() => {
                         <!-- ACTIVE -->
                         <span
                             v-else
-                            class="px-3 py-1 rounded-lg bg-electric-blue dark:bg-coral text-cream font-medium shadow-sm transition-all duration-300"
+                            class="px-3 py-1 rounded-lg bg-blue-700 text-white font-medium shadow-sm transition-all duration-300"
                         >
                             {{ bc.name }}
                         </span>
@@ -116,7 +116,7 @@ const pageTitle = computed(() => {
             <a
                 href="/"
                 target="_blank"
-                class="inline-flex items-center px-4 py-2.5 bg-electric-blue hover:bg-coral dark:bg-electric-blue dark:hover:bg-coral text-cream text-sm font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95"
+                class="inline-flex items-center px-4 py-2.5 bg-blue-700 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-coral text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform active:scale-95"
             >
                 <ExternalLink class="w-4 h-4 md:mr-2" />
                 <span class="hidden md:block">Lihat Website</span>

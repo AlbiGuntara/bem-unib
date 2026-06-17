@@ -863,7 +863,3 @@ onMounted(() => {
     });
 });
 </script>
-
-<style scoped>
-/* Custom styles jika diperlukan */
-</style>

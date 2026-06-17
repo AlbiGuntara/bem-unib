@@ -1,6 +1,6 @@
 <template>
     <header
-        class="fixed bg-white dark:bg-gray-700 top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-deep-blue dark:text-white shadow-md"
+        class="fixed bg-white dark:bg-gray-700 top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 dark:text-white shadow-md"
     >
         <!-- ================= LEFT ================= -->
         <div class="flex items-center gap-4">

@@ -2,177 +2,243 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\ProgramKerjaExport;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Dokumentasi;
-use App\Models\Admin\Jabatan;
-use App\Models\Admin\ProgramKerja;
-use Carbon\Carbon;
+use App\Models\Department;
+use App\Models\ProgramKerja;
+use App\Models\Pengurus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ProgramKerjaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ProgramKerja::with([
-            'jabatan',
-            'dokumentasis',
-        ]);
+        $query = ProgramKerja::with('department', 'ketuaPanitia');
 
-        /* SEARCH */
         if ($request->search) {
-            $query->where('nama_kegiatan', 'like', '%'.$request->search.'%');
+            $query->where('title', 'like', "%{$request->search}%");
         }
 
-        /* FILTER JABATAN */
-        if ($request->jabatan_id) {
-            $query->where('jabatan_id', $request->jabatan_id);
-        }
-
-        /* SORT */
-        if ($request->sort_by && $request->sort_direction) {
-            $query->orderBy($request->sort_by, $request->sort_direction);
+        if ($request->sort) {
+            $query->orderBy(
+                $request->sort,
+                $request->order ?? 'asc'
+            );
         } else {
             $query->latest();
         }
 
-        $perPage = $request->per_page ?? 10;
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
 
-        /* EVENTS (CALENDAR) */
-        $events = ProgramKerja::with('jabatan')
-            ->whereNotNull('tanggal_mulai')
-            ->when($request->jabatan_id, function ($q) use ($request) {
-                $q->where('jabatan_id', $request->jabatan_id);
-            })
-            ->get()
-            ->map(function ($item) {
+        if ($request->departemen_id) {
+            $query->where('departemen_id', $request->departemen_id);
+        }
 
-                $end = null;
-                if ($item->tanggal_selesai && $item->tanggal_selesai != $item->tanggal_mulai) {
-                    $end = Carbon::parse($item->tanggal_selesai)
-                        ->addDay()
-                        ->format('Y-m-d');
-                }
+        if ($request->pengurus_id) {
+            $query->where('pengurus_id', $request->pengurus_id);
+        }
 
-                return [
-                    'id' => $item->id,
-                    'title' => $item->nama_kegiatan,
-                    'start' => $item->tanggal_mulai,
-                    'end' => $end,
-                    'allDay' => true,
+        if ($request->is_public !== null && $request->is_public !== '') {
+            $query->where('is_public', $request->is_public);
+        }
 
-                    'nama_kegiatan' => $item->nama_kegiatan,
-                    'tujuan' => $item->tujuan,
-                    'tanggal_mulai' => $item->tanggal_mulai,
-                    'tanggal_selesai' => $item->tanggal_selesai,
-                    'penanggung_jawab' => optional($item->jabatan)->departemen,
-                    'peserta' => $item->peserta,
-                    'anggaran' => $item->anggaran,
-                    'deskripsi' => $item->deskripsi,
-                ];
+        if ($request->date_from || $request->date_to) {
+
+            $from = $request->date_from;
+            $to = $request->date_to;
+
+            $query->where(function ($q) use ($from, $to) {
+
+                $q->where(function ($sub) use ($from, $to) {
+
+                    $sub->whereNotNull('end_date');
+
+                    if ($from && $to) {
+                        $sub->whereDate('start_date', '<=', $to)
+                            ->whereDate('end_date', '>=', $from);
+                    } elseif ($from) {
+                        $sub->whereDate('end_date', '>=', $from);
+                    } elseif ($to) {
+                        $sub->whereDate('start_date', '<=', $to);
+                    }
+                })
+
+                ->orWhere(function ($sub) use ($from, $to) {
+
+                    $sub->whereNull('end_date');
+
+                    if ($from && $to) {
+                        $sub->whereBetween('start_date', [$from, $to]);
+                    } elseif ($from) {
+                        $sub->whereDate('start_date', '>=', $from);
+                    } elseif ($to) {
+                        $sub->whereDate('start_date', '<=', $to);
+                    }
+                });
             });
+        }
 
-        $dokumentasis = Dokumentasi::with('programKerja')
-            ->latest()
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'foto' => $item->foto
-                        ? asset('storage/'.$item->foto)
-                        : null,
-                    'link' => $item->link,
-                    'deskripsi' => $item->deskripsi,
-                    'programKerja' => $item->programKerja,
-                ];
-            });
+        $prokers = $query->paginate(
+            $request->perPage ?? 10
+        )->withQueryString();
 
-        return Inertia::render('Admin/ProgramKerja/Index', [
-            'data' => $query->paginate($perPage)->withQueryString(),
-            'events' => $events,
-            'jabatans' => Jabatan::orderBy('departemen')->get(),
-
-            'dokumentasis' => $dokumentasis,
-            'programKerjas' => ProgramKerja::select('id', 'nama_kegiatan')->get(),
-
-            'filters' => $request->only([
-                'search',
-                'per_page',
-                'sort_by',
-                'sort_direction',
-                'jabatan_id',
-            ]),
-        ]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Admin/ProgramKerja/Create', [
-            'jabatans' => Jabatan::orderBy('departemen')->get(),
-        ]);
+        return Inertia::render(
+            'Admin/Proker/Index',
+            [
+                'prokers' => $prokers,
+                'calendarEvents' => ProgramKerja::with(
+                    'department',
+                    'ketuaPanitia'
+                )->get(),
+                'filters' => $request->only([
+                    'search',
+                    'sort',
+                    'order',
+                    'perPage',
+                    'status',
+                    'departemen_id',
+                    'pengurus_id',
+                    'is_public',
+                    'date_from',
+                    'date_to',
+                ]),
+                'departments' => Department::all(),
+                'pengurus' => Pengurus::select(
+                    'id',
+                    'name',
+                    'position'
+                )->orderBy('name')->get(),
+            ]
+        );
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_kegiatan' => 'required|string|max:255',
-            'tujuan' => 'nullable|string',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
-            'jabatan_id' => 'nullable|exists:jabatans,id',
-            'peserta' => 'nullable|string',
-            'anggaran' => 'nullable|numeric',
-            'deskripsi' => 'nullable|string',
+            'title' => ['required'],
+            'description' => ['nullable'],
+            'start_date' => ['nullable'],
+            'end_date' => ['nullable'],
+            'location' => ['nullable'],
+            'departemen_id' => ['nullable'],
+            'pengurus_id' => ['nullable','exists:pengurus,id'],
+            'participants' => ['nullable', 'integer', 'min:0'],
+            'budget' => ['nullable'],
+            'realization_participants' => ['nullable','integer','min:0'],
+            'realization_budget' => ['nullable','numeric','min:0'],
+            'time' => ['nullable', 'date_format:H:i'],
+            'is_public' => ['boolean'],
+            'status' => ['required'],
         ]);
+
+        $validated['slug'] = Str::slug($validated['title']);
 
         ProgramKerja::create($validated);
 
-        return redirect()->route('program-kerja.index')
-            ->with('success', 'Program kerja berhasil ditambahkan');
+        return back()->with('success', 'Program berhasil ditambah.');
     }
 
-    public function edit(ProgramKerja $programKerja)
-    {
-        return Inertia::render('Admin/ProgramKerja/Edit', [
-            'programKerja' => $programKerja->load('jabatan'),
-            'jabatans' => Jabatan::orderBy('departemen')->get(),
-        ]);
-
-    }
-
-    public function update(Request $request, ProgramKerja $programKerja)
+    public function update(Request $request, ProgramKerja $program_kerja)
     {
         $validated = $request->validate([
-            'nama_kegiatan' => 'required|string|max:255',
-            'tujuan' => 'nullable|string',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
-            'jabatan_id' => 'nullable|exists:jabatans,id',
-            'peserta' => 'nullable|string',
-            'anggaran' => 'nullable|numeric',
-            'deskripsi' => 'nullable|string',
+            'title' => ['required'],
+            'description' => ['nullable'],
+            'start_date' => ['nullable'],
+            'end_date' => ['nullable'],
+            'location' => ['nullable'],
+            'departemen_id' => ['nullable'],
+            'pengurus_id' => ['nullable','exists:pengurus,id'],
+            'participants' => ['nullable', 'integer', 'min:0'],
+            'budget' => ['nullable'],
+            'realization_participants' => ['nullable','integer','min:0'],
+            'realization_budget' => ['nullable','numeric','min:0'],
+            'time' => ['nullable', 'date_format:H:i'],
+            'is_public' => ['boolean'],
+            'status' => ['required'],
         ]);
 
-        $programKerja->update($validated);
+        $validated['slug'] = Str::slug($validated['title']);
 
-        return redirect()->route('program-kerja.index')
-            ->with('success', 'Program kerja berhasil diperbarui');
+        $program_kerja->update($validated);
+
+        return back()->with('success', 'Program berhasil diperbarui.');
     }
 
-    public function destroy(ProgramKerja $programKerja)
+    public function destroy(ProgramKerja $program_kerja)
     {
-        $programKerja->delete();
+        $program_kerja->delete();
 
-        return back()->with('success', 'Program kerja berhasil dihapus');
+        return back()->with('success', 'Program berhasil dihapus.');
     }
 
-    public function export()
+    public function updateStatus(
+        Request $request,
+        ProgramKerja $program_kerja
+    ) {
+        $request->validate([
+            'status' => [
+                'required',
+                'in:rencana,berjalan,selesai,batal'
+            ]
+        ]);
+
+        $program_kerja->update([
+            'status' => $request->status
+        ]);
+
+        return back()->with('success', 'Status berhasil diperbarui.');
+    }
+
+    public function updatePublic(
+        Request $request,
+        ProgramKerja $program_kerja
+    ) {
+        $request->validate([
+            'is_public' => ['required','boolean']
+        ]);
+
+        $program_kerja->update([
+            'is_public' => $request->is_public
+        ]);
+
+        return back()->with('success', 'Publikasi berhasil diperbarui.');
+    }
+
+    public function complete(
+        Request $request,
+        ProgramKerja $program_kerja
+    )
     {
-        return Excel::download(
-            new ProgramKerjaExport,
-            'program-kerja.xlsx'
+        $validated = $request->validate([
+            'realization_participants' => [
+                'required',
+                'integer',
+                'min:0'
+            ],
+
+            'realization_budget' => [
+                'required',
+                'numeric',
+                'min:0'
+            ],
+        ]);
+
+        $program_kerja->update([
+            'status' => 'selesai',
+
+            'realization_participants'
+                => $validated['realization_participants'],
+
+            'realization_budget'
+                => $validated['realization_budget'],
+        ]);
+
+        return back()->with(
+            'success',
+            'Program kerja berhasil diselesaikan.'
         );
     }
 }

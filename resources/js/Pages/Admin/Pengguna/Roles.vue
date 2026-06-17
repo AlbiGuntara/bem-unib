@@ -1,423 +1,14 @@
-<template>
-    <AppLayout>
-        <Head title="Role Management" />
-
-        <!-- CONTAINER -->
-        <div
-            class="p-6 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-2xl shadow-sm border border-electric-blue/20 transition-all duration-300"
-        >
-            <!-- HEADER -->
-            <div
-                class="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-6"
-            >
-                <!-- SEARCH -->
-                <div class="relative w-full md:w-80">
-                    <Search
-                        class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                    />
-                    <input
-                        v-model="filters.search"
-                        @input="applyFilters"
-                        placeholder="Cari role..."
-                        class="pl-10 pr-4 py-2 w-full rounded-xl bg-cream dark:bg-[#1F1F1F] border border-electric-blue/30 text-deep-blue dark:text-cream placeholder-deep-blue/40 dark:placeholder-cream/40 focus:ring-2 focus:ring-electric-blue focus:outline-none transition-all duration-300 shadow-sm hover:shadow-md"
-                    />
-                </div>
-
-                <!-- ADD ROLE -->
-                <form @submit.prevent="submit" class="flex w-full md:w-auto">
-                    <input
-                        v-model="form.name"
-                        placeholder="Nama role"
-                        class="flex-1 pl-4 pr-4 py-2 rounded-l-xl bg-cream dark:bg-[#1F1F1F] border border-electric-blue/30 text-deep-blue dark:text-cream focus:border-deep-blue focus:outline-none transition-all duration-300 shadow-sm"
-                    />
-                    <button
-                        type="submit"
-                        :disabled="!form.name"
-                        class="px-4 rounded-r-xl bg-gradient-to-r from-deep-blue to-electric-blue text-white hover:opacity-90 disabled:opacity-40 transition-all duration-300"
-                    >
-                        <Plus class="w-5 h-5" />
-                    </button>
-                </form>
-            </div>
-
-            <!-- TABLE CONTAINER -->
-            <div
-                class="bg-white dark:bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-200 dark:border-electric-blue/30 shadow-sm overflow-hidden"
-            >
-                <!-- DESKTOP TABLE -->
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="min-w-full text-sm text-left">
-                        <thead>
-                            <tr
-                                class="bg-gradient-to-r from-deep-blue to-electric-blue text-cream uppercase text-xs tracking-wide"
-                            >
-                                <th class="px-4 py-3">No</th>
-
-                                <th
-                                    class="px-4 py-3 cursor-pointer select-none"
-                                    @click="sort('name')"
-                                >
-                                    <div class="flex items-center gap-1">
-                                        <span>Role</span>
-                                        <ArrowUp
-                                            v-if="
-                                                filters.sort_by === 'name' &&
-                                                filters.sort_direction === 'asc'
-                                            "
-                                            class="w-3 h-3 text-cream/70"
-                                        />
-                                        <ArrowDown
-                                            v-else-if="
-                                                filters.sort_by === 'name' &&
-                                                filters.sort_direction ===
-                                                    'desc'
-                                            "
-                                            class="w-3 h-3 text-cream/70"
-                                        />
-                                        <ChevronsUpDown
-                                            v-else
-                                            class="w-3 h-3 opacity-40"
-                                        />
-                                    </div>
-                                </th>
-
-                                <th class="px-4 py-3">Permission</th>
-                                <th class="px-4 py-3">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr
-                                v-for="(role, index) in roles.data"
-                                :key="role.id"
-                                class="border-b border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 transition-all"
-                            >
-                                <td
-                                    class="px-4 py-3 text-gray-900 dark:text-gray-100"
-                                >
-                                    {{ roles.from + index }}
-                                </td>
-
-                                <!-- ROLE NAME -->
-                                <td
-                                    class="px-4 py-3 text-gray-900 dark:text-gray-100 font-medium"
-                                >
-                                    <input
-                                        v-if="editId === role.id"
-                                        v-model="editName"
-                                        class="px-3 py-2 rounded-lg border border-electric-blue/30 bg-cream dark:bg-[#1F1F1F] w-full focus:ring-1 focus:ring-electric-blue outline-none"
-                                    />
-                                    <span v-else>
-                                        {{ role.name }}
-                                    </span>
-                                </td>
-
-                                <!-- PERMISSION COUNT -->
-                                <td class="px-4 py-3">
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20"
-                                    >
-                                        {{ role.permissions?.length ?? 0 }}
-                                        hak akses
-                                    </span>
-                                </td>
-
-                                <!-- ACTIONS -->
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <button
-                                            v-if="editId === role.id"
-                                            @click="update(role)"
-                                            class="text-green-600 hover:scale-110 transition"
-                                        >
-                                            <Save class="w-5 h-5" />
-                                        </button>
-
-                                        <button
-                                            v-else
-                                            @click="startEdit(role)"
-                                            class="text-blue-600 hover:scale-110 transition"
-                                        >
-                                            <Edit class="w-5 h-5" />
-                                        </button>
-
-                                        <button
-                                            @click="openPermission(role)"
-                                            class="text-indigo-600 hover:scale-110 transition"
-                                        >
-                                            <ShieldCheck class="w-5 h-5" />
-                                        </button>
-
-                                        <button
-                                            v-if="role.name !== 'super-admin'"
-                                            @click="destroy(role)"
-                                            class="text-red-600 hover:scale-110 transition"
-                                        >
-                                            <Trash2 class="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- MOBILE CARD -->
-                <div
-                    class="md:hidden space-y-4 p-4 bg-cream dark:bg-[#1f1f1f] rounded-b-lg"
-                >
-                    <div
-                        v-for="(role, index) in roles.data"
-                        :key="role.id"
-                        class="group relative bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-xl transition-all duration-300"
-                    >
-                        <!-- TOP SECTION -->
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex items-center gap-3">
-                                <!-- ICON CIRCLE -->
-                                <div
-                                    class="w-12 h-12 flex items-center justify-center rounded-xl bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20"
-                                >
-                                    <ShieldCheck class="w-6 h-6" />
-                                </div>
-
-                                <div>
-                                    <div class="w-full">
-                                        <input
-                                            v-if="editId === role.id"
-                                            v-model="editName"
-                                            class="w-full px-3 py-2 rounded-xl border border-electric-blue/30 bg-cream dark:bg-[#1F1F1F] text-gray-900 dark:text-gray-100 focus:ring-1 focus:ring-electric-blue outline-none"
-                                        />
-                                        <h3
-                                            v-else
-                                            class="text-lg font-semibold text-gray-900 dark:text-gray-100"
-                                        >
-                                            {{ role.name }}
-                                        </h3>
-                                    </div>
-
-                                    <p
-                                        class="text-xs text-gray-500 dark:text-gray-400"
-                                    >
-                                        Role ID #{{ roles.from + index }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- INFO SECTION -->
-                        <div
-                            class="flex items-center justify-between mb-4 p-3 rounded-xl bg-electric-blue/5 dark:bg-electric-blue/10 border border-electric-blue/10"
-                        >
-                            <div
-                                class="text-sm text-gray-600 dark:text-gray-300"
-                            >
-                                Total Hak Akses
-                            </div>
-
-                            <div
-                                class="text-sm font-semibold text-electric-blue"
-                            >
-                                {{ role.permissions?.length ?? 0 }}
-                            </div>
-                        </div>
-
-                        <!-- ACTION BUTTONS -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <!-- EDIT / SAVE -->
-                            <button
-                                v-if="editId === role.id"
-                                @click="update(role)"
-                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:scale-105 transition-all"
-                            >
-                                <Save class="w-4 h-4" />
-                                <span class="text-[11px]">Save</span>
-                            </button>
-
-                            <button
-                                v-else
-                                @click="startEdit(role)"
-                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:scale-105 transition-all"
-                            >
-                                <Edit class="w-4 h-4" />
-                                <span class="text-[11px]">Edit</span>
-                            </button>
-
-                            <!-- PERMISSION -->
-                            <button
-                                @click="openPermission(role)"
-                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:scale-105 transition-all"
-                            >
-                                <ShieldCheck class="w-4 h-4" />
-                                <span class="text-[11px]">Permission</span>
-                            </button>
-
-                            <!-- DELETE -->
-                            <button
-                                v-if="role.name !== 'super-admin'"
-                                @click="destroy(role)"
-                                class="flex flex-col items-center justify-center gap-1 py-2 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:scale-105 transition-all"
-                            >
-                                <Trash2 class="w-4 h-4" />
-                                <span class="text-[11px]">Delete</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGINATION -->
-            <div
-                v-if="roles.data.length"
-                class="flex justify-between items-center mt-6"
-            >
-                <div class="flex items-center gap-4">
-                    <span
-                        class="hidden md:block text-sm text-gray-900 dark:text-gray-100"
-                    >
-                        Show
-                    </span>
-
-                    <select
-                        v-model="filters.per_page"
-                        @change="applyFilters"
-                        class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-electric-blue focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer"
-                    >
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-
-                <div class="flex gap-1">
-                    <button
-                        v-for="(link, index) in roles.links"
-                        :key="index"
-                        @click="link.url && router.visit(link.url)"
-                        :disabled="!link.url"
-                        class="flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-200 font-medium"
-                        :class="[
-                            link.active
-                                ? 'bg-electric-blue text-white border-deep-blue shadow-lg scale-105'
-                                : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 hover:shadow-md',
-                            !link.url ? 'opacity-40 cursor-not-allowed' : '',
-                        ]"
-                    >
-                        <ChevronLeft v-if="index === 0" class="w-4 h-4" />
-                        <ChevronRight
-                            v-else-if="index === roles.links.length - 1"
-                            class="w-4 h-4"
-                        />
-                        <span v-else v-html="link.label"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL PERMISSION -->
-        <div
-            v-if="showPermissionModal"
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-60 flex items-center justify-center"
-        >
-            <div
-                class="bg-cream dark:bg-deep-blue w-full max-w-3xl rounded-3xl shadow-2xl border border-electric-blue/30 flex flex-col max-h-[85vh]"
-            >
-                <!-- HEADER -->
-                <div
-                    class="px-6 py-4 rounded-t-3xl border-b border-electric-blue/20 flex items-center justify-between sticky top-0 bg-cream dark:bg-deep-blue z-10"
-                >
-                    <div>
-                        <h2
-                            class="text-lg font-bold text-deep-blue dark:text-cream"
-                        >
-                            Kelola Permission
-                        </h2>
-                        <p class="text-sm text-gray-500">
-                            Role:
-                            <span class="font-semibold">{{
-                                activeRole.name
-                            }}</span>
-                        </p>
-                    </div>
-
-                    <button
-                        @click="toggleSelectAll"
-                        class="text-sm px-4 py-2 rounded-xl border border-electric-blue text-electric-blue hover:bg-electric-blue hover:text-white transition"
-                    >
-                        {{ isAllSelected ? "Lepas Semua" : "Pilih Semua" }}
-                    </button>
-                </div>
-
-                <!-- BODY -->
-                <div class="p-6 overflow-y-auto flex-1">
-                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-                        <label
-                            v-for="permission in permissions"
-                            :key="permission.id"
-                            class="flex items-center gap-3 px-3 py-2 rounded-xl border border-electric-blue/20 hover:bg-electric-blue/10 cursor-pointer transition"
-                        >
-                            <input
-                                type="checkbox"
-                                class="w-4 h-4 text-electric-blue border-electric-blue/40 rounded focus:ring-electric-blue"
-                                :value="permission.name"
-                                v-model="selectedPermissions"
-                            />
-                            <span
-                                class="text-sm text-gray-700 dark:text-gray-200"
-                            >
-                                {{ permission.name }}
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- FOOTER -->
-                <div
-                    class="px-6 py-4 rounded-b-3xl border-t border-electric-blue/20 flex justify-between items-center sticky bottom-0 bg-cream dark:bg-deep-blue"
-                >
-                    <span class="text-sm text-gray-500">
-                        Dipilih: {{ selectedPermissions.length }} /
-                        {{ permissions.length }}
-                    </span>
-
-                    <div class="flex gap-3">
-                        <button
-                            @click="showPermissionModal = false"
-                            class="px-5 py-2 rounded-xl border border-electric-blue/40 hover:bg-electric-blue/10 transition"
-                        >
-                            Batal
-                        </button>
-
-                        <button
-                            @click="savePermission"
-                            class="px-5 py-2 rounded-xl bg-electric-blue text-white hover:bg-deep-blue transition shadow"
-                        >
-                            Simpan
-                            <span class="hidden md:inline">Perubahan</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </AppLayout>
-</template>
-
 <script setup>
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
-import { Head, router, usePage } from "@inertiajs/vue3";
-import { ref, watch, computed } from "vue";
+import Table from "@/Components/Table.vue";
+import { Head, router } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+
 import {
     Plus,
-    Edit,
+    Pencil,
     Trash2,
     ShieldCheck,
-    Search,
-    ArrowUp,
-    ArrowDown,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsUpDown,
     Save,
 } from "lucide-vue-next";
 
@@ -428,45 +19,24 @@ const props = defineProps({
     filters: Object,
 });
 
-/* FLASH */
-const page = usePage();
-const flash = page.props.flash || {};
-
-/* FILTER STATE */
-const filters = ref({
+const tableFilters = computed(() => ({
     search: props.filters?.search || "",
-    per_page: props.filters?.per_page || 10,
-    sort_by: props.filters?.sort_by || "",
-    sort_direction: props.filters?.sort_direction || "",
-});
+    sort: props.filters?.sort || "",
+    order: props.filters?.order || "",
+    perPage: props.filters?.perPage || 10,
+}));
 
-function applyFilters() {
-    router.get(route("roles.index"), filters.value, {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-    });
-}
-
-/* SORT */
-function sort(column) {
-    if (filters.value.sort_by !== column) {
-        filters.value.sort_by = column;
-        filters.value.sort_direction = "asc";
-    } else {
-        filters.value.sort_direction =
-            filters.value.sort_direction === "asc"
-                ? "desc"
-                : filters.value.sort_direction === "desc"
-                  ? ""
-                  : "asc";
-
-        if (!filters.value.sort_direction) {
-            filters.value.sort_by = "";
-        }
-    }
-    applyFilters();
-}
+const columns = [
+    {
+        key: "name",
+        label: "Role",
+    },
+    {
+        key: "permissions_count",
+        label: "Permission",
+        sortable: false,
+    },
+];
 
 /* CREATE */
 const form = ref({ name: "" });
@@ -534,3 +104,213 @@ function toggleSelectAll() {
     }
 }
 </script>
+
+<template>
+    <AppLayout>
+
+        <Head title="Role Management" />
+
+        <Table :data="roles" :columns="columns" routeName="roles.index" :filters="tableFilters">
+            <!-- HEADER ACTION -->
+            <template #header-action>
+                <form @submit.prevent="submit" class="flex w-full md:w-auto">
+                    <input v-model="form.name" placeholder="Nama role"
+                        class="flex-1 pl-4 pr-4 py-2 rounded-l-lg bg-white dark:bg-slate-800 border border-blue-700/30 text-blue-800 dark:text-white focus:border-blue-800 focus:outline-none" />
+
+                    <button type="submit" :disabled="!form.name"
+                        class="px-4 rounded-r-lg bg-gradient-to-r from-blue-800 to-blue-700 text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <Plus class="w-5 h-5" />
+                    </button>
+                </form>
+            </template>
+
+            <!-- ROLE -->
+            <template #name="{ item }">
+                <input v-if="editId === item.id" v-model="editName"
+                    class="px-2 py-1 rounded-lg border border-blue-700/30 bg-white dark:bg-slate-800 w-full text-sm focus:ring-1 focus:ring-blue-700 outline-none" />
+
+                <span v-else>
+                    {{ item.name }}
+                </span>
+            </template>
+
+            <!-- PERMISSION COUNT -->
+            <template #permissions_count="{ item }">
+                <span
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                    {{ item.permissions_count }}
+                    hak akses
+                </span>
+            </template>
+
+            <!-- ACTIONS -->
+            <template #actions="{ item }">
+                <div class="flex items-center gap-2">
+
+                    <!-- SAVE -->
+                    <button v-if="editId === item.id" @click="update(item)"
+                        class="p-2 rounded-lg bg-green-600 text-white hover:bg-green-700 active:scale-95 transition"
+                        title="Simpan">
+                        <Save class="w-4 h-4" />
+                    </button>
+
+                    <!-- EDIT -->
+                    <button v-else @click="startEdit(item)"
+                        class="p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 active:scale-95 transition"
+                        title="Edit">
+                        <Pencil class="w-4 h-4" />
+                    </button>
+
+                    <!-- PERMISSION -->
+                    <button @click="openPermission(item)"
+                        class="p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition"
+                        title="Permission">
+                        <ShieldCheck class="w-4 h-4" />
+                    </button>
+
+                    <!-- DELETE -->
+                    <button v-if="item.name !== 'super-admin'" @click="destroy(item)"
+                        class="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 active:scale-95 transition"
+                        title="Hapus">
+                        <Trash2 class="w-4 h-4" />
+                    </button>
+
+                </div>
+            </template>
+        </Table>
+
+        <!-- MODAL PERMISSION -->
+        <!-- MODAL PERMISSION -->
+        <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="transition duration-150 ease-in"
+            leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <div v-if="showPermissionModal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                <div
+                    class="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+                    <!-- HEADER -->
+                    <div
+                        class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
+                        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-white">
+                                    Kelola Permission
+                                </h2>
+
+                                <p class="mt-1 text-sm text-blue-100">
+                                    Atur hak akses untuk role
+                                    <span class="font-semibold">
+                                        {{ activeRole?.name }}
+                                    </span>
+                                </p>
+                            </div>
+
+                            <button @click="toggleSelectAll"
+                                class="rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white hover:text-blue-700">
+                                {{
+                                    isAllSelected
+                                        ? "Lepas Semua"
+                                        : "Pilih Semua"
+                                }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="modal-scroll flex-1 overflow-y-auto">
+                        <div class="p-6">
+                            <!-- COUNTER -->
+                            <div
+                                class="mb-5 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 dark:border-blue-900 dark:bg-blue-950/30">
+                                <p class="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                    {{ selectedPermissions.length }}
+                                    dari
+                                    {{ permissions.length }}
+                                    permission dipilih
+                                </p>
+                            </div>
+
+                            <!-- LIST PERMISSION -->
+                            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                <label v-for="permission in permissions" :key="permission.id"
+                                    class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 transition hover:border-blue-600 hover:bg-blue-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-500 dark:hover:bg-slate-700">
+                                    <input v-model="selectedPermissions" :value="permission.name" type="checkbox"
+                                        class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600" />
+
+                                    <div class="flex-1 min-w-0">
+                                        <p class="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                                            {{ permission.name }}
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div
+                        class="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-6 py-4 sm:flex-row sm:justify-between dark:border-slate-700 dark:bg-slate-900">
+                        <div class="flex items-center text-sm text-slate-500 dark:text-slate-400">
+                            Dipilih:
+                            <span class="ml-1 font-semibold">
+                                {{ selectedPermissions.length }}
+                            </span>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button @click="showPermissionModal = false"
+                                class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+                                Batal
+                            </button>
+
+                            <button @click="savePermission"
+                                class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700">
+                                Simpan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </AppLayout>
+</template>
+
+<style scoped>
+.modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(37 99 235 / 0.6) transparent;
+}
+
+/* Chrome */
+.modal-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+    background: rgb(37 99 235 / 0.5);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(29 78 216 / 0.8);
+}
+
+/* Dark Mode */
+:global(.dark) .modal-scroll {
+    scrollbar-color: rgb(59 130 246 / 0.7) transparent;
+}
+
+:global(.dark) .modal-scroll::-webkit-scrollbar-thumb {
+    background: rgb(59 130 246 / 0.6);
+}
+
+:global(.dark) .modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(96 165 250 / 0.8);
+}
+</style>

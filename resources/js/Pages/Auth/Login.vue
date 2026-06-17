@@ -1,5 +1,5 @@
 <template>
-    <Head title="Login | IKSASS Banten" />
+    <Head title="Login | BEM UNIB" />
 
     <div class="flex flex-col md:flex-row h-screen">
         <img

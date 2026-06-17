@@ -15,22 +15,22 @@ class PermissionController extends Controller
             ->when($request->search, function ($q) use ($request) {
                 $q->where('name', 'like', '%'.$request->search.'%');
             })
-            ->when($request->sort_by, function ($q) use ($request) {
+            ->when($request->sort, function ($q) use ($request) {
                 $q->orderBy(
-                    $request->sort_by,
-                    $request->sort_direction ?? 'asc'
+                    $request->sort,
+                    $request->order ?? 'asc'
                 );
             })
-            ->paginate($request->per_page ?? 10)
+            ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('Admin/Pengguna/Permissions', [
             'permissions' => $permissions,
             'filters' => $request->only([
                 'search',
-                'per_page',
-                'sort_by',
-                'sort_direction',
+                'perPage',
+                'sort',
+                'order',
             ]),
         ]);
     }

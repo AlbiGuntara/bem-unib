@@ -3,7 +3,7 @@
         class="fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md border-b border-blue-100 shadow-lg shadow-blue-500/5 transition-all duration-300"
         :class="{ 'shadow-2xl shadow-blue-500/10': scrolled }"
     >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20 lg:h-24">
                 <!-- Logo with Animation -->
                 <Link href="/" class="flex items-center space-x-4">

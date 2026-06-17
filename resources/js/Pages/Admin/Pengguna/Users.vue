@@ -1,918 +1,3 @@
-<template>
-    <AppLayout>
-        <Head title="Manajemen User" />
-
-        <div
-            class="p-6 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-2xl shadow-sm border border-electric-blue/20 transition-all duration-300"
-        >
-            <!-- Header -->
-            <div class="flex gap-4 justify-between items-center mb-6">
-                <div class="relative w-full md:w-80">
-                    <Search
-                        class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                    />
-                    <input
-                        type="text"
-                        v-model="search"
-                        @input="updateSearch"
-                        placeholder="Cari user..."
-                        class="pl-10 pr-4 py-2 w-full rounded-xl max-w-xs md:max-w-sm bg-cream dark:bg-[#1F1F1F] border border-electric-blue/30 text-deep-blue dark:text-cream placeholder-deep-blue/40 dark:placeholder-cream/40 focus:ring-2 focus:ring-electric-blue focus:outline-none transition-all duration-300 shadow-sm hover:shadow-md"
-                    />
-                </div>
-
-                <button
-                    @click="openModal = true"
-                    class="group relative flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-deep-blue to-electric-blue hover:from-deep-blue/90 hover:to-electric-blue/90 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-                >
-                    <div
-                        class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"
-                    ></div>
-                    <UserPlus class="h-5 w-5 transition-transform" />
-                    <span class="hidden md:block">Tambah User</span>
-                </button>
-            </div>
-
-            <!-- Table Container -->
-            <div
-                class="bg-white dark:bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-200 dark:border-electric-blue/30 shadow-sm overflow-hidden"
-            >
-                <!-- Desktop Table -->
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="min-w-full text-sm text-left">
-                        <thead>
-                            <tr
-                                class="bg-gradient-to-r from-deep-blue to-electric-blue text-cream uppercase text-xs tracking-wide"
-                            >
-                                <th class="px-4 py-3">No</th>
-                                <th
-                                    v-for="col in columns"
-                                    :key="col.key"
-                                    class="px-4 py-3 cursor-pointer select-none"
-                                    @click="sortBy(col.key)"
-                                >
-                                    <div class="flex items-center gap-1">
-                                        <span>{{ col.label }}</span>
-                                        <ArrowUp
-                                            v-if="
-                                                propsFilters.sort === col.key &&
-                                                propsFilters.order === 'asc'
-                                            "
-                                            class="w-3 h-3 text-cream/70"
-                                        />
-                                        <ArrowDown
-                                            v-if="
-                                                propsFilters.sort === col.key &&
-                                                propsFilters.order === 'desc'
-                                            "
-                                            class="w-3 h-3 text-cream/70"
-                                        />
-                                        <ChevronsUpDown
-                                            v-if="propsFilters.sort !== col.key"
-                                            class="w-3 h-3 opacity-40"
-                                        />
-                                    </div>
-                                </th>
-                                <th class="px-4 py-3">Role</th>
-                                <th class="px-4 py-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(user, index) in users.data"
-                                :key="user.id"
-                                class="border-b border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 transition-all"
-                            >
-                                <td
-                                    class="px-4 py-3 text-gray-900 dark:text-gray-100"
-                                >
-                                    {{ (users.from || 0) + index }}
-                                </td>
-                                <td class="px-4 py-3 flex items-center gap-3">
-                                    <img
-                                        :src="
-                                            user.avatar
-                                                ? `/storage/${user.avatar}`
-                                                : '/images/default-avatar.jpg'
-                                        "
-                                        alt="avatar"
-                                        class="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-700 object-cover"
-                                    />
-                                    <span
-                                        class="text-gray-900 dark:text-gray-100 font-medium"
-                                    >
-                                        {{ user.name }}
-                                    </span>
-                                </td>
-                                <td
-                                    class="px-4 py-3 text-gray-900 dark:text-gray-100"
-                                >
-                                    {{ user.email }}
-                                </td>
-                                <td
-                                    class="px-4 py-3 text-gray-900 dark:text-gray-100"
-                                >
-                                    {{ user.username }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="relative">
-                                        <select
-                                            v-model="selectedRoles[user.id]"
-                                            @change="updateRole(user)"
-                                            class="w-full appearance-none rounded-lg border border-electric-blue/30 bg-cream dark:bg-[#1F1F1F] pl-2 pr-8 py-2 text-sm text-deep-blue dark:text-cream shadow-sm transition hover:border-electric-blue focus:outline-none focus:ring-1 focus:ring-electric-blue disabled:bg-electric-blue/10 disabled:text-deep-blue/40 dark:disabled:text-cream/40 disabled:cursor-not-allowed"
-                                            :disabled="
-                                                user.roles.some(
-                                                    (r) =>
-                                                        r.name ===
-                                                        'super-admin',
-                                                )
-                                            "
-                                        >
-                                            <option
-                                                v-for="role in roles"
-                                                :key="role.id"
-                                                :value="role.name"
-                                                class="dark:bg-gray-800"
-                                            >
-                                                {{ role.name }}
-                                            </option>
-                                        </select>
-
-                                        <!-- arrow -->
-                                        <div
-                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
-                                        >
-                                            <ChevronDown
-                                                class="h-4 w-4 text-gray-400 dark:text-white"
-                                            />
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div
-                                        class="relative inline-block text-left"
-                                    >
-                                        <button
-                                            @click="
-                                                toggleDropdown(user, $event)
-                                            "
-                                            class="flex items-center gap-2 px-3 py-1 bg-electric-blue/10 dark:bg-electric-blue/20 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 text-gray-900 dark:text-gray-100 rounded-xl border border-electric-blue/20 shadow-sm transition-all duration-300 transform group/btn"
-                                        >
-                                            <span class="font-medium"
-                                                >Actions</span
-                                            >
-                                            <ChevronDown
-                                                class="w-4 h-4 transition-transform duration-300 group-hover/btn:rotate-180"
-                                            />
-                                        </button>
-
-                                        <teleport to="body">
-                                            <Transition
-                                                enter-active-class="transition ease-out duration-200"
-                                                enter-from-class="opacity-0 translate-y-2"
-                                                enter-to-class="opacity-100 translate-y-0"
-                                                leave-active-class="transition ease-in duration-150"
-                                                leave-from-class="opacity-100 translate-y-0"
-                                                leave-to-class="opacity-0 translate-y-2"
-                                            >
-                                                <div
-                                                    v-if="openDropdown"
-                                                    class="absolute z-50 w-36 bg-white dark:bg-[#1F1F1F] border border-electric-blue/20 rounded-xl shadow-lg overflow-hidden"
-                                                    :style="{
-                                                        position: 'absolute',
-                                                        top:
-                                                            dropdownPosition.top +
-                                                            'px',
-                                                        left:
-                                                            dropdownPosition.left +
-                                                            'px',
-                                                    }"
-                                                >
-                                                    <ul
-                                                        class="text-sm text-gray-900 dark:text-gray-100"
-                                                    >
-                                                        <li
-                                                            @click="
-                                                                viewUser(
-                                                                    selectedUser,
-                                                                )
-                                                            "
-                                                            class="px-4 py-2 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 cursor-pointer transition-all"
-                                                        >
-                                                            View
-                                                        </li>
-                                                        <li
-                                                            @click="
-                                                                editUser(
-                                                                    selectedUser,
-                                                                )
-                                                            "
-                                                            class="px-4 py-2 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 cursor-pointer transition-all"
-                                                        >
-                                                            Edit
-                                                        </li>
-                                                        <li
-                                                            @click="
-                                                                deleteUser(
-                                                                    selectedUser.id,
-                                                                )
-                                                            "
-                                                            class="px-4 py-2 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 cursor-pointer transition-all"
-                                                        >
-                                                            Delete
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </Transition>
-                                        </teleport>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Mobile Cards -->
-                <div
-                    class="md:hidden space-y-4 p-4 bg-cream dark:bg-[#1f1f1f] rounded-b-lg"
-                >
-                    <div
-                        v-for="(user, index) in users.data"
-                        :key="user.id"
-                        class="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-electric-blue/30 p-4 shadow-sm"
-                    >
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center gap-3">
-                                <img
-                                    :src="
-                                        user.avatar
-                                            ? `/storage/${user.avatar}`
-                                            : '/images/default-avatar.jpg'
-                                    "
-                                    alt="avatar"
-                                    class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover"
-                                />
-                                <div>
-                                    <h3
-                                        class="font-medium text-gray-900 dark:text-gray-100"
-                                    >
-                                        {{ user.name }}
-                                    </h3>
-                                    <p
-                                        class="text-xs text-gray-500 dark:text-gray-400"
-                                    >
-                                        #{{ (users.from || 0) + index }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="relative inline-block text-left">
-                                <button
-                                    @click="toggleDropdown(user, $event)"
-                                    class="flex items-center gap-1 px-2 py-1 bg-electric-blue/10 dark:bg-electric-blue/20 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 text-gray-900 dark:text-gray-100 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 transform group/btn"
-                                >
-                                    <span class="text-xs">Actions</span>
-                                    <ChevronDown
-                                        class="w-3 h-3 transition-transform duration-300 group-hover/btn:rotate-180"
-                                    />
-                                </button>
-
-                                <teleport to="body">
-                                    <Transition
-                                        enter-active-class="transition ease-out duration-200"
-                                        enter-from-class="opacity-0 translate-y-2"
-                                        enter-to-class="opacity-100 translate-y-0"
-                                        leave-active-class="transition ease-in duration-150"
-                                        leave-from-class="opacity-100 translate-y-0"
-                                        leave-to-class="opacity-0 translate-y-2"
-                                    >
-                                        <div
-                                            v-if="openDropdown"
-                                            class="absolute z-50 w-36 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden"
-                                            :style="{
-                                                position: 'absolute',
-                                                top:
-                                                    dropdownPosition.top + 'px',
-                                                left:
-                                                    dropdownPosition.left +
-                                                    'px',
-                                            }"
-                                        >
-                                            <ul
-                                                class="text-sm text-gray-900 dark:text-gray-100"
-                                            >
-                                                <li
-                                                    @click="
-                                                        viewUser(selectedUser)
-                                                    "
-                                                    class="px-4 py-2 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 cursor-pointer transition-all"
-                                                >
-                                                    View
-                                                </li>
-                                                <li
-                                                    @click="
-                                                        editUser(selectedUser)
-                                                    "
-                                                    class="px-4 py-2 hover:bg-electric-blue/20 dark:hover:bg-electric-blue/30 cursor-pointer transition-all"
-                                                >
-                                                    Edit
-                                                </li>
-                                                <li
-                                                    @click="
-                                                        deleteUser(
-                                                            selectedUser.id,
-                                                        )
-                                                    "
-                                                    class="px-4 py-2 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 cursor-pointer transition-all"
-                                                >
-                                                    Delete
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </Transition>
-                                </teleport>
-                            </div>
-                        </div>
-
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400"
-                                    >Email:</span
-                                >
-                                <span
-                                    class="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[180px]"
-                                >
-                                    {{ user.email }}
-                                </span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400"
-                                    >Username:</span
-                                >
-                                <span
-                                    class="text-gray-900 dark:text-gray-100 font-medium"
-                                >
-                                    {{ user.username }}
-                                </span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-500 dark:text-gray-400"
-                                    >Google:</span
-                                >
-                                <span
-                                    :class="[
-                                        'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-                                        user.google_id
-                                            ? 'bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20 dark:text-electric-blue'
-                                            : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-                                    ]"
-                                >
-                                    {{
-                                        user.google_id
-                                            ? "Connected"
-                                            : "Not Connected"
-                                    }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Empty State -->
-            <div v-if="!users.data.length" class="text-center py-12">
-                <div
-                    class="w-24 h-24 mx-auto mb-4 bg-electric-blue/10 dark:bg-electric-blue/20 rounded-full flex items-center justify-center"
-                >
-                    <Users class="w-10 h-10 text-gray-400" />
-                </div>
-                <h3
-                    class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2"
-                >
-                    Tidak ada user ditemukan
-                </h3>
-                <p class="text-gray-500 dark:text-gray-400 mb-6">
-                    Coba ubah pencarian atau tambah user baru
-                </p>
-                <button
-                    @click="openModal = true"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-electric-blue hover:bg-coral text-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                    <UserPlus class="w-5 h-5" />
-                    Tambah User Pertama
-                </button>
-            </div>
-
-            <!-- Pagination -->
-            <div
-                v-if="users.data.length"
-                class="flex justify-between items-center mt-6"
-            >
-                <div class="flex items-center gap-4">
-                    <span
-                        class="hidden md:block text-sm text-gray-900 dark:text-gray-100"
-                    >
-                        Show
-                    </span>
-                    <select
-                        v-model="perPage"
-                        @change="updatePerPage"
-                        class="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-electric-blue focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer"
-                    >
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-
-                <div class="flex gap-1">
-                    <button
-                        v-for="(link, index) in users.links"
-                        :key="index"
-                        @click="goTo(link.url)"
-                        :disabled="!link.url"
-                        class="flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-200 font-medium"
-                        :class="[
-                            link.active
-                                ? 'bg-electric-blue text-white border-deep-blue shadow-lg scale-105'
-                                : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700 hover:bg-electric-blue/10 dark:hover:bg-electric-blue/20 hover:shadow-md',
-                            !link.url ? 'opacity-40 cursor-not-allowed' : '',
-                        ]"
-                    >
-                        <ChevronLeft v-if="index === 0" class="w-4 h-4" />
-                        <ChevronRight
-                            v-else-if="index === users.links.length - 1"
-                            class="w-4 h-4"
-                        />
-                        <span v-else v-html="link.label"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Tambah User -->
-        <teleport to="body">
-            <Transition
-                enter-active-class="transition-all duration-300"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition-all duration-300"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div
-                    v-if="openModal"
-                    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50"
-                    @click="openModal = false"
-                ></div>
-            </Transition>
-
-            <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 scale-95 translate-y-4"
-                enter-to-class="opacity-100 scale-100 translate-y-0"
-                leave-active-class="transition-all duration-200 ease-in"
-                leave-from-class="opacity-100 scale-100 translate-y-0"
-                leave-to-class="opacity-0 scale-95 translate-y-4"
-            >
-                <div
-                    v-if="openModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 p-4"
-                    @click="openModal = false"
-                >
-                    <div
-                        class="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 border border-white/20 dark:border-gray-700/50 w-full max-w-md mx-auto"
-                        @click.stop
-                    >
-                        <!-- Header Modal -->
-                        <div
-                            class="rounded-tl-xl px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-electric-blue/15 via-electric-blue/5 to-transparent"
-                        >
-                            <div class="flex items-center justify-between">
-                                <h2
-                                    class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                                >
-                                    Tambah User
-                                </h2>
-                                <button
-                                    @click="openModal = false"
-                                    class="p-2 text-gray-400 hover:text-electric-blue hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all duration-200 transform hover:scale-110"
-                                >
-                                    <X class="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Form -->
-                        <form @submit.prevent="submit" class="p-5 space-y-4">
-                            <div class="space-y-3">
-                                <div>
-                                    <label
-                                        class="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1"
-                                    >
-                                        Avatar
-                                    </label>
-                                    <div
-                                        class="flex items-center gap-4 p-2 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-electric-blue transition-all duration-200"
-                                    >
-                                        <Upload class="w-5 h-5 text-gray-400" />
-                                        <input
-                                            type="file"
-                                            @change="handleFileUpload"
-                                            class="flex-1 text-sm text-gray-700 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-electric-blue/10 file:text-electric-blue hover:file:bg-electric-blue hover:file:text-white transition-all"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div
-                                    v-for="field in [
-                                        'name',
-                                        'email',
-                                        'username',
-                                        'password',
-                                    ]"
-                                    :key="field"
-                                >
-                                    <label
-                                        class="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1 capitalize"
-                                    >
-                                        {{
-                                            field === "password"
-                                                ? "Password"
-                                                : field
-                                        }}
-                                    </label>
-                                    <input
-                                        v-model="form[field]"
-                                        :type="
-                                            field === 'password'
-                                                ? 'password'
-                                                : 'text'
-                                        "
-                                        :placeholder="`Masukkan ${
-                                            field === 'password'
-                                                ? 'password'
-                                                : field
-                                        }`"
-                                        class="block w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-electric-blue focus:ring-offset-1 focus:border-transparent focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md"
-                                        :required="field !== 'username'"
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-electric-blue to-coral hover:from-coral hover:to-electric-blue text-white rounded-lg shadow-lg hover:shadow-xl hover:shadow-electric-blue/30 transition-all duration-300 transform hover:scale-103 active:scale-97 font-semibold"
-                            >
-                                <Save class="w-5 h-5" />
-                                <span>Simpan User</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </Transition>
-        </teleport>
-
-        <!-- Modal View User -->
-        <teleport to="body">
-            <Transition
-                enter-active-class="transition-all duration-300"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition-all duration-300"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div
-                    v-if="openViewModal"
-                    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50"
-                    @click="openViewModal = false"
-                ></div>
-            </Transition>
-
-            <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 scale-95 translate-y-4"
-                enter-to-class="opacity-100 scale-100 translate-y-0"
-                leave-active-class="transition-all duration-200 ease-in"
-                leave-from-class="opacity-100 scale-100 translate-y-0"
-                leave-to-class="opacity-0 scale-95 translate-y-4"
-            >
-                <div
-                    v-if="openViewModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 p-4"
-                    @click="openViewModal = false"
-                >
-                    <div
-                        class="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 border border-white/20 dark:border-gray-700/50 w-full max-w-md mx-auto"
-                        @click.stop
-                    >
-                        <!-- Header Modal -->
-                        <div
-                            class="rounded-tl-xl px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-electric-blue/15 via-electric-blue/5 to-transparent"
-                        >
-                            <div class="flex items-center justify-between">
-                                <h2
-                                    class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                                >
-                                    Detail User
-                                </h2>
-                                <button
-                                    @click="openViewModal = false"
-                                    class="p-2 text-gray-400 hover:text-electric-blue hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all duration-200 transform hover:scale-110"
-                                >
-                                    <X class="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Content -->
-                        <div class="p-6 space-y-6">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="relative mb-4">
-                                    <img
-                                        :src="
-                                            viewingUser?.avatar
-                                                ? `/storage/${viewingUser.avatar}`
-                                                : '/images/default-avatar.jpg'
-                                        "
-                                        alt="avatar"
-                                        class="w-24 h-24 rounded-2xl border-2 border-gray-200 dark:border-gray-700 object-cover shadow-lg"
-                                    />
-                                    <div
-                                        class="absolute -bottom-2 -right-2 w-6 h-6 bg-electric-blue rounded-full border-2 border-white dark:border-gray-900"
-                                    ></div>
-                                </div>
-                                <h3
-                                    class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                                >
-                                    {{ viewingUser?.name }}
-                                </h3>
-                                <p
-                                    class="text-sm text-gray-500 dark:text-gray-400"
-                                >
-                                    ID: {{ viewingUser?.id }}
-                                </p>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div
-                                        class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-3 mb-2"
-                                        >
-                                            <Mail
-                                                class="w-4 h-4 text-electric-blue"
-                                            />
-                                            <span
-                                                class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                                >Email</span
-                                            >
-                                        </div>
-                                        <p
-                                            class="text-gray-900 dark:text-gray-100 pl-7"
-                                        >
-                                            {{ viewingUser?.email }}
-                                        </p>
-                                    </div>
-
-                                    <div
-                                        class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-3 mb-2"
-                                        >
-                                            <User
-                                                class="w-4 h-4 text-electric-blue"
-                                            />
-                                            <span
-                                                class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                                >Username</span
-                                            >
-                                        </div>
-                                        <p
-                                            class="text-gray-900 dark:text-gray-100 pl-7"
-                                        >
-                                            {{ viewingUser?.username || "-" }}
-                                        </p>
-                                    </div>
-
-                                    <div
-                                        class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4"
-                                    >
-                                        <div
-                                            class="flex items-center gap-3 mb-2"
-                                        >
-                                            <Key
-                                                class="w-4 h-4 text-electric-blue"
-                                            />
-                                            <span
-                                                class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                                >Google ID</span
-                                            >
-                                        </div>
-                                        <span
-                                            :class="[
-                                                'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ml-7',
-                                                viewingUser?.google_id
-                                                    ? 'bg-electric-blue/10 text-electric-blue dark:bg-electric-blue/20 dark:text-electric-blue'
-                                                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-                                            ]"
-                                        >
-                                            {{
-                                                viewingUser?.google_id
-                                                    ? "Connected"
-                                                    : "Not Connected"
-                                            }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex gap-3 pt-4">
-                                <button
-                                    @click="editUser(viewingUser)"
-                                    class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-electric-blue to-coral hover:from-coral hover:to-electric-blue text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold"
-                                >
-                                    <Edit class="w-4 h-4" />
-                                    Edit User
-                                </button>
-                                <button
-                                    @click="openViewModal = false"
-                                    class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold"
-                                >
-                                    Tutup
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Transition>
-        </teleport>
-
-        <!-- Modal Edit User -->
-        <teleport to="body">
-            <Transition
-                enter-active-class="transition-all duration-300"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition-all duration-300"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div
-                    v-if="openEditModal"
-                    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50"
-                    @click="openEditModal = false"
-                ></div>
-            </Transition>
-
-            <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 scale-95 translate-y-4"
-                enter-to-class="opacity-100 scale-100 translate-y-0"
-                leave-active-class="transition-all duration-200 ease-in"
-                leave-from-class="opacity-100 scale-100 translate-y-0"
-                leave-to-class="opacity-0 scale-95 translate-y-4"
-            >
-                <div
-                    v-if="openEditModal"
-                    class="fixed inset-0 flex items-center justify-center z-50 p-4"
-                    @click="openEditModal = false"
-                >
-                    <div
-                        class="relative bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 border border-white/20 dark:border-gray-700/50 w-full max-w-md mx-auto"
-                        @click.stop
-                    >
-                        <!-- Header Modal -->
-                        <div
-                            class="rounded-tl-xl px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-electric-blue/15 via-electric-blue/5 to-transparent"
-                        >
-                            <div class="flex items-center justify-between">
-                                <h2
-                                    class="text-xl font-bold text-gray-900 dark:text-gray-100"
-                                >
-                                    Edit User
-                                </h2>
-                                <button
-                                    @click="openEditModal = false"
-                                    class="p-2 text-gray-400 hover:text-electric-blue hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all duration-200 transform hover:scale-110"
-                                >
-                                    <X class="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Form -->
-                        <form @submit.prevent="update" class="p-5 space-y-4">
-                            <div class="space-y-3">
-                                <!-- Current Avatar Preview -->
-                                <div class="flex flex-col items-center mb-4">
-                                    <div class="relative mb-3">
-                                        <img
-                                            :src="
-                                                editingUser.avatar
-                                                    ? `/storage/${editingUser.avatar}`
-                                                    : '/images/default-avatar.jpg'
-                                            "
-                                            alt="avatar"
-                                            class="w-16 h-16 rounded-xl border-2 border-gray-200 dark:border-gray-700 object-cover"
-                                        />
-                                        <div
-                                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-electric-blue rounded-full border-2 border-white dark:border-gray-900"
-                                        ></div>
-                                    </div>
-                                    <span
-                                        class="text-xs text-gray-500 dark:text-gray-400"
-                                        >Current Avatar</span
-                                    >
-                                </div>
-
-                                <!-- Avatar Upload -->
-                                <div>
-                                    <label
-                                        class="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1"
-                                    >
-                                        Ganti Avatar
-                                    </label>
-                                    <div
-                                        class="flex items-center gap-4 p-2 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg hover:border-electric-blue transition-all duration-200"
-                                    >
-                                        <Upload class="w-5 h-5 text-gray-400" />
-                                        <input
-                                            type="file"
-                                            @change="handleEditFileUpload"
-                                            class="flex-1 text-sm text-gray-700 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-electric-blue/10 file:text-electric-blue hover:file:bg-electric-blue hover:file:text-white transition-all"
-                                        />
-                                    </div>
-                                </div>
-
-                                <!-- Form Fields -->
-                                <div
-                                    v-for="field in [
-                                        'name',
-                                        'email',
-                                        'username',
-                                        'password',
-                                    ]"
-                                    :key="field"
-                                >
-                                    <label
-                                        class="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1 capitalize"
-                                    >
-                                        {{
-                                            field === "password"
-                                                ? "Password Baru (Opsional)"
-                                                : field
-                                        }}
-                                    </label>
-                                    <input
-                                        v-model="editingUser[field]"
-                                        :type="
-                                            field === 'password'
-                                                ? 'password'
-                                                : 'text'
-                                        "
-                                        :placeholder="
-                                            field === 'password'
-                                                ? 'Kosongkan jika tidak ingin mengubah'
-                                                : `Masukkan ${field}`
-                                        "
-                                        class="block w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-electric-blue focus:ring-offset-1 focus:border-transparent focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md"
-                                        :required="
-                                            field !== 'username' &&
-                                            field !== 'password'
-                                        "
-                                    />
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="flex gap-3 pt-2">
-                                <button
-                                    type="submit"
-                                    class="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-electric-blue to-coral hover:from-coral hover:to-electric-blue text-white rounded-lg shadow-lg hover:shadow-xl hover:shadow-electric-blue/30 transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold"
-                                >
-                                    <Save class="w-5 h-5" />
-                                    <span>Update User</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    @click="openEditModal = false"
-                                    class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg border border-gray-200 dark:border-gray-700 transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold"
-                                >
-                                    Batal
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </Transition>
-        </teleport>
-    </AppLayout>
-</template>
-
 <script setup>
 import { router, Head } from "@inertiajs/vue3";
 import {
@@ -920,7 +5,6 @@ import {
     computed,
     onMounted,
     onBeforeUnmount,
-    nextTick,
     reactive,
 } from "vue";
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
@@ -928,24 +12,22 @@ import Swal from "sweetalert2";
 import {
     UserPlus,
     Save,
-    ChevronDown,
-    ChevronLeft,
-    ChevronRight,
     X,
     Upload,
     Mail,
-    User,
     Key,
     Edit,
-    Search,
-    ArrowUp,
-    ArrowDown,
-    ChevronsUpDown,
+    Pencil, Trash2, User, ChevronDown,
 } from "lucide-vue-next";
+import Table from "@/Components/Table.vue";
 
 // === Modal Tambah User ===
+import { useForm } from "@inertiajs/vue3";
+import { watch } from "vue";
+
 const openModal = ref(false);
-const form = ref({
+
+const form = useForm({
     avatar: null,
     name: "",
     email: "",
@@ -953,57 +35,44 @@ const form = ref({
     password: "",
 });
 
-function handleFileUpload(e) {
-    form.value.avatar = e.target.files[0];
+const previewUrl = ref(null);
+
+function handleFileChange(e) {
+    const file = e.target.files[0];
+    form.avatar = file;
+
+    if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
+
+    previewUrl.value = file ? URL.createObjectURL(file) : null;
 }
 
 function submit() {
-    const data = new FormData();
-    Object.keys(form.value).forEach((key) => {
-        if (form.value[key] !== null && form.value[key] !== "") {
-            data.append(key, form.value[key]);
-        }
-    });
-
-    router.post(route("users.store"), data, {
-        onSuccess: () => {
-            openModal.value = false;
-            Swal.fire("Berhasil!", "User berhasil ditambahkan.", "success");
-            form.value = {
-                avatar: null,
-                name: "",
-                email: "",
-                username: "",
-                password: "",
-            };
-        },
+    form.post(route("users.store"), {
+        forceFormData: true,
         preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+            previewUrl.value = null;
+            openModal.value = false;
+        },
     });
 }
+
+watch(openModal, (val) => {
+    if (!val) {
+        form.reset();
+        if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
+        previewUrl.value = null;
+    }
+});
 
 // === Table Columns ===
 const columns = [
     { key: "name", label: "Nama" },
     { key: "email", label: "Email" },
     { key: "username", label: "Username" },
+    { key: "role", label: "Role" },
 ];
-
-// === Dropdown Actions ===
-const openDropdown = ref(false);
-const dropdownPosition = ref({ top: 0, left: 0 });
-const selectedUser = ref(null);
-
-async function toggleDropdown(user, event) {
-    event.stopPropagation(); // penting agar tidak tertutup langsung
-    selectedUser.value = user;
-    const rect = event.currentTarget.getBoundingClientRect();
-    dropdownPosition.value = {
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-    };
-    await nextTick();
-    openDropdown.value = !openDropdown.value;
-}
 
 // === Props dari Server ===
 const props = defineProps({
@@ -1020,152 +89,120 @@ const props = defineProps({
     },
 });
 
-const propsFilters = computed(() => props.filters);
-const search = ref(props.filters.search || "");
-const perPage = ref(props.filters.perPage || 10);
-
-// === Sorting ===
-function sortBy(column) {
-    let sort = propsFilters.value.sort;
-    let order = propsFilters.value.order;
-
-    if (sort !== column) {
-        sort = column;
-        order = "asc";
-    } else if (order === "asc") {
-        order = "desc";
-    } else if (order === "desc") {
-        sort = null;
-        order = null;
-    } else {
-        sort = column;
-        order = "asc";
-    }
-
-    router.get(
-        route("users.index"),
-        {
-            search: search.value,
-            sort,
-            order,
-            perPage: perPage.value,
-        },
-        {
-            preserveState: true,
-            replace: true,
-        },
-    );
-}
-
-// === Search & Pagination ===
-function updateSearch() {
-    router.get(
-        route("users.index"),
-        { search: search.value, perPage: perPage.value },
-        { preserveState: true, replace: true },
-    );
-}
-
-function updatePerPage() {
-    router.get(
-        route("users.index"),
-        { search: search.value, perPage: perPage.value },
-        { preserveState: true, replace: true },
-    );
-}
-
-function goTo(url) {
-    if (!url) return;
-    router.visit(url, { preserveState: true, replace: true });
-}
-
 // === View, Edit, Delete ===
 const openViewModal = ref(false);
 const viewingUser = ref(null);
 const openEditModal = ref(false);
-const editingUser = ref(null);
+const editForm = useForm({
+    id: null,
+    avatar: null,
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+});
+const editPreviewUrl = ref(null);
+const editExistingAvatar = ref(null);
 
 function viewUser(user) {
-    openDropdown.value = false;
     viewingUser.value = { ...user };
     openViewModal.value = true;
 }
 
 function editUser(user) {
-    openDropdown.value = false;
-    editingUser.value = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        username: user.username,
-        avatar: user.avatar,
-        password: "",
-        avatar_file: null,
-    };
+    editForm.id = user.id;
+    editForm.name = user.name;
+    editForm.email = user.email;
+    editForm.username = user.username;
+    editForm.password = "";
+    editForm.avatar = null;
+
+    editExistingAvatar.value = user.avatar;
+
     openEditModal.value = true;
 }
 
-function handleEditFileUpload(e) {
-    editingUser.value.avatar_file = e.target.files[0];
+function handleEditFileChange(e) {
+    const file = e.target.files[0];
+    editForm.avatar = file;
+
+    if (editPreviewUrl.value) URL.revokeObjectURL(editPreviewUrl.value);
+
+    editPreviewUrl.value = file ? URL.createObjectURL(file) : null;
 }
 
 function update() {
-    if (!editingUser.value) return;
-
-    const data = new FormData();
-
-    data.append("name", editingUser.value.name);
-    data.append("email", editingUser.value.email);
-    data.append("username", editingUser.value.username);
-
-    if (editingUser.value.password !== "") {
-        data.append("password", editingUser.value.password);
-    }
-
-    if (editingUser.value.avatar_file) {
-        data.append("avatar", editingUser.value.avatar_file);
-    }
-
-    data.append("_method", "put");
-
-    router.post(route("users.update", editingUser.value.id), data, {
-        onStart: () => {
-            Swal.fire({
-                title: "Menyimpan...",
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading(),
-            });
-        },
-        onSuccess: () => {
-            Swal.close();
-            openEditModal.value = false;
-            Swal.fire("Berhasil!", "Data user berhasil diperbarui.", "success");
-        },
-        onError: (errors) => {
-            Swal.close();
-            Swal.fire("Gagal!", "Terjadi kesalahan saat menyimpan.", "error");
-            console.error(errors);
-        },
-        preserveScroll: true,
-    });
+    editForm
+        .transform((data) => ({
+            ...data,
+            _method: "put",
+        }))
+        .post(route("users.update", editForm.id), {
+            forceFormData: true,
+            preserveScroll: true,
+            onStart: () => {
+                Swal.fire({
+                    title: "Menyimpan...",
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                });
+            },
+            onSuccess: () => {
+                Swal.close();
+                openEditModal.value = false;
+                editForm.reset();
+                Swal.fire("Berhasil!", "Data user berhasil diperbarui.", "success");
+            },
+            onError: () => {
+                Swal.close();
+                Swal.fire("Gagal!", "Terjadi kesalahan saat menyimpan.", "error");
+            },
+        });
 }
 
 function deleteUser(id) {
-    openDropdown.value = false;
+    const isDark =
+        document.documentElement.classList.contains("dark");
+
     Swal.fire({
         title: "Hapus user ini?",
         text: "Tindakan ini tidak dapat dibatalkan!",
         icon: "warning",
+
         showCancelButton: true,
         confirmButtonText: "Ya, hapus!",
         cancelButtonText: "Batal",
-        confirmButtonColor: "#e3342f",
-        cancelButtonColor: "#6b7280",
+
+        confirmButtonColor: "#dc2626", // red-600
+        cancelButtonColor: isDark ? "#374151" : "#6b7280",
+
+        background: isDark ? "#0f172a" : "#ffffff", // slate-900 / white
+        color: isDark ? "#f1f5f9" : "#111827",
+
+        customClass: {
+            popup: "rounded-xl shadow-2xl",
+            title: "text-lg font-semibold",
+            htmlContainer: "text-sm",
+            confirmButton:
+                "px-4 py-2 rounded-lg font-medium",
+            cancelButton:
+                "px-4 py-2 rounded-lg font-medium",
+        },
+
+        buttonsStyling: true,
+        reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(route("users.destroy", id), {
                 onSuccess: () =>
-                    Swal.fire("Terhapus!", "User berhasil dihapus.", "success"),
+                    Swal.fire({
+                        title: "Terhapus!",
+                        text: "User berhasil dihapus.",
+                        icon: "success",
+                        background: isDark ? "#0f172a" : "#ffffff",
+                        color: isDark ? "#f1f5f9" : "#111827",
+                        confirmButtonColor: "#2563eb",
+                    }),
             });
         }
     });
@@ -1185,21 +222,584 @@ function updateRole(user) {
         { preserveScroll: true },
     );
 }
+</script>
 
-// === Tutup dropdown saat klik di luar ===
-function handleClickOutside(e) {
-    if (
-        openDropdown.value &&
-        !e.target.closest(".swal2-container") &&
-        !e.target.closest(".dropdown") &&
-        !e.target.closest(".swal2-popup")
-    ) {
-        openDropdown.value = false;
-    }
+<template>
+    <AppLayout>
+
+        <Head title="Manajemen User" />
+
+        <!-- Table Container -->
+        <Table :data="users" :columns="columns" routeName="users.index" :filters="props.filters">
+            <!-- HEADER ACTION -->
+            <template #header-action>
+                <button @click="openModal = true"
+                    class="group relative flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-800 to-blue-700 hover:from-blue-800/90 hover:to-blue-700/90 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+                    <UserPlus class="h-5 w-5" />
+                    <span>Tambah User</span>
+                </button>
+            </template>
+
+            <!-- NAME COLUMN (avatar + name) -->
+            <template #name="{ item }">
+                <div class="flex items-center gap-3">
+                    <img :src="item.avatar
+                        ? `/storage/${item.avatar}`
+                        : '/images/default-avatar.jpg'" class="w-9 h-9 rounded-full border object-cover" />
+                    <span class="font-medium">
+                        {{ item.name }}
+                    </span>
+                </div>
+            </template>
+
+            <!-- EMAIL -->
+            <template #email="{ item }">
+                {{ item.email }}
+            </template>
+
+            <!-- USERNAME -->
+            <template #username="{ item }">
+                {{ item.username }}
+            </template>
+
+            <!-- ROLE -->
+            <template #role="{ item }">
+                <div class="relative w-full max-w-[160px]">
+
+                    <select v-model="selectedRoles[item.id]" @change="updateRole(item)"
+                        :disabled="item.roles.some(r => r.name === 'super-admin')"
+                        class="w-full appearance-none rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 pr-8 text-sm text-gray-700 dark:text-gray-100 shadow-sm hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-offset-0 focus:ring-blue-500/20 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:hover:border-gray-200">
+                        <option disabled value="">Pilih Role</option>
+
+                        <option v-for="role in roles" :key="role.id" :value="role.name">
+                            {{ role.name }}
+                        </option>
+                    </select>
+
+                    <!-- Dropdown Icon -->
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                        <ChevronDown class="w-4 h-4" />
+                    </div>
+                </div>
+            </template>
+
+            <!-- AKSI -->
+            <template #actions="{ item }">
+                <div class="flex items-center gap-2">
+
+                    <!-- View -->
+                    <button @click="viewUser(item)"
+                        class="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition"
+                        title="View">
+                        <User class="w-4 h-4" />
+                    </button>
+
+                    <!-- Edit -->
+                    <button @click="editUser(item)"
+                        class="p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 active:scale-95 transition"
+                        title="Edit">
+                        <Pencil class="w-4 h-4" />
+                    </button>
+
+                    <!-- Delete -->
+                    <button @click="deleteUser(item.id)"
+                        class="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 active:scale-95 transition"
+                        title="Delete">
+                        <Trash2 class="w-4 h-4" />
+                    </button>
+
+                </div>
+            </template>
+        </Table>
+
+        <!-- Modal Tambah User -->
+        <teleport to="body">
+            <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0"
+                enter-to-class="opacity-100" leave-active-class="transition duration-150 ease-in"
+                leave-from-class="opacity-100" leave-to-class="opacity-0">
+                <div v-if="openModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    @click="openModal = false">
+                    <div class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+                        @click.stop>
+                        <!-- HEADER -->
+                        <div
+                            class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
+                            <h2 class="text-lg font-semibold text-white">
+                                Tambah User
+                            </h2>
+                            <p class="mt-1 text-sm text-blue-100">
+                                Lengkapi informasi user baru yang akan ditambahkan.
+                            </p>
+                        </div>
+
+                        <!-- BODY -->
+                        <form @submit.prevent="submit" class="modal-scroll flex-1 overflow-y-auto">
+                            <div class="space-y-5 p-6">
+
+                                <!-- Avatar Preview -->
+                                <div v-if="previewUrl">
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Preview Avatar
+                                    </label>
+
+                                    <div
+                                        class="flex items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+                                        <img :src="previewUrl"
+                                            class="h-16 w-16 rounded-lg border object-cover dark:border-slate-600" />
+
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                {{ form.avatar?.name }}
+                                            </p>
+                                            <p class="text-xs text-slate-500">
+                                                Preview sebelum upload
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Avatar Upload -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Avatar
+                                    </label>
+
+                                    <input type="file" accept="image/*" @change="handleFileChange" class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-700
+                file:mr-4 file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white
+                hover:file:bg-blue-700 transition
+                dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300" />
+
+                                    <p v-if="form.errors.avatar" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.avatar }}
+                                    </p>
+                                </div>
+
+                                <!-- Name -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Nama
+                                    </label>
+
+                                    <input v-model="form.name" type="text" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition
+                focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10
+                dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="form.errors.name" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.name }}
+                                    </p>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Email
+                                    </label>
+
+                                    <input v-model="form.email" type="email" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition
+                focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10
+                dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="form.errors.email" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.email }}
+                                    </p>
+                                </div>
+
+                                <!-- Username -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Username
+                                    </label>
+
+                                    <input v-model="form.username" type="text" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition
+                focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10
+                dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="form.errors.username" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.username }}
+                                    </p>
+                                </div>
+
+                                <!-- Password -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Password
+                                    </label>
+
+                                    <input v-model="form.password" type="password" class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition
+                focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10
+                dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="form.errors.password" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.password }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div
+                                class="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-6 py-4 sm:flex-row sm:justify-end dark:border-slate-700 dark:bg-slate-900">
+                                <button type="button" @click="openModal = false"
+                                    class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+                                    Batal
+                                </button>
+
+                                <button type="submit" :disabled="form.processing"
+                                    class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+                                    <span v-if="form.processing">Menyimpan...</span>
+                                    <span v-else>Simpan User</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </Transition>
+        </teleport>
+
+        <!-- Modal View User -->
+        <teleport to="body">
+            <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0"
+                enter-to-class="opacity-100" leave-active-class="transition duration-150 ease-in"
+                leave-from-class="opacity-100" leave-to-class="opacity-0">
+                <div v-if="openViewModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    @click="openViewModal = false">
+                    <div class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+                        @click.stop>
+
+                        <!-- HEADER (SAMA PERSIS CREATE) -->
+                        <div
+                            class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
+                            <h2 class="text-lg font-semibold text-white">
+                                Detail User
+                            </h2>
+                            <p class="mt-1 text-sm text-blue-100">
+                                Informasi lengkap data user.
+                            </p>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="modal-scroll flex-1 overflow-y-auto">
+                            <div class="p-6 space-y-6">
+
+                                <!-- HERO PROFILE CARD -->
+                                <div
+                                    class="relative overflow-hidden rounded-lg border border-slate-200 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-6 shadow-sm dark:border-slate-700 dark:from-slate-800 dark:via-slate-900 dark:to-slate-900">
+
+                                    <!-- Decorative blur -->
+                                    <div
+                                        class="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-blue-400/20 blur-3xl">
+                                    </div>
+
+                                    <div class="relative flex flex-col items-center text-center">
+
+                                        <!-- Avatar -->
+                                        <div class="relative">
+                                            <img :src="viewingUser?.avatar
+                                                ? `/storage/${viewingUser.avatar}`
+                                                : '/images/default-avatar.jpg'"
+                                                class="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-lg dark:border-slate-700" />
+
+                                            <!-- Status dot -->
+                                            <span
+                                                class="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-white"
+                                                :class="viewingUser?.google_id ? 'bg-green-500' : 'bg-slate-400'"></span>
+                                        </div>
+
+                                        <!-- Name -->
+                                        <h3 class="mt-4 text-xl font-bold text-slate-900 dark:text-white">
+                                            {{ viewingUser?.name }}
+                                        </h3>
+
+                                        <!-- Username -->
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">
+                                            @{{ viewingUser?.username || '-' }}
+                                        </p>
+
+                                        <!-- Badge -->
+                                        <div class="mt-3">
+                                            <span
+                                                class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                                                :class="viewingUser?.google_id
+                                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                                                    : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'">
+                                                {{ viewingUser?.google_id ? 'Google Connected' : 'Standard Account' }}
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- DETAILS SECTION -->
+                                <div class="space-y-4">
+
+                                    <!-- Email Card -->
+                                    <div
+                                        class="group rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition dark:border-slate-700 dark:bg-slate-800">
+
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
+                                                <Mail class="h-4 w-4" />
+                                            </div>
+
+                                            <div>
+                                                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                                                    Email
+                                                </p>
+                                                <p class="text-sm font-semibold text-slate-900 dark:text-white">
+                                                    {{ viewingUser?.email }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Username Card -->
+                                    <div
+                                        class="group rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition dark:border-slate-700 dark:bg-slate-800">
+
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                                <User class="h-4 w-4" />
+                                            </div>
+
+                                            <div>
+                                                <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                                                    Username
+                                                </p>
+                                                <p class="text-sm font-semibold text-slate-900 dark:text-white">
+                                                    {{ viewingUser?.username || '-' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div
+                            class="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-6 py-4 sm:flex-row sm:justify-end dark:border-slate-700 dark:bg-slate-900">
+                            <button type="button" @click="openViewModal = false"
+                                class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+                                Tutup
+                            </button>
+
+                            <button type="button" @click="editUser(viewingUser)"
+                                class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700">
+                                Edit User
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </Transition>
+        </teleport>
+
+        <!-- Modal Edit User -->
+        <teleport to="body">
+            <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0"
+                enter-to-class="opacity-100" leave-active-class="transition duration-150 ease-in"
+                leave-from-class="opacity-100" leave-to-class="opacity-0">
+
+                <div v-if="openEditModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+
+                    <div
+                        class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+
+                        <!-- HEADER -->
+                        <div
+                            class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
+
+                            <h2 class="text-lg font-semibold text-white">
+                                Edit User
+                            </h2>
+
+                            <p class="mt-1 text-sm text-blue-100">
+                                Perbarui informasi user yang dipilih.
+                            </p>
+                        </div>
+
+                        <!-- BODY -->
+                        <form @submit.prevent="update" class="modal-scroll flex-1 overflow-y-auto">
+
+                            <div class="space-y-5 p-6">
+
+                                <!-- NAME -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Nama
+                                    </label>
+
+                                    <input v-model="editForm.name" type="text" placeholder="Masukkan nama user"
+                                        class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="editForm.errors?.name" class="mt-1 text-sm text-red-500">
+                                        {{ editForm.errors.name }}
+                                    </p>
+                                </div>
+
+                                <!-- EMAIL -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Email
+                                    </label>
+
+                                    <input v-model="editForm.email" type="email" placeholder="Masukkan email user"
+                                        class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="editForm.errors?.email" class="mt-1 text-sm text-red-500">
+                                        {{ editForm.errors.email }}
+                                    </p>
+                                </div>
+
+                                <!-- USERNAME -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Username
+                                    </label>
+
+                                    <input v-model="editForm.username" type="text" placeholder="Masukkan username"
+                                        class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+
+                                    <p v-if="editForm.errors?.username" class="mt-1 text-sm text-red-500">
+                                        {{ editForm.errors.username }}
+                                    </p>
+                                </div>
+
+                                <!-- PASSWORD -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Password
+                                    </label>
+
+                                    <input v-model="editForm.password" type="password"
+                                        placeholder="Kosongkan jika tidak ingin mengubah password"
+                                        class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+                                </div>
+
+                                <!-- AVATAR CURRENT -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Avatar Saat Ini
+                                    </label>
+
+                                    <div
+                                        class="flex items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
+
+                                        <img :src="editForm.avatar
+                                            ? editPreviewUrl
+                                            : (editExistingAvatar
+                                                ? `/storage/${editExistingAvatar}`
+                                                : '/images/default-avatar.jpg')"
+                                            class="h-16 w-16 rounded-lg border object-cover" />
+
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                Avatar User
+                                            </p>
+
+                                            <p class="text-xs text-slate-500">
+                                                Upload baru jika ingin mengganti
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AVATAR UPLOAD -->
+                                <div>
+                                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        Ganti Avatar (Opsional)
+                                    </label>
+
+                                    <input type="file" accept="image/*" @change="handleEditFileChange" class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-700
+                                file:mr-4 file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white
+                                hover:file:bg-blue-700 transition
+                                dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300" />
+
+                                    <p v-if="editForm.avatar?.name" class="mt-2 text-sm text-slate-500">
+                                        File: {{ editForm.avatar.name }}
+                                    </p>
+
+                                    <p v-if="editForm.errors?.avatar" class="mt-1 text-sm text-red-500">
+                                        {{ editForm.errors.avatar }}
+                                    </p>
+                                </div>
+
+                                <!-- FOOTER -->
+                                <div
+                                    class="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-slate-200 bg-white px-6 py-4 sm:flex-row sm:justify-end dark:border-slate-700 dark:bg-slate-900">
+
+                                    <button type="button" @click="openEditModal = false"
+                                        class="rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+                                        Batal
+                                    </button>
+
+                                    <button type="submit" :disabled="editForm.processing"
+                                        class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+
+                                        <span v-if="editForm.processing">
+                                            Memperbarui...
+                                        </span>
+
+                                        <span v-else>
+                                            Update User
+                                        </span>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </Transition>
+        </teleport>
+    </AppLayout>
+</template>
+
+<style scoped>
+.modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(37 99 235 / 0.6) transparent;
 }
 
-onMounted(() => document.addEventListener("click", handleClickOutside));
-onBeforeUnmount(() =>
-    document.removeEventListener("click", handleClickOutside),
-);
-</script>
+/* Chrome */
+.modal-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+    background: rgb(37 99 235 / 0.5);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(29 78 216 / 0.8);
+}
+
+/* Dark Mode */
+:global(.dark) .modal-scroll {
+    scrollbar-color: rgb(59 130 246 / 0.7) transparent;
+}
+
+:global(.dark) .modal-scroll::-webkit-scrollbar-thumb {
+    background: rgb(59 130 246 / 0.6);
+}
+
+:global(.dark) .modal-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgb(96 165 250 / 0.8);
+}
+</style>

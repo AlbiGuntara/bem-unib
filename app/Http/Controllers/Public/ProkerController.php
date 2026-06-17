@@ -3,84 +3,65 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Dokumentasi;
-use App\Models\Admin\ProgramKerja;
-use Illuminate\Http\Request;
+use App\Models\ProgramKerja;
+use App\Models\Dokumentasi;
 use Inertia\Inertia;
 
 class ProkerController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = ProgramKerja::with(['jabatan', 'dokumentasis', 'presensis']);
+        $prokers = ProgramKerja::with([
+            'department',
+            'ketuaPanitia',
+        ])
+        ->select([
+            'id',
+            'title',
+            'description',
+            'start_date',
+            'end_date',
+            'location',
+            'departemen_id',
+            'pengurus_id',
+        ])
+        ->where('is_public', true)
+        ->orderBy('start_date')
+        ->get();
 
-        // SEARCH
-        if ($request->search) {
-            $query->where('nama_kegiatan', 'like', "%{$request->search}%");
-        }
-
-        // FILTER STATUS
-        if ($request->status) {
-            $today = now()->toDateString();
-
-            if ($request->status === 'akan-datang') {
-                $query->whereDate('tanggal_mulai', '>', $today);
-            }
-
-            if ($request->status === 'berlangsung') {
-                $query->whereDate('tanggal_mulai', '<=', $today)
-                    ->whereDate('tanggal_selesai', '>=', $today);
-            }
-
-            if ($request->status === 'selesai') {
-                $query->whereDate('tanggal_selesai', '<', $today);
-            }
-        }
-
-        $programs = $query
-            ->orderBy('tanggal_mulai', 'asc')
-            ->paginate(6)
-            ->through(function ($item) {
-                $today = now();
-
-                if ($today->lt($item->tanggal_mulai)) {
-                    $status = 'Akan Datang';
-                    $color = 'blue';
-                } elseif ($today->gt($item->tanggal_selesai)) {
-                    $status = 'Selesai';
-                    $color = 'gray';
-                } else {
-                    $status = 'Berlangsung';
-                    $color = 'green';
-                }
-
+        $documentations = Dokumentasi::with('programKerja')
+            ->whereHas('programKerja', function ($query) {
+                $query->where('is_public', true);
+            })
+            ->latest()
+            ->get()
+            ->map(function ($item) {
                 return [
                     'id' => $item->id,
-                    'nama' => $item->nama_kegiatan,
-                    'tujuan' => $item->tujuan,
-                    'deskripsi' => $item->deskripsi,
-                    'tanggal_mulai' => $item->tanggal_mulai,
-                    'tanggal_selesai' => $item->tanggal_selesai,
-                    'jabatan' => $item->jabatan?->nama_jabatan,
-                    'peserta' => $item->peserta,
-                    'anggaran' => number_format($item->anggaran, 0, ',', '.'),
-                    'status' => $status,
-                    'status_color' => $color,
-                    'dokumentasi_count' => $item->dokumentasis->count(),
-                    'presensi_count' => $item->presensis->count(),
+
+                    'title' => $item->programKerja?->title,
+
+                    'year' => $item->programKerja?->start_date
+                        ? \Carbon\Carbon::parse(
+                            $item->programKerja->start_date
+                        )->format('Y')
+                        : '-',
+
+                    'drive' => $item->link_drive,
+
+                    'image' => $item->thumbnail_portrait
+                        ? asset('storage/' . $item->thumbnail_portrait)
+                        : (
+                            $item->thumbnail_landscape
+                                ? asset('storage/' . $item->thumbnail_landscape)
+                                : '/images/default-event.jpg'
+                        ),
                 ];
             });
 
         return Inertia::render('Public/ProgramKerja', [
-            'programs' => $programs,
-            'filters' => $request->only(['search', 'status']),
-            'stats' => [
-                'total' => ProgramKerja::count(),
-                'aktif' => ProgramKerja::whereDate('tanggal_mulai', '<=', now())
-                    ->whereDate('tanggal_selesai', '>=', now())->count(),
-                'selesai' => ProgramKerja::whereDate('tanggal_selesai', '<', now())->count(),
-                'dokumentasi' => Dokumentasi::count(),
-            ],
+            'prokers' => $prokers,
+            'documentations' => $documentations,
         ]);
     }
 }

@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Jabatan;
-use App\Models\Admin\Pengurus;
-use App\Models\Admin\Periode;
-use App\Models\Admin\Warga;
+use App\Models\Department;
+use App\Models\Pengurus;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,126 +12,105 @@ class PengurusController extends Controller
 {
     public function index(Request $request)
     {
-        $pengurus = Pengurus::query()
-            ->with(['warga', 'jabatan', 'periode'])
+        $sort = $request->get('sort');
+        $order = $request->get('order', 'asc');
 
-            // SEARCH
-            ->when($request->search, function ($q, $search) {
-                $q->whereHas('warga', function ($q) use ($search) {
-                    $q->where('nama', 'like', "%{$search}%");
-                })
-                    ->orWhereHas('jabatan', function ($q) use ($search) {
-                        $q->where('nama_jabatan', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('periode', function ($q) use ($search) {
-                        $q->where('periode', 'like', "%{$search}%");
-                    });
-            })
+        $query = Pengurus::with('department');
 
-            // SORTING
-            ->when($request->sort_by, function ($q) use ($request) {
-                match ($request->sort_by) {
-                    'nama' => $q->whereHas('warga', function ($q) use ($request) {
-                        $q->orderBy('nama', $request->sort_direction ?? 'asc');
-                    }),
-                    'jabatan' => $q->whereHas('jabatan', function ($q) use ($request) {
-                        $q->orderBy('nama_jabatan', $request->sort_direction ?? 'asc');
-                    }),
-                    'periode' => $q->whereHas('periode', function ($q) use ($request) {
-                        $q->orderBy('periode', $request->sort_direction ?? 'asc');
-                    }),
-                    default => $q
-                };
-            }, fn ($q) => $q->latest())
+        if ($sort === 'department') {
+            $query->leftJoin(
+                'departments',
+                'pengurus.department_id',
+                '=',
+                'departments.id'
+            )
+            ->select('pengurus.*')
+            ->orderBy('departments.name', $order);
+        } elseif (!empty($sort)) {
+            $query->orderBy($sort, $order);
+        }
 
-            // PAGINATION
-            ->paginate($request->per_page ?? 10)
+        $pengurus = $query
+            ->paginate($request->perPage ?? 10)
             ->withQueryString();
 
         return Inertia::render('Admin/Pengurus/Index', [
             'pengurus' => $pengurus,
+            'departments' => Department::all(),
             'filters' => $request->only([
                 'search',
-                'per_page',
-                'sort_by',
-                'sort_direction',
+                'sort',
+                'order',
+                'perPage',
             ]),
-
-            // data pendukung modal
-            'periodes' => Periode::orderByDesc('tahun_selesai')->get(),
-            'wargas' => Warga::select('id', 'nama', 'status')->orderBy('nama')->get(),
-            'jabatans' => Jabatan::select('id', 'nama_jabatan', 'IKSASS')->get(),
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'id_warga' => 'required|exists:wargas,id',
-            'id_jabatan' => 'required|exists:jabatans,id',
-            'id_periode' => 'required|exists:periode,id',
+        $validated = $request->validate([
+            'department_id' => ['required'],
+            'name' => ['required'],
+            'npm' => ['required'],
+            'email' => ['required', 'email'],
+            'position' => ['required'],
+            'photo' => ['nullable', 'image'],
+            'instagram' => ['nullable'],
+            'facebook' => ['nullable'],
+            'whatsapp' => ['nullable'],
         ]);
 
-        $warga = Warga::findOrFail($request->id_warga);
-
-        if ($warga->status === 'Tidak Jelas') {
-            abort(422, 'Status warga tidak jelas');
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request
+                ->file('photo')
+                ->store('pengurus', 'public');
         }
 
-        $jabatan = Jabatan::findOrFail($request->id_jabatan);
+        Pengurus::create($validated);
 
-        if (
-            ($warga->status === 'Santri' && $jabatan->IKSASS !== 'IKSASS Santri') ||
-            ($warga->status === 'Alumni' && $jabatan->IKSASS !== 'IKSASS Alumni')
-        ) {
-            abort(422, 'Jabatan tidak sesuai status warga');
-        }
-
-        Pengurus::create([
-            'id_warga' => $request->id_warga,
-            'id_jabatan' => $request->id_jabatan,
-            'id_periode' => $request->id_periode,
-        ]);
-
-        return back()->with('success', 'Pengurus berhasil ditambahkan');
+        return back()->with(
+            'success',
+            'Data berhasil ditambahkan.'
+        );
     }
 
     public function update(Request $request, Pengurus $penguru)
     {
-        $request->validate([
-            'id_warga' => 'required|exists:wargas,id',
-            'id_jabatan' => 'required|exists:jabatans,id',
-            'id_periode' => 'required|exists:periode,id',
+        $validated = $request->validate([
+            'department_id' => ['required'],
+            'name' => ['required'],
+            'npm' => ['required'],
+            'email' => ['required', 'email'],
+            'position' => ['required'],
+            'photo' => ['nullable', 'image'],
+            'instagram' => ['nullable'],
+            'facebook' => ['nullable'],
+            'whatsapp' => ['nullable'],
         ]);
 
-        $warga = Warga::findOrFail($request->id_warga);
-
-        if ($warga->status === 'Tidak Jelas') {
-            abort(422, 'Status warga tidak jelas');
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request
+                ->file('photo')
+                ->store('pengurus', 'public');
+        } else {
+            unset($validated['photo']);
         }
 
-        $jabatan = Jabatan::findOrFail($request->id_jabatan);
+        $penguru->update($validated);
 
-        if (
-            ($warga->status === 'Santri' && $jabatan->IKSASS !== 'IKSASS Santri') ||
-            ($warga->status === 'Alumni' && $jabatan->IKSASS !== 'IKSASS Alumni')
-        ) {
-            abort(422, 'Jabatan tidak sesuai status warga');
-        }
-
-        $penguru->update([
-            'id_warga' => $request->id_warga,
-            'id_jabatan' => $request->id_jabatan,
-            'id_periode' => $request->id_periode,
-        ]);
-
-        return back()->with('success', 'Pengurus berhasil diperbarui');
+        return back()->with(
+            'success',
+            'Data berhasil diperbarui.'
+        );
     }
 
     public function destroy(Pengurus $penguru)
     {
         $penguru->delete();
 
-        return back()->with('success', 'Pengurus berhasil dihapus');
+        return back()->with(
+            'success',
+            'Data berhasil dihapus.'
+        );
     }
 }

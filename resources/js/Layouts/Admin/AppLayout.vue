@@ -1,6 +1,6 @@
 <template>
     <div
-        class="min-h-screen flex flex-col bg-cream dark:bg-gray-950 transition-colors duration-300"
+        class="min-h-screen flex flex-col bg-white dark:bg-gray-950 transition-colors duration-300"
     >
         <Alert />
 
@@ -42,17 +42,17 @@
                     class="relative z-10 min-h-[89px] px-6 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 footer-shadow transition-all duration-300 flex items-center"
                 >
                     <div
-                        class="flex flex-col md:flex-row items-center justify-between gap-2 text-sm w-full"
+                        class="flex flex-col md:flex-row items-center justify-start gap-2 text-sm w-full"
                     >
                         <p class="text-gray-600 dark:text-gray-400">
-                            © {{ currentYear }} BEM UNIB
+                            © {{ currentYear }} BEM UNIB. Develop by
                         </p>
 
                         <a
                             href="https://www.instagram.com/albyy_394"
                             class="italic text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
                         >
-                            @mas_al
+                            @el_gntara
                         </a>
                     </div>
                 </footer>
@@ -64,7 +64,7 @@
             <button
                 v-if="showScroll"
                 @click="scrollToTop"
-                class="fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-b hover:bg-coral text-cream shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105 active:scale-95"
+                class="fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-transform duration-300 transform active:scale-95"
             >
                 <ChevronUp class="w-5 h-5" />
             </button>
@@ -127,7 +127,7 @@ onMounted(() => {
         if (!el) return;
 
         const expectedHref = "https://www.instagram.com/albyy_394";
-        const expectedText = "@mas_al";
+        const expectedText = "@el_gntara";
 
         const currentHref = el.getAttribute("href");
         const currentText = el.textContent.trim();

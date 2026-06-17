@@ -1,254 +1,3 @@
-<template>
-    <!-- Overlay (Mobile) -->
-    <transition
-        enter-active-class="transition-opacity duration-300 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition-opacity duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-    >
-        <div
-            v-if="isMobileOpen"
-            class="fixed inset-0 backdrop-blur-xs bg-black/40 z-40 md:hidden"
-            @click="$emit('toggleMobile')"
-        />
-    </transition>
-
-    <!-- Sidebar -->
-    <transition :name="isDesktop ? '' : 'mobile-slide'">
-        <aside
-            v-show="isMobileOpen || isDesktop"
-            :class="[
-                'fixed top-0 left-0 h-screen z-40 flex flex-col bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-in-out pt-20',
-                isDesktop ? (collapsed ? 'w-20' : 'w-64') : 'w-64',
-            ]"
-        >
-            <!-- ================= MENU AREA ================= -->
-            <div class="relative flex-1 overflow-hidden">
-                <!-- Top Gradient -->
-                <div
-                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-gray-900 to-transparent z-10"
-                />
-
-                <!-- Scrollable Menu -->
-                <nav
-                    class="h-full overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 sidebar-scroll"
-                >
-                    <!-- ===== MAIN MENU ===== -->
-                    <div
-                        v-for="item in filteredMainMenu"
-                        :key="item.name"
-                        @click="handleMenuClick(item)"
-                        :class="[
-                            'group relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300',
-                            activeMenu === item.name
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'hover:bg-blue-50 dark:hover:bg-gray-800',
-                        ]"
-                    >
-                        <component
-                            :is="item.icon"
-                            :class="[
-                                'w-5 h-5 transition-transform group-hover:scale-110',
-                                activeMenu === item.name
-                                    ? 'text-white'
-                                    : 'text-gray-500 dark:text-gray-400',
-                            ]"
-                        />
-
-                        <span
-                            v-if="!isDesktop || !collapsed"
-                            class="text-sm font-medium"
-                        >
-                            {{ item.name }}
-                        </span>
-
-                        <span
-                            v-if="
-                                activeMenu === item.name &&
-                                (!collapsed || !isDesktop)
-                            "
-                            class="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse"
-                        />
-                    </div>
-
-                    <!-- ===== DROPDOWNS ===== -->
-                    <SidebarDropdown
-                        v-if="filteredWargaMenu.length"
-                        label="Manajemen Warga"
-                        :icon="Users"
-                        :items="filteredWargaMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleSubMenuClick"
-                    />
-
-                    <SidebarDropdown
-                        v-if="filteredStrukturalMenu.length"
-                        label="Struktural"
-                        :icon="Layers2"
-                        :items="filteredStrukturalMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleSubMenuClick"
-                    />
-
-                    <SidebarDropdown
-                        v-if="filteredProkerMenu.length"
-                        label="Program Kerja"
-                        :icon="Calendar"
-                        :items="filteredProkerMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleSubMenuClick"
-                    />
-
-                    <SidebarDropdown
-                        v-if="filteredSuratMenu.length"
-                        label="Administrasi"
-                        :icon="FileCog"
-                        :items="filteredSuratMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleSuratSubClick"
-                    />
-
-                    <SidebarDropdown
-                        v-if="filteredKeuanganMenu.length"
-                        label="Keuangan"
-                        :icon="Wallet"
-                        :items="filteredKeuanganMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleKeuanganClick"
-                    />
-
-                    <SidebarDropdown
-                        v-if="filteredPenggunaMenu.length"
-                        label="Pengguna"
-                        :icon="UserCog"
-                        :items="filteredPenggunaMenu"
-                        :activeMenu="activeMenu"
-                        :collapsed="collapsed"
-                        :isDesktop="isDesktop"
-                        @select="handleSubMenuClick"
-                    />
-                </nav>
-
-                <!-- Bottom Gradient -->
-                <div
-                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"
-                />
-            </div>
-
-            <!-- ================= USER SECTION ================= -->
-            <div
-                class="flex-shrink-0 min-h-[89px] px-4 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative z-10 user-section-shadow flex items-center"
-            >
-                <div
-                    :class="[
-                        'flex items-center gap-3',
-                        collapsed && isDesktop ? 'justify-center' : '',
-                    ]"
-                >
-                    <img
-                        :src="getAvatarUrl(user?.avatar)"
-                        class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500"
-                    />
-
-                    <div v-if="!collapsed || !isDesktop" class="min-w-0">
-                        <p
-                            class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate"
-                        >
-                            {{ user?.name || "Guest" }}
-                        </p>
-                        <p
-                            class="text-xs text-gray-500 dark:text-gray-400 truncate"
-                        >
-                            {{ user?.email || "Belum login" }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-    </transition>
-</template>
-
-<style scoped>
-/* Scrollbar Custom */
-.sidebar-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb {
-    background: #3b82f6;
-    border-radius: 10px;
-}
-
-.sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    background: #2563eb;
-}
-
-/* User Section Shadow */
-.user-section-shadow {
-    box-shadow:
-        0 -4px 12px rgba(0, 0, 0, 0.06),
-        0 -1px 3px rgba(0, 0, 0, 0.04);
-}
-
-/* Dark Mode Shadow */
-.dark .user-section-shadow {
-    box-shadow:
-        0 -4px 14px rgba(0, 0, 0, 0.35),
-        0 -1px 4px rgba(0, 0, 0, 0.25);
-}
-
-/* Mobile Sidebar Animation */
-/* Enter */
-.mobile-slide-enter-active {
-    transition:
-        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        opacity 0.35s ease;
-}
-
-.mobile-slide-enter-from {
-    transform: translateX(-110%) scale(0.98);
-    opacity: 0;
-}
-
-.mobile-slide-enter-to {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-}
-
-/* Leave */
-.mobile-slide-leave-active {
-    transition:
-        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.25s ease;
-}
-
-.mobile-slide-leave-from {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-}
-
-.mobile-slide-leave-to {
-    transform: translateX(-105%) scale(0.98);
-    opacity: 0;
-}
-</style>
-
 <script setup>
 import SidebarDropdown from "@/Components/SidebarDropdown.vue";
 import {
@@ -259,6 +8,7 @@ import {
     UserCog,
     Layers2,
     Calendar,
+    CalendarDays,
 } from "lucide-vue-next";
 
 import { ref, onMounted, onUnmounted, watch, watchEffect, computed } from "vue";
@@ -317,59 +67,26 @@ const mainMenuItems = [
     },
 ];
 
-const wargaMenuItems = [
-    { name: "Data Warga", link: "/admin/warga", permission: "view warga" },
-    {
-        name: "Skor Pendidikan",
-        link: "/admin/skor-pendidikan",
-        permission: "view skor-pendidikan",
-    },
-    { name: "Prestasi", link: "/admin/prestasi", permission: "view prestasi" },
-];
-
 const strukturalMenuItems = [
     {
         name: "Data Pengurus",
         link: "/admin/pengurus",
         permission: "view pengurus",
     },
-    { name: "Jabatan", link: "/admin/jabatan", permission: "view jabatan" },
+    { name: "Departemen", link: "/admin/departments", permission: "view departemen" },
 ];
 
-const prokerMenuItems = [
+const kegiatanMenuItems = [
     {
         name: "Program Kerja",
         link: "/admin/program-kerja",
-        permission: "view program-kerja",
-    },
-];
-
-const suratMenuItems = [
-    {
-        name: "Surat Masuk",
-        link: "/admin/surat-masuk",
-        permission: "view surat",
+        permission: "view program kerja",
     },
     {
-        name: "Surat Keluar",
-        link: "/admin/surat-keluar",
-        permission: "view surat",
+        name: "Dokumentasi",
+        link: "/admin/dokumentasi",
+        permission: "view dokumentasi",
     },
-];
-
-const KeuanganMenuItems = [
-    { name: "Kas Umum", link: "/admin/kas-umum", permission: "view kas-umum" },
-    {
-        name: "Kas Kegiatan",
-        link: "/admin/kas-kegiatan",
-        permission: "view kas-kegiatan",
-    },
-    {
-        name: "Hutang Piutang",
-        link: "/admin/hutang-piutang",
-        permission: "view hutang-piutang",
-    },
-    { name: "Log Aktifitas", link: "#", permission: "view log-aktifitas" },
 ];
 
 const PenggunaMenuItems = [
@@ -399,14 +116,6 @@ const filteredMainMenu = computed(() =>
     ),
 );
 
-const filteredWargaMenu = computed(() =>
-    wargaMenuItems.filter(
-        (item) =>
-            (!item.permission || can(item.permission)) &&
-            (!item.role || hasRole(item.role)),
-    ),
-);
-
 const filteredStrukturalMenu = computed(() =>
     strukturalMenuItems.filter(
         (item) =>
@@ -415,24 +124,8 @@ const filteredStrukturalMenu = computed(() =>
     ),
 );
 
-const filteredProkerMenu = computed(() =>
-    prokerMenuItems.filter(
-        (item) =>
-            (!item.permission || can(item.permission)) &&
-            (!item.role || hasRole(item.role)),
-    ),
-);
-
-const filteredSuratMenu = computed(() =>
-    suratMenuItems.filter(
-        (item) =>
-            (!item.permission || can(item.permission)) &&
-            (!item.role || hasRole(item.role)),
-    ),
-);
-
-const filteredKeuanganMenu = computed(() =>
-    KeuanganMenuItems.filter(
+const filteredKegiatanMenu = computed(() =>
+    kegiatanMenuItems.filter(
         (item) =>
             (!item.permission || can(item.permission)) &&
             (!item.role || hasRole(item.role)),
@@ -526,11 +219,8 @@ watchEffect(() => {
 
     const allItems = [
         ...mainMenuItems,
-        ...wargaMenuItems,
         ...strukturalMenuItems,
-        ...prokerMenuItems,
-        ...suratMenuItems,
-        ...KeuanganMenuItems,
+        ...kegiatanMenuItems,
         ...PenggunaMenuItems,
     ];
 
@@ -564,3 +254,162 @@ function getAvatarUrl(avatar) {
     return "/images/default-avatar.jpg";
 }
 </script>
+
+<template>
+    <!-- Overlay (Mobile) -->
+    <transition enter-active-class="transition-opacity duration-300 ease-out" enter-from-class="opacity-0"
+        enter-to-class="opacity-100" leave-active-class="transition-opacity duration-200 ease-in"
+        leave-from-class="opacity-100" leave-to-class="opacity-0">
+        <div v-if="isMobileOpen" class="fixed inset-0 backdrop-blur-xs bg-black/40 z-40 md:hidden"
+            @click="$emit('toggleMobile')" />
+    </transition>
+
+    <!-- Sidebar -->
+    <transition :name="isDesktop ? '' : 'mobile-slide'">
+        <aside v-show="isMobileOpen || isDesktop" :class="[
+            'fixed top-0 left-0 h-screen z-40 flex flex-col bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-in-out pt-20',
+            isDesktop ? (collapsed ? 'w-20' : 'w-64') : 'w-64',
+        ]">
+            <!-- ================= MENU AREA ================= -->
+            <div class="relative flex-1 overflow-hidden">
+                <!-- Top Gradient -->
+                <div
+                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-gray-900 to-transparent z-10" />
+
+                <!-- Scrollable Menu -->
+                <nav class="h-full overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 sidebar-scroll">
+                    <!-- ===== MAIN MENU ===== -->
+                    <div v-for="item in filteredMainMenu" :key="item.name" @click="handleMenuClick(item)" :class="[
+                        'group relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300',
+                        activeMenu === item.name
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'hover:bg-blue-50 dark:hover:bg-gray-800',
+                    ]">
+                        <component :is="item.icon" :class="[
+                            'w-5 h-5 transition-transform group-hover:scale-110',
+                            activeMenu === item.name
+                                ? 'text-white'
+                                : 'text-gray-500 dark:text-gray-400',
+                        ]" />
+
+                        <span v-if="!isDesktop || !collapsed" class="text-sm font-medium">
+                            {{ item.name }}
+                        </span>
+
+                        <span v-if="
+                            activeMenu === item.name &&
+                            (!collapsed || !isDesktop)
+                        " class="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse" />
+                    </div>
+
+                    <!-- ===== DROPDOWNS ===== -->
+                    <SidebarDropdown v-if="filteredStrukturalMenu.length" label="Struktural" :icon="Users"
+                        :items="filteredStrukturalMenu" :activeMenu="activeMenu" :collapsed="collapsed"
+                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+
+                    <SidebarDropdown v-if="filteredKegiatanMenu.length" label="Kegiatan" :icon="CalendarDays"
+                        :items="filteredKegiatanMenu" :activeMenu="activeMenu" :collapsed="collapsed"
+                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+
+                    <SidebarDropdown v-if="filteredPenggunaMenu.length" label="Pengguna" :icon="UserCog"
+                        :items="filteredPenggunaMenu" :activeMenu="activeMenu" :collapsed="collapsed"
+                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+                </nav>
+
+                <!-- Bottom Gradient -->
+                <div
+                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-gray-900 to-transparent" />
+            </div>
+
+            <!-- ================= USER SECTION ================= -->
+            <div
+                class="flex-shrink-0 min-h-[89px] px-4 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative z-10 user-section-shadow flex items-center">
+                <div :class="[
+                    'flex items-center gap-3',
+                    collapsed && isDesktop ? 'justify-center' : '',
+                ]">
+                    <img :src="getAvatarUrl(user?.avatar)"
+                        class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500" />
+
+                    <div v-if="!collapsed || !isDesktop" class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+                            {{ user?.name || "Guest" }}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {{ user?.email || "Belum login" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </transition>
+</template>
+
+<style scoped>
+/* Scrollbar Custom */
+.sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 10px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+/* User Section Shadow */
+.user-section-shadow {
+    box-shadow:
+        0 -4px 12px rgba(0, 0, 0, 0.06),
+        0 -1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark Mode Shadow */
+.dark .user-section-shadow {
+    box-shadow:
+        0 -4px 14px rgba(0, 0, 0, 0.35),
+        0 -1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Mobile Sidebar Animation */
+/* Enter */
+.mobile-slide-enter-active {
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease;
+}
+
+.mobile-slide-enter-from {
+    transform: translateX(-110%) scale(0.98);
+    opacity: 0;
+}
+
+.mobile-slide-enter-to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+/* Leave */
+.mobile-slide-leave-active {
+    transition:
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease;
+}
+
+.mobile-slide-leave-from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+.mobile-slide-leave-to {
+    transform: translateX(-105%) scale(0.98);
+    opacity: 0;
+}
+</style>
