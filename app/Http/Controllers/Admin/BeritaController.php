@@ -138,11 +138,12 @@ class BeritaController extends Controller
             'is_published' => 'boolean'
         ]);
 
+        unset($validated['thumbnail']);
+
         if ($request->hasFile('thumbnail')) {
 
             if ($berita->thumbnail) {
-                Storage::disk('public')
-                    ->delete($berita->thumbnail);
+                Storage::disk('public')->delete($berita->thumbnail);
             }
 
             $validated['thumbnail'] = $request
@@ -155,11 +156,23 @@ class BeritaController extends Controller
         $berita->update($validated);
 
         return redirect()
-        ->route('berita.index')
-        ->with(
-            'success',
-            'Berita berhasil dibuat'
-        );
+            ->route('berita.index')
+            ->with('success', 'Berita berhasil diperbarui');
+    }
+
+    public function updateStatus(Request $request, Berita $berita)
+    {
+        $request->validate([
+            'is_published' => ['required', 'boolean']
+        ]);
+
+        $berita->update([
+            'is_published' => $request->boolean('is_published')
+        ]);
+
+        return redirect()
+            ->route('berita.index')
+            ->with('success', 'Status berhasil diperbarui');
     }
 
     public function destroy(Berita $berita)
@@ -177,5 +190,162 @@ class BeritaController extends Controller
                 'success',
                 'Berita berhasil dihapus'
             );
+    }
+
+    public function indexPublic(Request $request)
+    {
+        $beritas = Berita::with('user')
+            ->where('is_published', true)
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->when($request->category, function ($query, $category) {
+                $query->where('category', $category);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        $categories = Berita::where('is_published', true)
+            ->select('category')
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        $featured = Berita::with('user')
+            ->where('is_published', true)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $latest = Berita::with('user')
+            ->where('is_published', true)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $popular = Berita::with('user')
+            ->where('is_published', true)
+            ->where('views', '>', 0)
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        $totalNews = Berita::where('is_published', true)
+            ->count();
+
+        $totalCategories = Berita::where('is_published', true)
+            ->distinct('category')
+            ->count('category');
+
+        $totalViews = Berita::where('is_published', true)
+            ->sum('views');
+
+        return Inertia::render('Public/Berita/Index', [
+            'beritas' => $beritas,
+            'categories' => $categories,
+            'featured' => $featured,
+            'latest' => $latest,
+            'popular' => $popular,
+            'filters' => $request->only(['search', 'category']),
+            'stats' => [
+                'totalNews' => $totalNews,
+                'totalCategories' => $totalCategories,
+                'totalViews' => $totalViews,
+            ],
+        ]);
+    }
+
+    public function showPublic($slug)
+    {
+        $berita = Berita::with('user')
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        $berita->increment('views');
+
+        $related = Berita::with('user')
+            ->where('is_published', true)
+            ->where('category', $berita->category)
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $latest = Berita::with('user')
+            ->where('is_published', true)
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $popular = Berita::with('user')
+            ->where('is_published', true)
+            ->where('views', '>', 0)
+            ->where('id', '!=', $berita->id)
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        $categories = Berita::where('is_published', true)
+            ->select('category')
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        return Inertia::render('Public/Berita/Show', [
+            'berita' => $berita,
+            'related' => $related,
+            'latest' => $latest,
+            'popular' => $popular,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function preview(Berita $berita)
+    {
+        $related = Berita::with('user')
+            ->where('is_published', true)
+            ->where('category', $berita->category)
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $latest = Berita::with('user')
+            ->where('is_published', true)
+            ->where('id', '!=', $berita->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $popular = Berita::with('user')
+            ->where('is_published', true)
+            ->where('views', '>', 0)
+            ->where('id', '!=', $berita->id)
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        $categories = Berita::where('is_published', true)
+            ->select('category')
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        $berita->load('user');
+
+        return Inertia::render('Public/Berita/Show', [
+            'berita' => $berita,
+            'related' => $related,
+            'latest' => $latest,
+            'popular' => $popular,
+            'categories' => $categories,
+            'isPreview' => true,
+        ]);
     }
 }

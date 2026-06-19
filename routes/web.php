@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\PengurusController;
 use App\Http\Controllers\Admin\ProgramKerjaController;
 use App\Http\Controllers\Admin\DokumentasiController;
 use App\Http\Controllers\Admin\BeritaController;
+use App\Http\Controllers\Admin\IncomingLetterController;
+use App\Http\Controllers\Admin\OutgoingLetterController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ProkerController;
@@ -29,6 +31,12 @@ Route::get('/profil', function () {
 
 Route::get('/program-kerja', [ProkerController::class, 'index'])
     ->name('program-kerja');
+
+Route::get('/berita', [BeritaController::class, 'indexPublic'])
+    ->name('berita.public.index');
+
+Route::get('/berita/{slug:slug}', [BeritaController::class, 'showPublic'])
+    ->name('berita.public.show');
 
 // Login page
 Route::get('/login', function () {
@@ -146,6 +154,36 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         'edit' => 'permission:edit berita',
         'update' => 'permission:edit berita',
         'destroy' => 'permission:delete berita',
+    ]);
+
+    Route::get('berita/{berita}/preview', [BeritaController::class, 'preview'])
+        ->middleware('permission:view berita')
+        ->name('berita.preview');
+
+    Route::patch('/admin/berita/{berita}/status',[BeritaController::class, 'updateStatus'])->name('berita.update-status');
+
+    // ================= SURAT MASUK =================
+    Route::resource('surat-masuk', IncomingLetterController::class)->middleware([
+        'index' => 'permission:view surat-masuk',
+        'store' => 'permission:create surat-masuk',
+        'update' => 'permission:edit surat-masuk',
+        'destroy' => 'permission:delete surat-masuk',
+    ])->except([
+        'create',
+        'show',
+        'edit'
+    ]);
+
+    // ================= SURAT KELUAR =================
+    Route::resource('surat-keluar', OutgoingLetterController::class)->middleware([
+        'index' => 'permission:view surat-keluar',
+        'store' => 'permission:create surat-keluar',
+        'update' => 'permission:edit surat-keluar',
+        'destroy' => 'permission:delete surat-keluar',
+    ])->except([
+        'create',
+        'show',
+        'edit'
     ]);
 
     // ================= ROLE & PERMISSION =================

@@ -89,6 +89,19 @@ const kegiatanMenuItems = [
     },
 ];
 
+const suratMenuItems = [
+    {
+        name: "Surat Masuk",
+        link: "/admin/surat-masuk",
+        permission: "view surat-masuk",
+    },
+    {
+        name: "Surat Keluar",
+        link: "/admin/surat-keluar",
+        permission: "view surat-keluar",
+    },
+];
+
 const PenggunaMenuItems = [
     {
         name: "Users",
@@ -126,6 +139,14 @@ const filteredStrukturalMenu = computed(() =>
 
 const filteredKegiatanMenu = computed(() =>
     kegiatanMenuItems.filter(
+        (item) =>
+            (!item.permission || can(item.permission)) &&
+            (!item.role || hasRole(item.role)),
+    ),
+);
+
+const filteredSuratMenu = computed(() =>
+    suratMenuItems.filter(
         (item) =>
             (!item.permission || can(item.permission)) &&
             (!item.role || hasRole(item.role)),
@@ -221,6 +242,7 @@ watchEffect(() => {
         ...mainMenuItems,
         ...strukturalMenuItems,
         ...kegiatanMenuItems,
+        ...suratMenuItems,
         ...PenggunaMenuItems,
     ];
 
@@ -310,6 +332,10 @@ function getAvatarUrl(avatar) {
                     <SidebarDropdown v-if="filteredKegiatanMenu.length" label="Kegiatan" :icon="CalendarDays"
                         :items="filteredKegiatanMenu" :activeMenu="activeMenu" :collapsed="collapsed"
                         :isDesktop="isDesktop" @select="handleSubMenuClick" />
+
+                    <SidebarDropdown v-if="filteredSuratMenu.length" label="Surat" :icon="FileCog"
+                        :items="filteredSuratMenu" :activeMenu="activeMenu" :collapsed="collapsed"
+                        :isDesktop="isDesktop" @select="handleSuratSubClick" />
 
                     <SidebarDropdown v-if="filteredPenggunaMenu.length" label="Pengguna" :icon="UserCog"
                         :items="filteredPenggunaMenu" :activeMenu="activeMenu" :collapsed="collapsed"

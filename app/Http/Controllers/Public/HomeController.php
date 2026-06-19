@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProgramKerja;
+use App\Models\Berita;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
@@ -52,6 +53,38 @@ class HomeController extends Controller
             ->orderBy('start_date')
             ->first();
 
+        $latestNews = Berita::with('user')
+            ->where('is_published', true)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+
+                    'slug' => $item->slug,
+
+                    'date' => $item->created_at
+                        ->translatedFormat('d F Y'),
+
+                    'category' => $item->category,
+
+                    'excerpt' => \Illuminate\Support\Str::limit(
+                        strip_tags($item->content),
+                        120
+                    ),
+
+                    'image' => $item->thumbnail
+                        ? asset('storage/' . $item->thumbnail)
+                        : '/images/default-news.jpg',
+
+                    'author' => $item->user?->name,
+
+                    'views' => $item->views,
+                ];
+            });
+
         return Inertia::render('Public/Home', [
             'pastEvents' => $pastEvents,
 
@@ -86,6 +119,8 @@ class HomeController extends Controller
                     )->format('Y-m-d 23:59:59'),
                 ]
                 : null,
+
+            'latestNews' => $latestNews,
         ]);
     }
 }

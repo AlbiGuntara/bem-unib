@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
-import { computed, ref } from "vue";
+import { Head, useForm, router } from "@inertiajs/vue3";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 
 import { Save, Send, FolderOpen, Tags } from "lucide-vue-next";
 
@@ -9,26 +9,183 @@ import TiptapEditor from "@/Components/TiptapEditor.vue";
 import TagInput from "@/Components/TagInput.vue";
 import ImageUpload from "@/Components/ImageUpload.vue";
 
+import axios from "axios";
 import Swal from "sweetalert2";
 
 const props = defineProps({
     categories: Array,
 });
 
-const form = useForm({
+const STORAGE_KEY = "berita_create_draft";
+
+const initialValues = {
     title: "",
     content: "",
-    thumbnail: null,
     category: "",
     label: [],
     is_published: false,
+};
+
+const saved = (() => {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+})();
+
+const form = useForm({
+    title: saved?.title ?? initialValues.title,
+    content: saved?.content ?? initialValues.content,
+    thumbnail: null,
+    category: saved?.category ?? initialValues.category,
+    label: saved?.label ?? initialValues.label,
+    is_published: saved?.is_published ?? initialValues.is_published,
+});
+
+const isSubmitting = ref(false);
+const isAutoSaving = ref(false);
+const isNavigating = ref(false);
+
+const isDirty = computed(() => {
+    return (
+        form.title !== initialValues.title ||
+        form.content !== initialValues.content ||
+        form.category !== initialValues.category ||
+        JSON.stringify(form.label) !== JSON.stringify(initialValues.label) ||
+        form.is_published !== initialValues.is_published
+    );
+});
+
+const shouldWarn = computed(() => isDirty.value && !isSubmitting.value && !isAutoSaving.value && !isNavigating.value);
+
+function persistDraft() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+            title: form.title,
+            content: form.content,
+            category: form.category,
+            label: form.label,
+            is_published: form.is_published,
+        }),
+    );
+}
+
+watch(
+    () => [form.title, form.content, form.category, form.label, form.is_published],
+    persistDraft,
+    { deep: true },
+);
+
+function clearDraft() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+function fireAlert(options) {
+    const isDark = document.documentElement.classList.contains("dark");
+    return Swal.fire({
+        background: isDark ? "#0f172a" : "#ffffff",
+        color: isDark ? "#f1f5f9" : "#111827",
+        confirmButtonColor: "#2563eb",
+        cancelButtonColor: isDark ? "#475569" : "#6b7280",
+        customClass: {
+            popup: "rounded-2xl shadow-2xl",
+            title: "text-lg font-semibold",
+            htmlContainer: "text-sm",
+            confirmButton: "px-4 py-2 rounded-lg font-medium",
+            cancelButton: "px-4 py-2 rounded-lg font-medium",
+        },
+        ...options,
+    });
+}
+
+async function saveDraftAndNavigate(targetUrl) {
+    isAutoSaving.value = true;
+
+    Swal.fire({
+        title: "Menyimpan draft...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        background: document.documentElement.classList.contains("dark")
+            ? "#0f172a" : "#ffffff",
+        color: document.documentElement.classList.contains("dark")
+            ? "#f1f5f9" : "#111827",
+        didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+        const fd = new FormData();
+        fd.append("title", form.title);
+        fd.append("content", form.content);
+        fd.append("category", form.category);
+        fd.append("label", JSON.stringify(form.label));
+        fd.append("is_published", "0");
+        if (form.thumbnail) {
+            fd.append("thumbnail", form.thumbnail);
+        }
+        await axios.post(route("berita.store"), fd);
+        clearDraft();
+        Swal.close();
+        if (targetUrl) {
+            router.visit(targetUrl);
+        }
+    } catch (error) {
+        isAutoSaving.value = false;
+        Swal.close();
+        const message = error?.response?.data?.message || "Gagal menyimpan draft";
+        fireAlert({
+            icon: "error",
+            title: "Gagal Menyimpan Draft",
+            text: message,
+            confirmButtonText: "Mengerti",
+        });
+    }
+}
+
+let removeBeforeHook = null;
+
+onMounted(() => {
+    removeBeforeHook = router.on("before", (event) => {
+        if (isAutoSaving.value || isNavigating.value) return;
+
+        if (shouldWarn.value) {
+            const url = event.visit.url.href;
+
+            fireAlert({
+                icon: "question",
+                title: "Konten Belum Disimpan",
+                text: "Anda memiliki konten yang belum disimpan.",
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: "Simpan Draft",
+                denyButtonText: "Keluar",
+                cancelButtonText: "Tetap di Halaman",
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    saveDraftAndNavigate(url);
+                } else if (result.isDenied) {
+                    clearDraft();
+                    isNavigating.value = true;
+                    router.visit(url);
+                }
+            });
+
+            return false;
+        }
+    });
+});
+
+onUnmounted(() => {
+    if (removeBeforeHook) removeBeforeHook();
 });
 
 const showSuggestions = ref(false);
 
 const filteredCategories = computed(() => {
     if (!form.category) return [];
-
     return props.categories
         .filter((item) =>
             item.toLowerCase().includes(form.category.toLowerCase()),
@@ -36,37 +193,15 @@ const filteredCategories = computed(() => {
         .slice(0, 5);
 });
 
-function fireAlert(options) {
-    const isDark = document.documentElement.classList.contains("dark");
-
-    return Swal.fire({
-        background: isDark ? "#0f172a" : "#ffffff",
-        color: isDark ? "#f1f5f9" : "#111827",
-
-        confirmButtonColor: "#2563eb",
-
-        customClass: {
-            popup: "rounded-2xl shadow-2xl",
-            title: "text-lg font-semibold",
-            htmlContainer: "text-sm",
-            confirmButton: "px-4 py-2 rounded-lg font-medium",
-        },
-
-        ...options,
-    });
-}
-
 function submit(status) {
     const errors = [];
 
     if (!form.title?.trim()) {
         errors.push("Judul berita belum diisi");
     }
-
     if (!form.category?.trim()) {
         errors.push("Kategori belum dipilih");
     }
-
     if (!form.content || form.content === "<p></p>" || form.content === "") {
         errors.push("Isi berita masih kosong");
     }
@@ -75,55 +210,43 @@ function submit(status) {
         fireAlert({
             icon: "warning",
             title: "Data Belum Lengkap",
-            html: `
-        <div class="text-left space-y-1">
-            ${errors.map((item) => `<div>• ${item}</div>`).join("")}
-        </div>
-    `,
+            html: `<div class="text-left space-y-1">${errors.map((item) => `<div>• ${item}</div>`).join("")}</div>`,
             confirmButtonText: "Mengerti",
         });
-
         return;
     }
 
     form.is_published = status;
+    isSubmitting.value = true;
 
     form.post(route("berita.store"), {
         preserveScroll: true,
-
         onStart: () => {
             Swal.fire({
                 title: "Menyimpan...",
                 text: "Mohon tunggu sebentar",
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-
-                background: document.documentElement.classList.contains("dark")
-                    ? "#0f172a"
-                    : "#ffffff",
-
-                color: document.documentElement.classList.contains("dark")
-                    ? "#f1f5f9"
-                    : "#111827",
-
-                didOpen: () => {
-                    Swal.showLoading();
-                },
+                background: document.documentElement.classList.contains("dark") ? "#0f172a" : "#ffffff",
+                color: document.documentElement.classList.contains("dark") ? "#f1f5f9" : "#111827",
+                didOpen: () => Swal.showLoading(),
             });
         },
-
         onSuccess: () => {
+            clearDraft();
             Swal.close();
         },
-
         onError: (errors) => {
+            isSubmitting.value = false;
             Swal.close();
-
             fireAlert({
                 icon: "error",
                 title: "Gagal Menyimpan Berita",
                 html: Object.values(errors).join("<br>"),
             });
+        },
+        onFinish: () => {
+            isSubmitting.value = false;
         },
     });
 }
@@ -134,16 +257,12 @@ function submit(status) {
         <Head title="Tambah Berita" />
 
         <div class="space-y-4">
-            <!-- HEADER ARTICLE -->
-
             <div
                 class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-8"
             >
                 <div
                     class="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
                 >
-                    <!-- TITLE -->
-
                     <div class="flex-1">
                         <div
                             class="text-xs uppercase tracking-wider text-blue-600 font-semibold mb-3"
@@ -164,8 +283,6 @@ function submit(status) {
                             {{ form.errors.title }}
                         </p>
                     </div>
-
-                    <!-- ACTION -->
 
                     <div
                         class="flex flex-col sm:flex-row gap-3 md:min-w-[320px]"
@@ -189,11 +306,7 @@ function submit(status) {
                 </div>
             </div>
 
-            <!-- Content -->
-
             <div class="grid lg:grid-cols-4 gap-4">
-                <!-- EDITOR -->
-
                 <div class="lg:col-span-3">
                     <div
                         class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm"
@@ -208,12 +321,9 @@ function submit(status) {
                         </p>
                     </div>
                 </div>
-                <!-- SIDEBAR -->
 
                 <div class="space-y-4">
                     <div class="sticky top-6 space-y-4">
-                        <!-- THUMBNAIL -->
-
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-5"
                         >
@@ -225,8 +335,6 @@ function submit(status) {
 
                             <ImageUpload v-model="form.thumbnail" />
                         </div>
-
-                        <!-- CATEGORY -->
 
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-5"
@@ -242,8 +350,6 @@ function submit(status) {
                             </div>
 
                             <div class="relative">
-                                <!-- INPUT -->
-
                                 <input
                                     v-model="form.category"
                                     @focus="showSuggestions = true"
@@ -255,8 +361,6 @@ function submit(status) {
                                     placeholder="Tambah kategori..."
                                     class="w-full bg-transparent border-0 border-b-2 border-gray-200 dark:border-slate-700 px-0 pb-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:ring-0 focus:outline-none focus:border-blue-500"
                                 />
-
-                                <!-- SUGGESTION -->
 
                                 <div
                                     v-if="
@@ -292,8 +396,6 @@ function submit(status) {
                             </p>
                         </div>
 
-                        <!-- LABEL -->
-
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-5"
                         >
@@ -322,13 +424,10 @@ function submit(status) {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-
     background: transparent;
-
     font-size: 2.5rem;
     font-weight: 800;
     line-height: 1.1;
-
     padding: 0;
 }
 

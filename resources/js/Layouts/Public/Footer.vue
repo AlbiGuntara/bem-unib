@@ -1,15 +1,15 @@
 <template>
     <footer class="bg-blue-950 text-white">
         <!-- Bottom Footer -->
-        <div class="border-t border-green-800">
+        <div class="border-t border-blue-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="md:flex md:items-center md:justify-between">
-                    <p class="text-center md:text-left text-green-200">
+                    <p class="text-center md:text-left text-blue-200">
                         &copy; 2026 Badan Eksekutif Mahasiswa Universitas
                         Ibrahimy.
                     </p>
                     <div
-                        class="mt-4 md:mt-0 flex justify-center md:justify-end space-x-2 text-sm text-green-200"
+                        class="mt-4 md:mt-0 flex justify-center md:justify-end space-x-2 text-sm text-blue-200"
                     >
                         <span>developed by</span>
                         <Link
@@ -28,7 +28,7 @@
             <button
                 v-if="showScrollTop"
                 @click="scrollToTop"
-                class="fixed bottom-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-green-500/90 backdrop-blur-md text-white shadow-xl hover:bg-green-600 hover:scale-110 transition-all duration-300"
+                class="fixed bottom-8 right-8 z-50 w-12 h-12 flex items-center justify-center rounded-full bg-blue-500/90 backdrop-blur-md text-white shadow-xl hover:bg-blue-600 hover:scale-110 transition-all duration-300"
             >
                 <ArrowUp class="w-5 h-5" />
             </button>

@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
-import { computed, ref } from "vue";
+import { Head, useForm, router } from "@inertiajs/vue3";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 
 import { Save, Send, FolderOpen, Tags } from "lucide-vue-next";
 
@@ -16,46 +16,145 @@ const props = defineProps({
     categories: Array,
 });
 
-const form = useForm({
+const isPublished = ref(props.berita.is_published);
+
+const STORAGE_KEY = `berita_edit_${props.berita.id}_draft`;
+
+const initialValues = {
     title: props.berita.title,
     content: props.berita.content,
-    thumbnail: null,
     category: props.berita.category,
     label: props.berita.label ?? [],
     is_published: props.berita.is_published,
+};
+
+const saved = (() => {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+})();
+
+const form = useForm({
+    title: saved?.title ?? initialValues.title,
+    content: saved?.content ?? initialValues.content,
+    thumbnail: null,
+    category: saved?.category ?? initialValues.category,
+    label: saved?.label ?? initialValues.label,
+    is_published: saved?.is_published ?? initialValues.is_published,
+});
+
+const isSubmitting = ref(false);
+const isNavigating = ref(false);
+
+const isDirty = computed(() => {
+    return (
+        form.title !== initialValues.title ||
+        form.content !== initialValues.content ||
+        form.category !== initialValues.category ||
+        JSON.stringify(form.label) !== JSON.stringify(initialValues.label) ||
+        form.is_published !== initialValues.is_published
+    );
+});
+
+const shouldWarn = computed(
+    () => isDirty.value && !isSubmitting.value && !isNavigating.value,
+);
+
+function persistDraft() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+            title: form.title,
+            content: form.content,
+            category: form.category,
+            label: form.label,
+            is_published: form.is_published,
+        }),
+    );
+}
+
+watch(
+    () => [
+        form.title,
+        form.content,
+        form.category,
+        form.label,
+        form.is_published,
+    ],
+    persistDraft,
+    { deep: true },
+);
+
+function clearDraft() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+function fireAlert(options) {
+    const isDark = document.documentElement.classList.contains("dark");
+    return Swal.fire({
+        background: isDark ? "#0f172a" : "#ffffff",
+        color: isDark ? "#f1f5f9" : "#111827",
+        confirmButtonColor: "#2563eb",
+        cancelButtonColor: isDark ? "#475569" : "#6b7280",
+        customClass: {
+            popup: "rounded-2xl shadow-2xl",
+            title: "text-lg font-semibold",
+            htmlContainer: "text-sm",
+            confirmButton: "px-4 py-2 rounded-lg font-medium",
+            cancelButton: "px-4 py-2 rounded-lg font-medium",
+        },
+        ...options,
+    });
+}
+
+let removeBeforeHook = null;
+
+onMounted(() => {
+    removeBeforeHook = router.on("before", (event) => {
+        if (isNavigating.value) return;
+
+        if (shouldWarn.value) {
+            const url = event.visit.url.href;
+
+            fireAlert({
+                icon: "warning",
+                title: "Perubahan Belum Disimpan",
+                text: "Apakah Anda yakin ingin meninggalkan halaman? Perubahan yang belum disimpan akan dihapus.",
+                showCancelButton: true,
+                confirmButtonText: "Ya, Hapus Perubahan",
+                cancelButtonText: "Tetap di Halaman",
+                confirmButtonColor: "#dc2626",
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    clearDraft();
+                    isNavigating.value = true;
+                    router.visit(url);
+                }
+            });
+
+            return false;
+        }
+    });
+});
+
+onUnmounted(() => {
+    if (removeBeforeHook) removeBeforeHook();
 });
 
 const showSuggestions = ref(false);
 
 const filteredCategories = computed(() => {
     if (!form.category) return [];
-
     return props.categories
         .filter((item) =>
             item.toLowerCase().includes(form.category.toLowerCase()),
         )
         .slice(0, 5);
 });
-
-function fireAlert(options) {
-    const isDark = document.documentElement.classList.contains("dark");
-
-    return Swal.fire({
-        background: isDark ? "#0f172a" : "#ffffff",
-        color: isDark ? "#f1f5f9" : "#111827",
-
-        confirmButtonColor: "#2563eb",
-
-        customClass: {
-            popup: "rounded-2xl shadow-2xl",
-            title: "text-lg font-semibold",
-            htmlContainer: "text-sm",
-            confirmButton: "px-4 py-2 rounded-lg font-medium",
-        },
-
-        ...options,
-    });
-}
 
 function submit(status) {
     const errors = [];
@@ -76,11 +175,7 @@ function submit(status) {
         fireAlert({
             icon: "warning",
             title: "Data Belum Lengkap",
-            html: `
-        <div class="text-left space-y-1">
-            ${errors.map((item) => `<div>• ${item}</div>`).join("")}
-        </div>
-    `,
+            html: `<div class="text-left space-y-1">${errors.map((item) => `<div>• ${item}</div>`).join("")}</div>`,
             confirmButtonText: "Mengerti",
         });
 
@@ -88,12 +183,13 @@ function submit(status) {
     }
 
     form.is_published = status;
+    isSubmitting.value = true;
 
-    form.post(route("berita.update", props.berita.id), {
+    form.transform((data) => ({
+        ...data,
+        _method: "PUT",
+    })).post(route("berita.update", props.berita.id), {
         forceFormData: true,
-
-        _method: "put",
-
         preserveScroll: true,
 
         onStart: () => {
@@ -111,13 +207,17 @@ function submit(status) {
                     ? "#f1f5f9"
                     : "#111827",
 
-                didOpen: () => {
-                    Swal.showLoading();
-                },
+                didOpen: () => Swal.showLoading(),
             });
         },
 
         onSuccess: () => {
+            clearDraft();
+
+            if (form.is_published) {
+                isPublished.value = true;
+            }
+
             Swal.close();
         },
 
@@ -130,25 +230,25 @@ function submit(status) {
                 html: Object.values(errors).join("<br>"),
             });
         },
+
+        onFinish: () => {
+            isSubmitting.value = false;
+        },
     });
 }
 </script>
 
 <template>
     <AppLayout>
-        <Head title="Tambah Berita" />
+        <Head title="Edit Berita" />
 
         <div class="space-y-4">
-            <!-- HEADER ARTICLE -->
-
             <div
                 class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-8"
             >
                 <div
                     class="flex flex-col md:flex-row md:items-start md:justify-between gap-4"
                 >
-                    <!-- TITLE -->
-
                     <div class="flex-1">
                         <div
                             class="text-xs uppercase tracking-wider text-blue-600 font-semibold mb-3"
@@ -170,35 +270,47 @@ function submit(status) {
                         </p>
                     </div>
 
-                    <!-- ACTION -->
-
                     <div
                         class="flex flex-col sm:flex-row gap-3 md:min-w-[320px]"
                     >
-                        <button
-                            @click="submit(false)"
-                            class="flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 transition"
-                        >
-                            <Save class="w-4 h-4" />
-                            Simpan Draft
-                        </button>
+                        <!-- JIKA SUDAH PUBLISH -->
 
                         <button
+                            v-if="isPublished"
                             @click="submit(true)"
-                            class="flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition"
+                            class="w-full whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition"
                         >
-                            <Send class="w-4 h-4" />
-                            Publish
+                            <Save class="w-4 h-4" />
+
+                            Perbarui Artikel
                         </button>
+
+                        <!-- JIKA MASIH DRAFT -->
+
+                        <template v-else>
+                            <button
+                                @click="submit(false)"
+                                class="flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 transition"
+                            >
+                                <Save class="w-4 h-4" />
+
+                                Simpan Perubahan
+                            </button>
+
+                            <button
+                                @click="submit(true)"
+                                class="flex-1 whitespace-nowrap flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition"
+                            >
+                                <Send class="w-4 h-4" />
+
+                                Publish
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>
 
-            <!-- Content -->
-
             <div class="grid lg:grid-cols-4 gap-4">
-                <!-- EDITOR -->
-
                 <div class="lg:col-span-3">
                     <div
                         class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg overflow-hidden shadow-sm"
@@ -213,12 +325,9 @@ function submit(status) {
                         </p>
                     </div>
                 </div>
-                <!-- SIDEBAR -->
 
                 <div class="space-y-4">
                     <div class="sticky top-6 space-y-4">
-                        <!-- THUMBNAIL -->
-
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-5"
                         >
@@ -238,8 +347,6 @@ function submit(status) {
                             />
                         </div>
 
-                        <!-- CATEGORY -->
-
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-5"
                         >
@@ -254,8 +361,6 @@ function submit(status) {
                             </div>
 
                             <div class="relative">
-                                <!-- INPUT -->
-
                                 <input
                                     v-model="form.category"
                                     @focus="showSuggestions = true"
@@ -267,8 +372,6 @@ function submit(status) {
                                     placeholder="Tambah kategori..."
                                     class="w-full bg-transparent border-0 border-b-2 border-gray-200 dark:border-slate-700 px-0 pb-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:ring-0 focus:outline-none focus:border-blue-500"
                                 />
-
-                                <!-- SUGGESTION -->
 
                                 <div
                                     v-if="
@@ -304,8 +407,6 @@ function submit(status) {
                             </p>
                         </div>
 
-                        <!-- LABEL -->
-
                         <div
                             class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-5"
                         >
@@ -334,13 +435,10 @@ function submit(status) {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-
     background: transparent;
-
     font-size: 2.5rem;
     font-weight: 800;
     line-height: 1.1;
-
     padding: 0;
 }
 

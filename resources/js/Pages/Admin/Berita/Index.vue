@@ -3,8 +3,9 @@ import AppLayout from "@/Layouts/Admin/AppLayout.vue";
 import Table from "@/Components/Table.vue";
 
 import { router, Head, Link } from "@inertiajs/vue3";
+import { ref, watch } from "vue";
 
-import { Pencil, Trash2, Plus } from "lucide-vue-next";
+import { Eye, Pencil, Trash2, Plus, ChevronDown } from "lucide-vue-next";
 
 import Swal from "sweetalert2";
 
@@ -50,6 +51,31 @@ const columns = [
         sortable: false,
     },
 ];
+
+const selectedStatuses = ref({});
+
+watch(
+    () => props.beritas.data,
+    (items) => {
+        items.forEach((item) => {
+            selectedStatuses.value[item.id] = item.is_published ? "1" : "0";
+        });
+    },
+    { immediate: true },
+);
+
+function updateStatus(item) {
+    router.patch(
+        route("berita.update-status", item.id),
+        {
+            is_published: selectedStatuses.value[item.id] === "1",
+        },
+        {
+            preserveScroll: true,
+            preserveState: true,
+        },
+    );
+}
 
 function deleteData(id) {
     const isDark = document.documentElement.classList.contains("dark");
@@ -176,22 +202,39 @@ function deleteData(id) {
             <!-- Status -->
 
             <template #status="{ item }">
-                <span
-                    class="px-3 py-1 rounded-full text-xs font-medium"
-                    :class="
-                        item.is_published
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-yellow-100 text-yellow-700'
-                    "
-                >
-                    {{ item.is_published ? "Published" : "Draft" }}
-                </span>
+                <div class="relative w-full max-w-[140px]">
+                    <select
+                        v-model="selectedStatuses[item.id]"
+                        @change="updateStatus(item)"
+                        class="w-full appearance-none rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 pr-8 text-sm text-gray-700 dark:text-gray-100 shadow-sm hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    >
+                        <option value="1">Published</option>
+
+                        <option value="0">Draft</option>
+                    </select>
+
+                    <div
+                        class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"
+                    >
+                        <ChevronDown class="w-4 h-4" />
+                    </div>
+                </div>
             </template>
 
             <!-- Actions -->
 
             <template #actions="{ item }">
                 <div class="flex items-center gap-2">
+                    <!-- Preview -->
+
+                    <a
+                        :href="route('berita.preview', item.id)"
+                        target="_blank"
+                        class="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                    >
+                        <Eye class="w-4 h-4" />
+                    </a>
+
                     <!-- Edit -->
 
                     <Link
