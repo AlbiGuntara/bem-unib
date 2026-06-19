@@ -7,6 +7,10 @@
 
     <link rel="icon" type="image/png" href="{{ asset('images/logo/bem.png') }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.google.com" />
+
     {{-- Inline script: set theme on <html> as early as possible --}}
     <script>
         (function() {

@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <Head title="Profil | BEM UNIB" />
+        <SeoHead title="Profil" description="Profil organisasi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Visi, misi, filosofi logo, dan struktur kepengurusan Kabinet Transformasi." />
 
         <!-- HERO SECTION -->
         <section
@@ -219,6 +219,7 @@
                                     :src="'/images/bg/bem.jpg'"
                                     alt="BEM UNIB"
                                     class="w-full h-full object-cover"
+                                    loading="lazy"
                                 />
 
                                 <!-- Overlay -->
@@ -475,8 +476,9 @@
                                 >
                                     <img
                                         :src="logos[activeIndex].image"
-                                        alt="Logo"
+                                        :alt="logos[activeIndex].title"
                                         class="w-full h-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.25)] select-none"
+                                        loading="lazy"
                                     />
                                 </div>
                             </transition>
@@ -554,7 +556,7 @@
 
 <script setup>
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
-import { Head } from "@inertiajs/vue3";
+import SeoHead from "@/Components/SeoHead.vue";
 import { onMounted, ref } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";

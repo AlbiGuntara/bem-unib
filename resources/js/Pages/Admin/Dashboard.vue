@@ -1,7 +1,7 @@
 <script setup>
-import { Head, usePage, router } from "@inertiajs/vue3";
+import { Head, usePage, router, Deferred } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
-import { computed } from "vue";
+import { computed, onMounted, defineAsyncComponent } from "vue";
 import {
     Users,
     Building2,
@@ -24,33 +24,14 @@ import {
     Loader2,
 } from "lucide-vue-next";
 
-import { Bar, Doughnut, Line } from "vue-chartjs";
-import {
-    Chart as ChartJS,
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    ArcElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Filler,
-} from "chart.js";
+const Bar = defineAsyncComponent(() => import("vue-chartjs").then((m) => m.Bar));
+const Doughnut = defineAsyncComponent(() => import("vue-chartjs").then((m) => m.Doughnut));
+const Line = defineAsyncComponent(() => import("vue-chartjs").then((m) => m.Line));
 
-ChartJS.register(
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    ArcElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Filler,
-);
+onMounted(async () => {
+    const { Chart, registerables } = await import("chart.js");
+    Chart.register(...registerables);
+});
 
 const page = usePage();
 const p = page.props;
@@ -444,407 +425,700 @@ const beritaTrendOpts = baseOpts({
 
         <!-- CHARTS ROW 1 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
-                        >
-                            <BarChart3 class="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                            <h3
-                                class="text-sm font-bold text-slate-800 dark:text-white"
-                            >
-                                Program Kerja per Departemen
-                            </h3>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Distribusi proker setiap departemen
-                            </p>
-                        </div>
-                    </div>
-                    <span
-                        class="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-full"
-                        >{{ prokerByDepartemen.length }} departemen</span
+            <Deferred data="prokerByDepartemen">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
                     >
-                </div>
-                <div class="p-5">
-                    <div class="h-64">
-                        <Bar :data="prokerDeptData" :options="prokerDeptOpts" />
+                        <div
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                        >
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
+                                >
+                                    <BarChart3 class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Program Kerja per Departemen
+                                    </h3>
+                                    <p
+                                        class="text-xs text-slate-500 dark:text-slate-400"
+                                    >
+                                        Distribusi proker setiap departemen
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="h-64 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
+                            >
+                                <BarChart3 class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Program Kerja per Departemen
+                                </h3>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Distribusi proker setiap departemen
+                                </p>
+                            </div>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-1 rounded-full"
+                            >{{ prokerByDepartemen.length }} departemen</span
+                        >
+                    </div>
+                    <div class="p-5">
+                        <div class="h-64">
+                            <Bar :data="prokerDeptData" :options="prokerDeptOpts" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Deferred>
 
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600"
-                        >
-                            <PieChart class="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                            <h3
-                                class="text-sm font-bold text-slate-800 dark:text-white"
-                            >
-                                Kategori Pesan
-                            </h3>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Saran, Kritik, Aspirasi, Aduan
-                            </p>
-                        </div>
-                    </div>
-                    <span
-                        class="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1 rounded-full"
-                        >{{
-                            messageCategoryData.reduce((a, b) => a + b, 0)
-                        }}
-                        total</span
+            <Deferred data="messageCategoryData">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
                     >
-                </div>
-                <div class="p-5">
-                    <div class="h-64 flex items-center justify-center">
-                        <Doughnut :data="msgCatData" :options="msgCatOpts" />
+                        <div
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                        >
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600"
+                                >
+                                    <PieChart class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Kategori Pesan
+                                    </h3>
+                                    <p
+                                        class="text-xs text-slate-500 dark:text-slate-400"
+                                    >
+                                        Saran, Kritik, Aspirasi, Aduan
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="h-64 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600"
+                            >
+                                <PieChart class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Kategori Pesan
+                                </h3>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Saran, Kritik, Aspirasi, Aduan
+                                </p>
+                            </div>
+                        </div>
+                        <span
+                            class="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1 rounded-full"
+                            >{{
+                                messageCategoryData.reduce((a, b) => a + b, 0)
+                            }}
+                            total</span
+                        >
+                    </div>
+                    <div class="p-5">
+                        <div class="h-64 flex items-center justify-center">
+                            <Doughnut :data="msgCatData" :options="msgCatOpts" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Deferred>
         </div>
 
         <!-- CHARTS ROW 2 -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
-                >
-                    <div class="flex items-center gap-3">
+            <Deferred data="programKerjaByStatusData">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    >
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600"
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
                         >
-                            <CalendarCheck class="h-4 w-4 text-white" />
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600"
+                                >
+                                    <CalendarCheck class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Status Program Kerja
+                                    </h3>
+                                    <p
+                                        class="text-xs text-slate-500 dark:text-slate-400"
+                                    >
+                                        Rencana / Berjalan / Selesai / Batal
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h3
-                                class="text-sm font-bold text-slate-800 dark:text-white"
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600"
                             >
-                                Status Program Kerja
-                            </h3>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Rencana / Berjalan / Selesai / Batal
-                            </p>
+                                <CalendarCheck class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Status Program Kerja
+                                </h3>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Rencana / Berjalan / Selesai / Batal
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="h-56">
+                            <Bar
+                                :data="prokerStatusData"
+                                :options="prokerStatusOpts"
+                            />
                         </div>
                     </div>
                 </div>
-                <div class="p-5">
-                    <div class="h-56">
-                        <Bar
-                            :data="prokerStatusData"
-                            :options="prokerStatusOpts"
-                        />
-                    </div>
-                </div>
-            </div>
+            </Deferred>
 
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
-                >
-                    <div class="flex items-center gap-3">
+            <Deferred data="messageStatusData">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    >
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-rose-600"
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
                         >
-                            <MessageSquare class="h-4 w-4 text-white" />
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-rose-600"
+                                >
+                                    <MessageSquare class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Status Pesan
+                                    </h3>
+                                    <p
+                                        class="text-xs text-slate-500 dark:text-slate-400"
+                                    >
+                                        Unread / Read / Replied
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h3
-                                class="text-sm font-bold text-slate-800 dark:text-white"
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-rose-600"
                             >
-                                Status Pesan
-                            </h3>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Unread / Read / Replied
-                            </p>
+                                <MessageSquare class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Status Pesan
+                                </h3>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Unread / Read / Replied
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="h-56 flex items-center justify-center">
+                            <Doughnut
+                                :data="msgStatusData"
+                                :options="msgStatusOpts"
+                            />
                         </div>
                     </div>
                 </div>
-                <div class="p-5">
-                    <div class="h-56 flex items-center justify-center">
-                        <Doughnut
-                            :data="msgStatusData"
-                            :options="msgStatusOpts"
-                        />
-                    </div>
-                </div>
-            </div>
+            </Deferred>
 
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
-                >
-                    <div class="flex items-center gap-3">
+            <Deferred data="beritaByMonth">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    >
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-600"
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
                         >
-                            <TrendingUp class="h-4 w-4 text-white" />
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-600"
+                                >
+                                    <TrendingUp class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Trend Berita
+                                    </h3>
+                                    <p
+                                        class="text-xs text-slate-500 dark:text-slate-400"
+                                    >
+                                        Publikasi per bulan
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h3
-                                class="text-sm font-bold text-slate-800 dark:text-white"
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-violet-600"
                             >
-                                Trend Berita
-                            </h3>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                Publikasi per bulan
-                            </p>
+                                <TrendingUp class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Trend Berita
+                                </h3>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Publikasi per bulan
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="h-56">
+                            <Line
+                                :data="beritaTrendData"
+                                :options="beritaTrendOpts"
+                            />
                         </div>
                     </div>
                 </div>
-                <div class="p-5">
-                    <div class="h-56">
-                        <Line
-                            :data="beritaTrendData"
-                            :options="beritaTrendOpts"
-                        />
-                    </div>
-                </div>
-            </div>
+            </Deferred>
         </div>
 
         <!-- RECENT ITEMS -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500"
-                        >
-                            <CalendarCheck class="h-4 w-4 text-white" />
-                        </div>
-                        <h3
-                            class="text-sm font-bold text-slate-800 dark:text-white"
-                        >
-                            Program Kerja Terdekat
-                        </h3>
-                    </div>
-                    <button
-                        @click="router.visit(route('program-kerja.index'))"
-                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
-                    >
-                        <ArrowRight class="w-4 h-4" />
-                    </button>
-                </div>
-                <div class="p-4 space-y-3">
-                    <div v-if="!prokerTerdekat.length" class="py-8 text-center">
-                        <div
-                            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
-                        >
-                            <Inbox class="h-6 w-6 text-slate-400" />
-                        </div>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">
-                            Belum ada program kerja terdekat
-                        </p>
-                    </div>
+            <Deferred data="prokerTerdekat">
+                <template #fallback>
                     <div
-                        v-for="proker in prokerTerdekat"
-                        :key="proker.id"
-                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer group"
-                        @click="router.visit(route('program-kerja.index'))"
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
                     >
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0"
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
                         >
-                            <Loader2 class="h-4 w-4" />
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500"
+                                >
+                                    <CalendarCheck class="h-4 w-4 text-white" />
+                                </div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Program Kerja Terdekat
+                                </h3>
+                            </div>
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <p
-                                class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition"
-                            >
-                                {{ proker.title }}
-                            </p>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                {{ formatDate(proker.start_date) }}
-                            </p>
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
                         </div>
-                        <ArrowRight
-                            class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
-                        />
                     </div>
-                </div>
-            </div>
-
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
+                </template>
                 <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
                 >
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500"
-                        >
-                            <Newspaper class="h-4 w-4 text-white" />
-                        </div>
-                        <h3
-                            class="text-sm font-bold text-slate-800 dark:text-white"
-                        >
-                            Berita Terbaru
-                        </h3>
-                    </div>
-                    <button
-                        @click="router.visit(route('berita.index'))"
-                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
-                    >
-                        <ArrowRight class="w-4 h-4" />
-                    </button>
-                </div>
-                <div class="p-4 space-y-3">
-                    <div v-if="!recentBerita.length" class="py-8 text-center">
-                        <div
-                            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
-                        >
-                            <Inbox class="h-6 w-6 text-slate-400" />
-                        </div>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">
-                            Belum ada berita
-                        </p>
-                    </div>
                     <div
-                        v-for="berita in recentBerita"
-                        :key="berita.id"
-                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer group"
-                        @click="router.visit(route('berita.edit', berita.id))"
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
                     >
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0"
-                        >
-                            <FileText class="h-4 w-4" />
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p
-                                class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition"
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-emerald-500"
                             >
-                                {{ berita.title }}
-                            </p>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                {{ formatDate(berita.created_at) }} ·
-                                {{ berita.category }}
-                            </p>
-                        </div>
-                        <ArrowRight
-                            class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div
-                class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-            >
-                <div
-                    class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-500"
-                        >
-                            <MailOpen class="h-4 w-4 text-white" />
-                        </div>
-                        <div>
+                                <CalendarCheck class="h-4 w-4 text-white" />
+                            </div>
                             <h3
                                 class="text-sm font-bold text-slate-800 dark:text-white"
                             >
-                                Pesan Belum Dibaca
+                                Program Kerja Terdekat
                             </h3>
-                            <p
-                                v-if="stats.unreadMessages > 0"
-                                class="text-xs text-rose-500 font-semibold"
-                            >
-                                {{ stats.unreadMessages }} pesan
-                            </p>
                         </div>
-                    </div>
-                    <button
-                        @click="router.visit(route('messages.index'))"
-                        class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
-                    >
-                        <ArrowRight class="w-4 h-4" />
-                    </button>
-                </div>
-                <div class="p-4 space-y-3">
-                    <div
-                        v-if="!unreadMessagesList.length"
-                        class="py-8 text-center"
-                    >
-                        <div
-                            class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                        <button
+                            @click="router.visit(route('program-kerja.index'))"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
                         >
-                            <CheckCircle2 class="h-6 w-6 text-emerald-400" />
-                        </div>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">
-                            Semua pesan sudah dibaca
-                        </p>
+                            <ArrowRight class="w-4 h-4" />
+                        </button>
                     </div>
-                    <div
-                        v-for="msg in unreadMessagesList"
-                        :key="msg.id"
-                        class="flex items-center gap-3 p-3 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/10 transition cursor-pointer group"
-                        @click="router.visit(route('messages.show', msg.id))"
-                    >
+                    <div class="p-4 space-y-3">
+                        <div v-if="!prokerTerdekat.length" class="py-8 text-center">
+                            <div
+                                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                            >
+                                <Inbox class="h-6 w-6 text-slate-400" />
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">
+                                Belum ada program kerja terdekat
+                            </p>
+                        </div>
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 shrink-0"
+                            v-for="proker in prokerTerdekat"
+                            :key="proker.id"
+                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer group"
+                            @click="router.visit(route('program-kerja.index'))"
                         >
-                            <AlertCircle class="h-4 w-4" />
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p
-                                class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-rose-600 dark:group-hover:text-rose-400 transition"
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0"
                             >
-                                {{ msg.subject }}
-                            </p>
-                            <p
-                                class="text-xs text-slate-500 dark:text-slate-400"
-                            >
-                                {{ msg.name }} ·
-                                {{ formatDate(msg.created_at) }}
-                            </p>
+                                <Loader2 class="h-4 w-4" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition"
+                                >
+                                    {{ proker.title }}
+                                </p>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    {{ formatDate(proker.start_date) }}
+                                </p>
+                            </div>
+                            <ArrowRight
+                                class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
+                            />
                         </div>
-                        <ArrowRight
-                            class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
-                        />
                     </div>
                 </div>
-            </div>
+            </Deferred>
+
+            <Deferred data="recentBerita">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    >
+                        <div
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                        >
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500"
+                                >
+                                    <Newspaper class="h-4 w-4 text-white" />
+                                </div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Berita Terbaru
+                                </h3>
+                            </div>
+                        </div>
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500"
+                            >
+                                <Newspaper class="h-4 w-4 text-white" />
+                            </div>
+                            <h3
+                                class="text-sm font-bold text-slate-800 dark:text-white"
+                            >
+                                Berita Terbaru
+                            </h3>
+                        </div>
+                        <button
+                            @click="router.visit(route('berita.index'))"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
+                        >
+                            <ArrowRight class="w-4 h-4" />
+                        </button>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div v-if="!recentBerita.length" class="py-8 text-center">
+                            <div
+                                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                            >
+                                <Inbox class="h-6 w-6 text-slate-400" />
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">
+                                Belum ada berita
+                            </p>
+                        </div>
+                        <div
+                            v-for="berita in recentBerita"
+                            :key="berita.id"
+                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer group"
+                            @click="router.visit(route('berita.edit', berita.id))"
+                        >
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0"
+                            >
+                                <FileText class="h-4 w-4" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition"
+                                >
+                                    {{ berita.title }}
+                                </p>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    {{ formatDate(berita.created_at) }} ·
+                                    {{ berita.category }}
+                                </p>
+                            </div>
+                            <ArrowRight
+                                class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Deferred>
+
+            <Deferred data="unreadMessages">
+                <template #fallback>
+                    <div
+                        class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    >
+                        <div
+                            class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                        >
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-500"
+                                >
+                                    <MailOpen class="h-4 w-4 text-white" />
+                                </div>
+                                <div>
+                                    <h3
+                                        class="text-sm font-bold text-slate-800 dark:text-white"
+                                    >
+                                        Pesan Belum Dibaca
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="h-56 flex items-center justify-center text-slate-400 dark:text-slate-500"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Loader2 class="w-5 h-5 animate-spin" />
+                                <span class="text-sm">Memuat data...</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div
+                    class="rounded-lg bg-white dark:bg-gray-900 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                >
+                    <div
+                        class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between"
+                    >
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-500"
+                            >
+                                <MailOpen class="h-4 w-4 text-white" />
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-sm font-bold text-slate-800 dark:text-white"
+                                >
+                                    Pesan Belum Dibaca
+                                </h3>
+                                <p
+                                    v-if="stats.unreadMessages > 0"
+                                    class="text-xs text-rose-500 font-semibold"
+                                >
+                                    {{ stats.unreadMessages }} pesan
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            @click="router.visit(route('messages.index'))"
+                            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition"
+                        >
+                            <ArrowRight class="w-4 h-4" />
+                        </button>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div
+                            v-if="!unreadMessagesList.length"
+                            class="py-8 text-center"
+                        >
+                            <div
+                                class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800"
+                            >
+                                <CheckCircle2 class="h-6 w-6 text-emerald-400" />
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">
+                                Semua pesan sudah dibaca
+                            </p>
+                        </div>
+                        <div
+                            v-for="msg in unreadMessagesList"
+                            :key="msg.id"
+                            class="flex items-center gap-3 p-3 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/10 transition cursor-pointer group"
+                            @click="router.visit(route('messages.show', msg.id))"
+                        >
+                            <div
+                                class="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 shrink-0"
+                            >
+                                <AlertCircle class="h-4 w-4" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="text-sm font-medium text-slate-800 dark:text-white truncate group-hover:text-rose-600 dark:group-hover:text-rose-400 transition"
+                                >
+                                    {{ msg.subject }}
+                                </p>
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    {{ msg.name }} ·
+                                    {{ formatDate(msg.created_at) }}
+                                </p>
+                            </div>
+                            <ArrowRight
+                                class="w-4 h-4 text-slate-300 dark:text-slate-600 opacity-0 group-hover:opacity-100 transition"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Deferred>
         </div>
     </AppLayout>
 </template>

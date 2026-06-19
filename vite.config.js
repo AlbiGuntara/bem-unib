@@ -18,4 +18,22 @@ export default defineConfig({
             "@": path.resolve(__dirname, "resources/js"),
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes("node_modules/@fullcalendar"))
+                        return "vendor-fullcalendar";
+                    if (id.includes("node_modules/@tiptap"))
+                        return "vendor-tiptap";
+                    if (
+                        id.includes("node_modules/chart.js") ||
+                        id.includes("node_modules/vue-chartjs")
+                    )
+                        return "vendor-chartjs";
+                    if (id.includes("node_modules")) return "vendor";
+                },
+            },
+        },
+    },
 });

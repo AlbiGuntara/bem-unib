@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import SeoHead from "@/Components/SeoHead.vue";
+import { Link } from "@inertiajs/vue3";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -222,7 +223,7 @@ onMounted(() => {
 
 <template>
     <AppLayout>
-        <Head title="Beranda | BEM UNIB" />
+        <SeoHead title="Beranda" description="Website resmi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Informasi kegiatan, program kerja, berita, dan aspirasi mahasiswa Kabinet Transformasi." image="/images/bg/hero.png" />
 
         <!-- HERO SECTION -->
         <section
@@ -323,6 +324,7 @@ onMounted(() => {
                             <img
                                 :src="currentLeader.photo"
                                 class="w-full h-full object-cover"
+                                loading="lazy"
                             />
 
                             <div
@@ -576,6 +578,7 @@ onMounted(() => {
                                         <img
                                             :src="event.image"
                                             class="w-full h-full object-cover hover:scale-105 transition duration-500"
+                                            loading="lazy"
                                         />
                                     </div>
 
@@ -614,6 +617,7 @@ onMounted(() => {
                                     <img
                                         :src="event.image"
                                         class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                                        loading="lazy"
                                     />
 
                                     <!-- Overlay -->
@@ -791,6 +795,7 @@ onMounted(() => {
                                 <img
                                     :src="news.image"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    loading="lazy"
                                 />
                                 <span
                                     class="absolute top-4 left-4 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full"
@@ -897,6 +902,7 @@ onMounted(() => {
                             <img
                                 :src="logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                                loading="lazy"
                             />
                         </div>
 
@@ -914,6 +920,7 @@ onMounted(() => {
                             <img
                                 :src="logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                                loading="lazy"
                             />
                         </div>
                     </div>
@@ -940,6 +947,7 @@ onMounted(() => {
                             <img
                                 :src="logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                                loading="lazy"
                             />
                         </div>
 
@@ -957,6 +965,7 @@ onMounted(() => {
                             <img
                                 :src="logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
+                                loading="lazy"
                             />
                         </div>
                     </div>

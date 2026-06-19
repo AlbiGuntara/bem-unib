@@ -5,37 +5,29 @@ namespace App\Http\Middleware;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that's loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determines the current asset version.
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     */
     public function share(Request $request): array
     {
+        $isAdminRoute = str_starts_with($request->route()?->getPrefix() ?? '', 'admin');
+
         return array_merge(parent::share($request), [
             'flash' => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
 
-            'auth' => [
+            'auth' => fn() => [
                 'user' => Auth::check() ? [
                     'name' => Auth::user()->name,
                     'email' => Auth::user()->email,
@@ -45,7 +37,9 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
 
-            'unreadMessagesCount' => Auth::check() ? Message::where('status', 'unread')->count() : 0,
+            'unreadMessagesCount' => fn() => Auth::check() && $isAdminRoute
+                ? Cache::remember('unread_messages_count', 300, fn() => Message::where('status', 'unread')->count())
+                : 0,
 
             'recaptchaSiteKey' => config('services.recaptcha.site_key'),
         ]);

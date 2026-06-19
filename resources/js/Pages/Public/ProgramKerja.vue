@@ -1,9 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { ref, computed, onMounted, nextTick, defineAsyncComponent } from "vue";
+import SeoHead from "@/Components/SeoHead.vue";
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
 
-import FullCalendar from "@fullcalendar/vue3";
+const FullCalendar = defineAsyncComponent(() => import("@fullcalendar/vue3"));
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
@@ -176,7 +176,7 @@ onMounted(async () => {
 <template>
     <AppLayout>
 
-        <Head title="Program Kerja | BEM UNIB" />
+        <SeoHead title="Program Kerja" description="Daftar program kerja dan agenda strategis BEM Universitas Ibrahimy. Lihat kalender kegiatan, timeline, dan dokumentasi program." />
 
         <!-- HERO SECTION -->
         <section class="relative min-h-[85vh] overflow-hidden bg-slate-50">
@@ -612,7 +612,7 @@ onMounted(async () => {
                         class="group relative z-10 shrink-0 w-[240px] sm:w-[260px] lg:w-[280px] aspect-[2/3] overflow-hidden rounded-lg snap-start shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500">
                         <!-- IMAGE -->
                         <img :src="item.image" :alt="item.title"
-                            class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" />
+                            class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy" />
 
                         <!-- Overlay -->
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>

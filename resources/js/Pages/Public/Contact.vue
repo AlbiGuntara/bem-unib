@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
+import SeoHead from "@/Components/SeoHead.vue";
+import { useForm, usePage } from "@inertiajs/vue3";
 import { ref, computed, onMounted } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -164,7 +165,7 @@ const errors = computed(() => page.props.errors || {});
 
 <template>
     <AppLayout>
-        <Head title="Kontak - BEM UNIB" />
+        <SeoHead title="Kontak" description="Hubungi BEM Universitas Ibrahimy. Sampaikan saran, kritik, aspirasi, atau aduan melalui form kontak resmi." />
 
         <div
             class="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white"

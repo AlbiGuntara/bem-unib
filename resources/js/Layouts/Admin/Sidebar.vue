@@ -465,6 +465,7 @@ function getAvatarUrl(avatar) {
                     <img
                         :src="getAvatarUrl(user?.avatar)"
                         class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500"
+                        loading="lazy"
                     />
 
                     <div v-if="!collapsed || !isDesktop" class="min-w-0">

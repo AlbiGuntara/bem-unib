@@ -187,7 +187,7 @@ function submit() {
                         <div
                             class="flex items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
                             <img :src="`/storage/${pengurus.photo}`"
-                                class="h-20 w-20 rounded-lg border object-cover dark:border-slate-600" />
+                                class="h-20 w-20 rounded-lg border object-cover dark:border-slate-600" loading="lazy" />
 
                             <div>
                                 <p class="text-sm font-medium text-slate-700 dark:text-slate-300">

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { Head, Link } from "@inertiajs/vue3";
+import SeoHead from "@/Components/SeoHead.vue";
+import { Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -83,6 +84,12 @@ function copyLink() {
     });
 }
 
+function stripHtml(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+}
+
 function formatDate(dateStr) {
     return new Date(dateStr).toLocaleDateString("id-ID", {
         day: "numeric",
@@ -109,7 +116,7 @@ onMounted(() => {
 
 <template>
     <AppLayout>
-        <Head :title="berita.title" />
+        <SeoHead :title="berita.title" :description="stripHtml(berita.content).substring(0, 160)" :image="berita.thumbnail ? `/storage/${berita.thumbnail}` : ''" :url="typeof window !== 'undefined' ? window.location.href : ''" type="article" />
 
         <!-- Hero -->
         <section class="relative overflow-hidden min-h-[75vh] flex items-end">
@@ -437,106 +444,108 @@ onMounted(() => {
                                     <div
                                         class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0"
                                     >
-                                        <img
-                                            v-if="item.thumbnail"
-                                            :src="`/storage/${item.thumbnail}`"
-                                            :alt="item.title"
-                                            class="w-full h-full object-cover"
-                                        />
-                                        <div
-                                            v-else
-                                            class="w-full h-full flex items-center justify-center"
-                                        >
-                                            <Newspaper
-                                                class="w-5 h-5 text-gray-300"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4
-                                            class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2"
-                                        >
-                                            {{ item.title }}
-                                        </h4>
-                                        <div
-                                            class="flex items-center gap-2 text-xs text-gray-400 mt-1"
-                                        >
-                                            <span>{{
-                                                formatDate(item.created_at)
-                                            }}</span>
-                                            <span>·</span>
-                                            <span
-                                                class="flex items-center gap-0.5"
-                                                ><Eye class="w-3 h-3" />{{
-                                                    item.views
-                                                }}</span
-                                            >
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        </div>
-
-                        <!-- Related News -->
-                        <div
-                            v-if="related.length"
-                            class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
-                            data-aos="fade-up"
-                            data-aos-delay="200"
-                            data-aos-duration="600"
-                        >
-                            <h3
-                                class="font-bold text-gray-900 mb-4 flex items-center gap-2"
-                            >
-                                <span
-                                    class="w-1 h-5 bg-blue-600 rounded-full"
-                                ></span>
-                                Artikel Terkait
-                            </h3>
-                            <div class="space-y-4">
-                                <Link
-                                    v-for="item in related"
-                                    :key="item.id"
-                                    :href="
-                                        route('berita.public.show', item.slug)
-                                    "
-                                    class="flex gap-3 group"
-                                >
+                                    <img
+                                        v-if="item.thumbnail"
+                                        :src="`/storage/${item.thumbnail}`"
+                                        :alt="item.title"
+                                        class="w-full h-full object-cover"
+                                        loading="lazy"
+                                    />
                                     <div
-                                        class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0"
+                                        v-else
+                                        class="w-full h-full flex items-center justify-center"
                                     >
-                                        <img
-                                            v-if="item.thumbnail"
-                                            :src="`/storage/${item.thumbnail}`"
-                                            :alt="item.title"
-                                            class="w-full h-full object-cover"
+                                        <Newspaper
+                                            class="w-5 h-5 text-gray-300"
                                         />
-                                        <div
-                                            v-else
-                                            class="w-full h-full flex items-center justify-center"
-                                        >
-                                            <Newspaper
-                                                class="w-5 h-5 text-gray-300"
-                                            />
-                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4
-                                            class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2"
-                                        >
-                                            {{ item.title }}
-                                        </h4>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4
+                                        class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2"
+                                    >
+                                        {{ item.title }}
+                                    </h4>
+                                    <div
+                                        class="flex items-center gap-2 text-xs text-gray-400 mt-1"
+                                    >
+                                        <span>{{
+                                            formatDate(item.created_at)
+                                        }}</span>
+                                        <span>·</span>
                                         <span
-                                            class="text-xs text-gray-400 mt-1 block"
+                                            class="flex items-center gap-0.5"
+                                            ><Eye class="w-3 h-3" />{{
+                                                item.views
+                                            }}</span
                                         >
-                                            {{ formatDate(item.created_at) }}
-                                        </span>
                                     </div>
-                                </Link>
-                            </div>
+                                </div>
+                            </Link>
                         </div>
+                    </div>
 
-                        <!-- Popular News -->
+                    <!-- Related News -->
+                    <div
+                        v-if="related.length"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                        data-aos="fade-up"
+                        data-aos-delay="200"
+                        data-aos-duration="600"
+                    >
+                        <h3
+                            class="font-bold text-gray-900 mb-4 flex items-center gap-2"
+                        >
+                            <span
+                                class="w-1 h-5 bg-blue-600 rounded-full"
+                            ></span>
+                            Artikel Terkait
+                        </h3>
+                        <div class="space-y-4">
+                            <Link
+                                v-for="item in related"
+                                :key="item.id"
+                                :href="
+                                    route('berita.public.show', item.slug)
+                                "
+                                class="flex gap-3 group"
+                            >
+                                <div
+                                    class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 shrink-0"
+                                >
+                                    <img
+                                        v-if="item.thumbnail"
+                                        :src="`/storage/${item.thumbnail}`"
+                                        :alt="item.title"
+                                        class="w-full h-full object-cover"
+                                        loading="lazy"
+                                    />
+                                    <div
+                                        v-else
+                                        class="w-full h-full flex items-center justify-center"
+                                    >
+                                        <Newspaper
+                                            class="w-5 h-5 text-gray-300"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4
+                                        class="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2"
+                                    >
+                                        {{ item.title }}
+                                    </h4>
+                                    <span
+                                        class="text-xs text-gray-400 mt-1 block"
+                                    >
+                                        {{ formatDate(item.created_at) }}
+                                    </span>
+                                </div>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- Popular News -->
                         <div
                             v-if="popular.length"
                             class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"

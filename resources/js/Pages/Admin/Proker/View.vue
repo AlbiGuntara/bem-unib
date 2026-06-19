@@ -134,7 +134,7 @@ function budgetProgress() {
                                     <img :src="proker.ketua_panitia?.photo
                                         ? `/storage/${proker.ketua_panitia.photo}`
                                         : '/images/avatar.png'
-                                        " class="h-16 w-16 rounded-lg object-cover border-2 border-blue-100" />
+                                        " class="h-16 w-16 rounded-lg object-cover border-2 border-blue-100" loading="lazy" />
 
                                     <div>
                                         <p class="text-xs uppercase tracking-wider text-slate-500">

@@ -245,7 +245,7 @@ function updateRole(user) {
                 <div class="flex items-center gap-3">
                     <img :src="item.avatar
                         ? `/storage/${item.avatar}`
-                        : '/images/default-avatar.jpg'" class="w-9 h-9 rounded-full border object-cover" />
+                        : '/images/default-avatar.jpg'" class="w-9 h-9 rounded-full border object-cover" loading="lazy" />
                     <span class="font-medium">
                         {{ item.name }}
                     </span>
@@ -346,7 +346,7 @@ function updateRole(user) {
                                     <div
                                         class="flex items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800">
                                         <img :src="previewUrl"
-                                            class="h-16 w-16 rounded-lg border object-cover dark:border-slate-600" />
+                                            class="h-16 w-16 rounded-lg border object-cover dark:border-slate-600" loading="lazy" />
 
                                         <div>
                                             <p class="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -499,7 +499,7 @@ function updateRole(user) {
                                             <img :src="viewingUser?.avatar
                                                 ? `/storage/${viewingUser.avatar}`
                                                 : '/images/default-avatar.jpg'"
-                                                class="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-lg dark:border-slate-700" />
+                                                class="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-lg dark:border-slate-700" loading="lazy" />
 
                                             <!-- Status dot -->
                                             <span
@@ -697,7 +697,7 @@ function updateRole(user) {
                                             : (editExistingAvatar
                                                 ? `/storage/${editExistingAvatar}`
                                                 : '/images/default-avatar.jpg')"
-                                            class="h-16 w-16 rounded-lg border object-cover" />
+                                            class="h-16 w-16 rounded-lg border object-cover" loading="lazy" />
 
                                         <div>
                                             <p class="text-sm font-medium text-slate-700 dark:text-slate-300">

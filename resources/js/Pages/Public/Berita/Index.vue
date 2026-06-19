@@ -2,8 +2,6 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
-import AOS from "aos";
-import "aos/dist/aos.css";
 
 import {
     Calendar,

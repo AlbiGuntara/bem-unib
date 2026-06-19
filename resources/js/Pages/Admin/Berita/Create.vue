@@ -1,11 +1,11 @@
 <script setup>
 import AppLayout from "@/Layouts/Admin/AppLayout.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
-import { computed, ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted, defineAsyncComponent } from "vue";
 
 import { Save, Send, FolderOpen, Tags } from "lucide-vue-next";
 
-import TiptapEditor from "@/Components/TiptapEditor.vue";
+const TiptapEditor = defineAsyncComponent(() => import("@/Components/TiptapEditor.vue"));
 import TagInput from "@/Components/TagInput.vue";
 import ImageUpload from "@/Components/ImageUpload.vue";
 
@@ -422,21 +422,23 @@ function submit(status) {
 .article-title-input {
     width: 100%;
     border: none !important;
-    outline: none !important;
     box-shadow: none !important;
     background: transparent;
     font-size: 2.5rem;
     font-weight: 800;
     line-height: 1.1;
     padding: 0;
+    border-radius: 0;
 }
 
-.article-title-input:focus,
-.article-title-input:focus-visible,
-.article-title-input:active {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
+.article-title-input:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+.article-title-input:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .article-title-input::placeholder {

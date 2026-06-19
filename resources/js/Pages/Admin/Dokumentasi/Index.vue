@@ -249,7 +249,7 @@ function formatDate(date) {
                     class="w-full object-cover transition duration-500 group-hover:scale-110" :class="item.orientation === 'portrait'
                         ? 'aspect-[3/4]'
                         : 'aspect-[16/9]'
-                        " />
+                        " loading="lazy" />
 
                 <!-- OVERLAY -->
                 <div
@@ -295,7 +295,7 @@ function formatDate(date) {
                 <X class="h-8 w-8" />
             </button>
 
-            <img :src="`/storage/${selectedImage}`" class="max-h-[90vh] rounded-lg" />
+            <img :src="`/storage/${selectedImage}`" class="max-h-[90vh] rounded-lg" loading="lazy" />
         </div>
 
         <CreateDokumentasi :show="createModal" :programKerjas="programKerjas" @close="createModal = false" />

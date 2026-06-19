@@ -108,7 +108,7 @@ function deleteData(id) {
 
             <template #logo="{ item }">
                 <img v-if="item.logo_path" :src="`/storage/${item.logo_path}`"
-                    class="w-10 h-10 rounded-lg object-cover" />
+                    class="w-10 h-10 rounded-lg object-cover" loading="lazy" />
             </template>
 
             <template #actions="{ item }">

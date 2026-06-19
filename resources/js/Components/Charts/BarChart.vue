@@ -1,26 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import {
-    Chart as ChartJS,
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    BarController,
-} from "chart.js";
-
-// Register ChartJS components
-ChartJS.register(
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    BarController
-);
+import { ref, onMounted, watch, onUnmounted } from "vue";
 
 const props = defineProps({
     chartData: {
@@ -39,8 +18,12 @@ const props = defineProps({
 
 const chartRef = ref(null);
 const chartInstance = ref(null);
+let ChartJS = null;
 
-onMounted(() => {
+onMounted(async () => {
+    const { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, BarController } = await import("chart.js");
+    Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, BarController);
+    ChartJS = Chart;
     renderChart();
 });
 
@@ -50,13 +33,15 @@ watch(
         if (chartInstance.value) {
             chartInstance.value.destroy();
         }
-        renderChart();
+        if (ChartJS) {
+            renderChart();
+        }
     },
     { deep: true }
 );
 
 function renderChart() {
-    if (!chartRef.value) return;
+    if (!chartRef.value || !ChartJS) return;
 
     const ctx = chartRef.value.getContext("2d");
 
@@ -121,7 +106,6 @@ function renderChart() {
     });
 }
 
-import { onUnmounted } from "vue";
 onUnmounted(() => {
     if (chartInstance.value) {
         chartInstance.value.destroy();

@@ -107,7 +107,7 @@ const columns = [
                     <img :src="item.photo
                         ? `/storage/${item.photo}`
                         : '/images/default-avatar.png'
-                        " class="w-12 h-12 rounded-full object-cover border" />
+                        " class="w-12 h-12 rounded-full object-cover border" loading="lazy" />
 
                     <div>
                         <h4 class="font-semibold text-slate-900 dark:text-slate-100">
@@ -126,7 +126,7 @@ const columns = [
             </template>
 
             <template #photo="{ item }">
-                <img v-if="item.photo" :src="`/storage/${item.photo}`" class="w-12 h-12 rounded-full object-cover" />
+                <img v-if="item.photo" :src="`/storage/${item.photo}`" class="w-12 h-12 rounded-full object-cover" loading="lazy" />
             </template>
 
             <template #actions="{ item }">

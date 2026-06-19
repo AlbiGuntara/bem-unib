@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, defineAsyncComponent } from "vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import FullCalendar from "@fullcalendar/vue3";
+const FullCalendar = defineAsyncComponent(() => import("@fullcalendar/vue3"));
 import ViewProkerModal from "@/Pages/Admin/Proker/View.vue";
 import {
     CalendarDays,
