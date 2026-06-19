@@ -9,6 +9,7 @@ import {
     Layers2,
     Calendar,
     CalendarDays,
+    Phone,
 } from "lucide-vue-next";
 
 import { ref, onMounted, onUnmounted, watch, watchEffect, computed } from "vue";
@@ -73,19 +74,28 @@ const strukturalMenuItems = [
         link: "/admin/pengurus",
         permission: "view pengurus",
     },
-    { name: "Departemen", link: "/admin/departments", permission: "view departemen" },
+    {
+        name: "Departemen",
+        link: "/admin/departments",
+        permission: "view departemen",
+    },
 ];
 
 const kegiatanMenuItems = [
     {
         name: "Program Kerja",
         link: "/admin/program-kerja",
-        permission: "view program kerja",
+        permission: "view program-kerja",
     },
     {
         name: "Dokumentasi",
         link: "/admin/dokumentasi",
         permission: "view dokumentasi",
+    },
+    {
+        name: "Berita",
+        link: "/admin/berita",
+        permission: "view berita",
     },
 ];
 
@@ -99,6 +109,24 @@ const suratMenuItems = [
         name: "Surat Keluar",
         link: "/admin/surat-keluar",
         permission: "view surat-keluar",
+    },
+];
+
+const layananMenuItems = [
+    {
+        name: "Kontak",
+        link: "/admin/contacts",
+        permission: "view contacts",
+    },
+    {
+        name: "Kotak Saran",
+        link: "/admin/messages",
+        permission: "view messages",
+    },
+    {
+        name: "FAQ",
+        link: "/admin/faqs",
+        permission: "view faqs",
     },
 ];
 
@@ -147,6 +175,14 @@ const filteredKegiatanMenu = computed(() =>
 
 const filteredSuratMenu = computed(() =>
     suratMenuItems.filter(
+        (item) =>
+            (!item.permission || can(item.permission)) &&
+            (!item.role || hasRole(item.role)),
+    ),
+);
+
+const filteredLayananMenu = computed(() =>
+    layananMenuItems.filter(
         (item) =>
             (!item.permission || can(item.permission)) &&
             (!item.role || hasRole(item.role)),
@@ -243,6 +279,7 @@ watchEffect(() => {
         ...strukturalMenuItems,
         ...kegiatanMenuItems,
         ...suratMenuItems,
+        ...layananMenuItems,
         ...PenggunaMenuItems,
     ];
 
@@ -279,89 +316,166 @@ function getAvatarUrl(avatar) {
 
 <template>
     <!-- Overlay (Mobile) -->
-    <transition enter-active-class="transition-opacity duration-300 ease-out" enter-from-class="opacity-0"
-        enter-to-class="opacity-100" leave-active-class="transition-opacity duration-200 ease-in"
-        leave-from-class="opacity-100" leave-to-class="opacity-0">
-        <div v-if="isMobileOpen" class="fixed inset-0 backdrop-blur-xs bg-black/40 z-40 md:hidden"
-            @click="$emit('toggleMobile')" />
+    <transition
+        enter-active-class="transition-opacity duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+    >
+        <div
+            v-if="isMobileOpen"
+            class="fixed inset-0 backdrop-blur-xs bg-black/40 z-40 md:hidden"
+            @click="$emit('toggleMobile')"
+        />
     </transition>
 
     <!-- Sidebar -->
     <transition :name="isDesktop ? '' : 'mobile-slide'">
-        <aside v-show="isMobileOpen || isDesktop" :class="[
-            'fixed top-0 left-0 h-screen z-40 flex flex-col bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-in-out pt-20',
-            isDesktop ? (collapsed ? 'w-20' : 'w-64') : 'w-64',
-        ]">
+        <aside
+            v-show="isMobileOpen || isDesktop"
+            :class="[
+                'fixed top-0 left-0 h-screen z-40 flex flex-col bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-in-out pt-20',
+                isDesktop ? (collapsed ? 'w-20' : 'w-64') : 'w-64',
+            ]"
+        >
             <!-- ================= MENU AREA ================= -->
             <div class="relative flex-1 overflow-hidden">
                 <!-- Top Gradient -->
                 <div
-                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-gray-900 to-transparent z-10" />
+                    class="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-gray-900 to-transparent z-10"
+                />
 
                 <!-- Scrollable Menu -->
-                <nav class="h-full overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 sidebar-scroll">
+                <nav
+                    class="h-full overflow-y-auto overflow-x-hidden px-3 py-4 space-y-1 sidebar-scroll"
+                >
                     <!-- ===== MAIN MENU ===== -->
-                    <div v-for="item in filteredMainMenu" :key="item.name" @click="handleMenuClick(item)" :class="[
-                        'group relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300',
-                        activeMenu === item.name
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'hover:bg-blue-50 dark:hover:bg-gray-800',
-                    ]">
-                        <component :is="item.icon" :class="[
-                            'w-5 h-5 transition-transform group-hover:scale-110',
+                    <div
+                        v-for="item in filteredMainMenu"
+                        :key="item.name"
+                        @click="handleMenuClick(item)"
+                        :class="[
+                            'group relative flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300',
                             activeMenu === item.name
-                                ? 'text-white'
-                                : 'text-gray-500 dark:text-gray-400',
-                        ]" />
+                                ? 'bg-blue-600 text-white shadow-lg'
+                                : 'hover:bg-blue-50 dark:hover:bg-gray-800',
+                        ]"
+                    >
+                        <component
+                            :is="item.icon"
+                            :class="[
+                                'w-5 h-5 transition-transform group-hover:scale-110',
+                                activeMenu === item.name
+                                    ? 'text-white'
+                                    : 'text-gray-500 dark:text-gray-400',
+                            ]"
+                        />
 
-                        <span v-if="!isDesktop || !collapsed" class="text-sm font-medium">
+                        <span
+                            v-if="!isDesktop || !collapsed"
+                            class="text-sm font-medium"
+                        >
                             {{ item.name }}
                         </span>
 
-                        <span v-if="
-                            activeMenu === item.name &&
-                            (!collapsed || !isDesktop)
-                        " class="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span
+                            v-if="
+                                activeMenu === item.name &&
+                                (!collapsed || !isDesktop)
+                            "
+                            class="absolute right-4 w-2 h-2 rounded-full bg-white animate-pulse"
+                        />
                     </div>
 
                     <!-- ===== DROPDOWNS ===== -->
-                    <SidebarDropdown v-if="filteredStrukturalMenu.length" label="Struktural" :icon="Users"
-                        :items="filteredStrukturalMenu" :activeMenu="activeMenu" :collapsed="collapsed"
-                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+                    <SidebarDropdown
+                        v-if="filteredStrukturalMenu.length"
+                        label="Struktural"
+                        :icon="Users"
+                        :items="filteredStrukturalMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSubMenuClick"
+                    />
 
-                    <SidebarDropdown v-if="filteredKegiatanMenu.length" label="Kegiatan" :icon="CalendarDays"
-                        :items="filteredKegiatanMenu" :activeMenu="activeMenu" :collapsed="collapsed"
-                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+                    <SidebarDropdown
+                        v-if="filteredKegiatanMenu.length"
+                        label="Kegiatan"
+                        :icon="CalendarDays"
+                        :items="filteredKegiatanMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSubMenuClick"
+                    />
 
-                    <SidebarDropdown v-if="filteredSuratMenu.length" label="Surat" :icon="FileCog"
-                        :items="filteredSuratMenu" :activeMenu="activeMenu" :collapsed="collapsed"
-                        :isDesktop="isDesktop" @select="handleSuratSubClick" />
+                    <SidebarDropdown
+                        v-if="filteredSuratMenu.length"
+                        label="Surat"
+                        :icon="FileCog"
+                        :items="filteredSuratMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSuratSubClick"
+                    />
 
-                    <SidebarDropdown v-if="filteredPenggunaMenu.length" label="Pengguna" :icon="UserCog"
-                        :items="filteredPenggunaMenu" :activeMenu="activeMenu" :collapsed="collapsed"
-                        :isDesktop="isDesktop" @select="handleSubMenuClick" />
+                    <SidebarDropdown
+                        v-if="filteredLayananMenu.length"
+                        label="Layanan"
+                        :icon="Phone"
+                        :items="filteredLayananMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSubMenuClick"
+                    />
+
+                    <SidebarDropdown
+                        v-if="filteredPenggunaMenu.length"
+                        label="Pengguna"
+                        :icon="UserCog"
+                        :items="filteredPenggunaMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSubMenuClick"
+                    />
                 </nav>
 
                 <!-- Bottom Gradient -->
                 <div
-                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-gray-900 to-transparent" />
+                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-gray-900 to-transparent"
+                />
             </div>
 
             <!-- ================= USER SECTION ================= -->
             <div
-                class="flex-shrink-0 min-h-[89px] px-4 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative z-10 user-section-shadow flex items-center">
-                <div :class="[
-                    'flex items-center gap-3',
-                    collapsed && isDesktop ? 'justify-center' : '',
-                ]">
-                    <img :src="getAvatarUrl(user?.avatar)"
-                        class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500" />
+                class="flex-shrink-0 min-h-[89px] px-4 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative z-10 user-section-shadow flex items-center"
+            >
+                <div
+                    :class="[
+                        'flex items-center gap-3',
+                        collapsed && isDesktop ? 'justify-center' : '',
+                    ]"
+                >
+                    <img
+                        :src="getAvatarUrl(user?.avatar)"
+                        class="w-11 h-11 rounded-xl object-cover border-2 border-blue-500"
+                    />
 
                     <div v-if="!collapsed || !isDesktop" class="min-w-0">
-                        <p class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+                        <p
+                            class="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate"
+                        >
                             {{ user?.name || "Guest" }}
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <p
+                            class="text-xs text-gray-500 dark:text-gray-400 truncate"
+                        >
                             {{ user?.email || "Belum login" }}
                         </p>
                     </div>

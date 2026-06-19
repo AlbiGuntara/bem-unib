@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
@@ -43,6 +44,10 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                 ] : null,
             ],
+
+            'unreadMessagesCount' => Auth::check() ? Message::where('status', 'unread')->count() : 0,
+
+            'recaptchaSiteKey' => config('services.recaptcha.site_key'),
         ]);
     }
 }

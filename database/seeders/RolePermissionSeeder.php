@@ -31,6 +31,23 @@ class RolePermissionSeeder extends Seeder
             'create permission',
             'edit permission',
             'delete permission',
+
+            // Contacts
+            'view contacts',
+            'create contacts',
+            'edit contacts',
+            'delete contacts',
+
+            // Messages
+            'view messages',
+            'reply messages',
+            'delete messages',
+
+            // FAQs
+            'view faqs',
+            'create faqs',
+            'edit faqs',
+            'delete faqs',
         ];
 
         foreach ($permissions as $permission) {
@@ -49,10 +66,27 @@ class RolePermissionSeeder extends Seeder
             'view users',
             'create users',
             'edit users',
+
+            'view contacts',
+            'create contacts',
+            'edit contacts',
+            'delete contacts',
+
+            'view messages',
+            'reply messages',
+            'delete messages',
+
+            'view faqs',
+            'create faqs',
+            'edit faqs',
+            'delete faqs',
         ]);
 
         $operator->givePermissionTo([
             'view users',
+            'view contacts',
+            'view messages',
+            'view faqs',
         ]);
     }
 }

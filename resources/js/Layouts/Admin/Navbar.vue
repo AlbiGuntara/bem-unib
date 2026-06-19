@@ -35,6 +35,22 @@
 
         <!-- ================= RIGHT ================= -->
         <div class="flex items-center gap-3">
+            <!-- Notification Bell -->
+            <div class="hidden md:block relative group">
+                <Link
+                    :href="route('messages.index')"
+                    class="relative p-2.5 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 block"
+                >
+                    <Bell class="w-5 h-5 transition-transform duration-300" />
+                    <span
+                        v-if="unreadCount > 0"
+                        class="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse"
+                    >
+                        {{ unreadCount > 99 ? "99+" : unreadCount }}
+                    </span>
+                </Link>
+            </div>
+
             <!-- Theme Toggle -->
             <div class="relative group">
                 <button
@@ -66,9 +82,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, Link, usePage } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
-import { Menu, X, Sun, Moon, LogOut } from "lucide-vue-next";
+import { Menu, X, Sun, Moon, LogOut, Bell } from "lucide-vue-next";
+
+const page = usePage();
+
+const unreadCount = computed(() => page.props.unreadMessagesCount || 0);
 
 const props = defineProps({
     isMobileOpen: Boolean,

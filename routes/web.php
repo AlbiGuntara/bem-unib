@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
@@ -13,6 +16,7 @@ use App\Http\Controllers\Admin\BeritaController;
 use App\Http\Controllers\Admin\IncomingLetterController;
 use App\Http\Controllers\Admin\OutgoingLetterController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Public\ContactController as PublicContactController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\ProkerController;
 use Illuminate\Http\Request;
@@ -37,6 +41,14 @@ Route::get('/berita', [BeritaController::class, 'indexPublic'])
 
 Route::get('/berita/{slug:slug}', [BeritaController::class, 'showPublic'])
     ->name('berita.public.show');
+
+// Contact & Suggestion Box
+Route::get('/kontak', [PublicContactController::class, 'index'])
+    ->name('kontak');
+
+Route::post('/kontak', [PublicContactController::class, 'store'])
+    ->middleware(['throttle:5,10'])
+    ->name('kontak.store');
 
 // Login page
 Route::get('/login', function () {
@@ -204,4 +216,56 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('roles/{role}/sync-permissions', [RoleController::class, 'syncPermissions'])
         ->middleware('permission:edit role')
         ->name('roles.sync-permissions');
+
+    // ================= CONTACTS =================
+    Route::resource('contacts', ContactController::class)->middleware([
+        'index' => 'permission:view contacts',
+        'store' => 'permission:create contacts',
+        'update' => 'permission:edit contacts',
+        'destroy' => 'permission:delete contacts',
+    ])->except([
+        'create',
+        'show',
+        'edit'
+    ]);
+
+    // ================= MESSAGES =================
+    Route::get('messages', [MessageController::class, 'index'])
+        ->middleware('permission:view messages')
+        ->name('messages.index');
+
+    Route::get('messages/{message}', [MessageController::class, 'show'])
+        ->middleware('permission:view messages')
+        ->name('messages.show');
+
+    Route::post('messages/{message}/reply', [MessageController::class, 'reply'])
+        ->middleware('permission:reply messages')
+        ->name('messages.reply');
+
+    Route::patch('messages/{message}/status', [MessageController::class, 'updateStatus'])
+        ->middleware('permission:reply messages')
+        ->name('messages.update-status');
+
+    Route::post('messages/bulk-action', [MessageController::class, 'bulkAction'])
+        ->middleware('permission:delete messages')
+        ->name('messages.bulk-action');
+
+    Route::delete('messages/{message}', [MessageController::class, 'destroy'])
+        ->middleware('permission:delete messages')
+        ->name('messages.destroy');
+
+    Route::get('messages/unread/count', [MessageController::class, 'unreadCount'])
+        ->name('messages.unread-count');
+
+    // ================= FAQS =================
+    Route::resource('faqs', FaqController::class)->middleware([
+        'index' => 'permission:view faqs',
+        'store' => 'permission:create faqs',
+        'update' => 'permission:edit faqs',
+        'destroy' => 'permission:delete faqs',
+    ])->except([
+        'create',
+        'show',
+        'edit'
+    ]);
 });

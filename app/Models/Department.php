@@ -13,4 +13,8 @@ class Department extends Model
         'logo_path',
     ];
 
+    public function programKerja()
+    {
+        return $this->hasMany(ProgramKerja::class, 'departemen_id');
+    }
 }

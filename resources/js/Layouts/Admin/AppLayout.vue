@@ -73,13 +73,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from "vue";
+import { ref, onMounted, watch, onUnmounted, computed } from "vue";
 import Sidebar from "./Sidebar.vue";
 import Navbar from "./Navbar.vue";
 import Breadcrumb from "@/Components/Breadcrumb.vue";
 import Alert from "@/Components/Alert.vue";
 import Swal from "sweetalert2";
-import { ChevronUp } from "lucide-vue-next";
+import { ChevronUp, MessageSquare } from "lucide-vue-next";
+import { usePage, router } from "@inertiajs/vue3";
 
 /* ================= STATE ================= */
 const collapsed = ref(false);
@@ -158,6 +159,57 @@ onMounted(() => {
 
 watch(collapsed, (val) => {
     localStorage.setItem("sidebarCollapsed", val);
+});
+
+/* ================= REAL-TIME NOTIFICATIONS ================= */
+const page = usePage();
+
+function getSwalToastTheme() {
+    const dark = document.documentElement.classList.contains("dark");
+    return {
+        background: dark ? "#1e293b" : "#ffffff",
+        color: dark ? "#f1f5f9" : "#0f172a",
+        confirmButtonColor: "#3b82f6",
+    };
+}
+
+onMounted(() => {
+    if (window.Echo) {
+        window.Echo.private("admin.messages").listen(".new-message", (e) => {
+            const unread = page.props.unreadMessagesCount || 0;
+
+            router.reload({ only: ["unreadMessagesCount"], preserveState: true, preserveScroll: true });
+
+            if (e.message && e.message.name && e.message.subject) {
+                const toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: true,
+                    confirmButtonText: "Lihat",
+                    confirmButtonColor: "#3b82f6",
+                    timer: 8000,
+                    timerProgressBar: true,
+                    showCloseButton: true,
+                    ...getSwalToastTheme(),
+                });
+
+                toast.fire({
+                    icon: "info",
+                    title: "Pesan Baru!",
+                    text: `${e.message.name} - ${e.message.subject}`,
+                    didOpen: (toastEl) => {
+                        toastEl.onclick = () => {
+                            router.visit(route("messages.index"));
+                        };
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        router.visit(route("messages.index"));
+                    }
+                });
+            }
+        });
+    }
 });
 </script>
 

@@ -1,7 +1,9 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { Head, Link } from "@inertiajs/vue3";
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 import {
     Calendar,
@@ -95,6 +97,14 @@ function formatTime(dateStr) {
         minute: "2-digit",
     });
 }
+
+onMounted(() => {
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50,
+    });
+});
 </script>
 
 <template>
@@ -138,6 +148,8 @@ function formatTime(dateStr) {
 
             <div
                 class="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-16 pt-32"
+                data-aos="fade-up"
+                data-aos-duration="1000"
             >
                 <!-- PREVIEW -->
 
@@ -208,7 +220,7 @@ function formatTime(dateStr) {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-3 gap-10">
                     <!-- Main Content -->
-                    <div class="lg:col-span-2">
+                    <div class="lg:col-span-2" data-aos="fade-up" data-aos-duration="800">
                         <div
                             class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
                         >
@@ -361,10 +373,12 @@ function formatTime(dateStr) {
                     </div>
 
                     <!-- Sidebar -->
-                    <aside class="space-y-8 lg:sticky lg:top-28 lg:self-start">
+                    <aside class="space-y-8 lg:sticky lg:top-28 lg:self-start" data-aos="fade-left" data-aos-duration="800">
                         <!-- Categories -->
                         <div
                             class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                            data-aos="fade-up"
+                            data-aos-duration="600"
                         >
                             <h3
                                 class="font-bold text-gray-900 mb-4 flex items-center gap-2"
@@ -399,6 +413,9 @@ function formatTime(dateStr) {
                         <!-- Latest News -->
                         <div
                             class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                            data-aos="fade-up"
+                            data-aos-delay="100"
+                            data-aos-duration="600"
                         >
                             <h3
                                 class="font-bold text-gray-900 mb-4 flex items-center gap-2"
@@ -464,6 +481,9 @@ function formatTime(dateStr) {
                         <div
                             v-if="related.length"
                             class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                            data-aos="fade-up"
+                            data-aos-delay="200"
+                            data-aos-duration="600"
                         >
                             <h3
                                 class="font-bold text-gray-900 mb-4 flex items-center gap-2"
@@ -520,6 +540,9 @@ function formatTime(dateStr) {
                         <div
                             v-if="popular.length"
                             class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+                            data-aos="fade-up"
+                            data-aos-delay="300"
+                            data-aos-duration="600"
                         >
                             <h3
                                 class="font-bold text-gray-900 mb-4 flex items-center gap-2"
