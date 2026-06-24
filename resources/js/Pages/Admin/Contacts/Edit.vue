@@ -11,26 +11,25 @@ const emit = defineEmits(["close"]);
 
 const form = useForm({
     _method: "PUT",
-    email: "",
-    phone: "",
-    address: "",
-    instagram_url: "",
-    tiktok_url: "",
-    youtube_url: "",
-    facebook_url: "",
-    maps_embed: "",
+    type: "email",
+    value: "",
 });
+
+const typeOptions = [
+    { value: "email", label: "Email" },
+    { value: "phone", label: "Telepon / WhatsApp" },
+    { value: "address", label: "Alamat" },
+    { value: "instagram", label: "Instagram" },
+    { value: "tiktok", label: "TikTok" },
+    { value: "youtube", label: "YouTube" },
+    { value: "facebook", label: "Facebook" },
+    { value: "maps", label: "Google Maps (Embed)" },
+];
 
 watch(() => props.contact, (c) => {
     if (!c) return;
-    form.email = c.email;
-    form.phone = c.phone;
-    form.address = c.address;
-    form.instagram_url = c.instagram_url || "";
-    form.tiktok_url = c.tiktok_url || "";
-    form.youtube_url = c.youtube_url || "";
-    form.facebook_url = c.facebook_url || "";
-    form.maps_embed = c.maps_embed || "";
+    form.type = c.type;
+    form.value = c.value;
 }, { immediate: true });
 
 function submit() {
@@ -47,63 +46,34 @@ function submit() {
         leave-to-class="opacity-0">
         <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div
-                class="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+                class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
                 <div
                     class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
                     <h2 class="text-lg font-semibold text-white">Edit Kontak</h2>
-                    <p class="mt-1 text-sm text-blue-100">Perbarui informasi kontak BEM.</p>
+                    <p class="mt-1 text-sm text-blue-100">Perbarui kontak atau media sosial.</p>
                 </div>
 
                 <form @submit.prevent="submit" class="modal-scroll flex-1 overflow-y-auto">
                     <div class="space-y-5 p-6">
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
-                            <input v-model="form.email" type="email"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            <p v-if="form.errors.email" class="mt-1 text-sm text-red-500">{{ form.errors.email }}</p>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Tipe Kontak</label>
+                            <select v-model="form.type"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
+                                <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                            </select>
+                            <p v-if="form.errors.type" class="mt-1 text-sm text-red-500">{{ form.errors.type }}</p>
                         </div>
 
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Telepon / WhatsApp</label>
-                            <input v-model="form.phone" type="text"
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Nilai
+                                <span v-if="form.type === 'maps'" class="text-xs text-slate-500">(tempel iframe embed)</span>
+                            </label>
+                            <textarea v-if="form.type === 'maps'" v-model="form.value" rows="4"
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            <p v-if="form.errors.phone" class="mt-1 text-sm text-red-500">{{ form.errors.phone }}</p>
-                        </div>
-
-                        <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Alamat</label>
-                            <textarea v-model="form.address" rows="3"
+                            <input v-else v-model="form.value" :type="form.type === 'email' ? 'email' : 'text'"
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            <p v-if="form.errors.address" class="mt-1 text-sm text-red-500">{{ form.errors.address }}</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Instagram URL</label>
-                                <input v-model="form.instagram_url" type="url" placeholder="https://instagram.com/..."
-                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            </div>
-                            <div>
-                                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">TikTok URL</label>
-                                <input v-model="form.tiktok_url" type="url" placeholder="https://tiktok.com/..."
-                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            </div>
-                            <div>
-                                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">YouTube URL</label>
-                                <input v-model="form.youtube_url" type="url" placeholder="https://youtube.com/..."
-                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            </div>
-                            <div>
-                                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Facebook URL</label>
-                                <input v-model="form.facebook_url" type="url" placeholder="https://facebook.com/..."
-                                    class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Maps Embed</label>
-                            <textarea v-model="form.maps_embed" rows="3" placeholder="<iframe src=...></iframe>"
-                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+                            <p v-if="form.errors.value" class="mt-1 text-sm text-red-500">{{ form.errors.value }}</p>
                         </div>
                     </div>
 

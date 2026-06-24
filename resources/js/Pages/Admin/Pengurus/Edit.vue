@@ -17,6 +17,7 @@ const form = useForm({
     npm: "",
     email: "",
     position: "",
+    position_type: "ministry",
     photo: null,
     instagram: "",
     facebook: "",
@@ -33,6 +34,7 @@ watch(
         form.npm = item.npm;
         form.email = item.email;
         form.position = item.position;
+        form.position_type = item.position_type ?? 'ministry';
         form.instagram = item.instagram;
         form.facebook = item.facebook;
         form.whatsapp = item.whatsapp;
@@ -144,6 +146,32 @@ function submit() {
 
                             <input v-model="form.position" type="text"
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+                        </div>
+
+                        <!-- Tipe Kepengurusan -->
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Tipe Kepengurusan
+                            </label>
+
+                            <select v-model="form.position_type"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
+                                <option value="ministry">
+                                    Kementerian
+                                </option>
+
+                                <option value="core">
+                                    Pengurus Inti
+                                </option>
+
+                                <option value="top_leader">
+                                    Pimpinan Tertinggi
+                                </option>
+                            </select>
+
+                            <p v-if="form.errors.position_type" class="mt-1 text-sm text-red-500">
+                                {{ form.errors.position_type }}
+                            </p>
                         </div>
 
                         <!-- Whatsapp -->

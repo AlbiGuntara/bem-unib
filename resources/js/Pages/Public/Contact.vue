@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
 import SeoHead from "@/Components/SeoHead.vue";
 import { useForm, usePage } from "@inertiajs/vue3";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {
@@ -23,10 +23,12 @@ import {
     HelpCircle,
     Inbox,
     Sparkles,
+    CheckCircle2,
+    X,
 } from "lucide-vue-next";
 
 const props = defineProps({
-    contacts: Object,
+    contacts: Array,
     faqs: Array,
 });
 
@@ -57,54 +59,48 @@ const categoryOptions = [
     { value: "aduan", label: "Aduan", icon: MessageSquare, color: "red" },
 ];
 
-const contactInfo = computed(() => [
-    {
-        icon: Mail,
-        label: "Email",
-        value: props.contacts?.email,
-        href: `mailto:${props.contacts?.email}`,
-    },
-    {
-        icon: Phone,
-        label: "Telepon / WhatsApp",
-        value: props.contacts?.phone,
-        href: `https://wa.me/${props.contacts?.phone?.replace(/[^0-9]/g, "")}`,
-    },
-    { icon: MapPin, label: "Alamat", value: props.contacts?.address },
-]);
+function findByType(contacts, type) {
+    if (!Array.isArray(contacts)) return null;
+    const c = contacts.find((c) => c.type === type);
+    return c ? c.value : null;
+}
+
+function filterByType(contacts, types) {
+    if (!Array.isArray(contacts)) return [];
+    return contacts.filter((c) => types.includes(c.type));
+}
+
+const contactInfo = computed(() => {
+    const result = [];
+    const email = findByType(props.contacts, "email");
+    const phone = findByType(props.contacts, "phone");
+    const address = findByType(props.contacts, "address");
+
+    if (email) result.push({ icon: Mail, label: "Email", value: email, href: `mailto:${email}` });
+    if (phone) result.push({ icon: Phone, label: "Telepon / WhatsApp", value: phone, href: `https://wa.me/${phone.replace(/[^0-9]/g, "")}` });
+    if (address) result.push({ icon: MapPin, label: "Alamat", value: address });
+
+    return result;
+});
 
 const socialLinks = computed(() => {
-    const links = [];
-    if (props.contacts?.instagram_url)
-        links.push({
-            icon: Instagram,
-            url: props.contacts.instagram_url,
-            label: "Instagram",
-            color: "hover:text-pink-500",
-        });
-    if (props.contacts?.tiktok_url)
-        links.push({
-            icon: Music2,
-            url: props.contacts.tiktok_url,
-            label: "TikTok",
-            color: "hover:text-gray-900",
-        });
-    if (props.contacts?.youtube_url)
-        links.push({
-            icon: Youtube,
-            url: props.contacts.youtube_url,
-            label: "YouTube",
-            color: "hover:text-red-600",
-        });
-    if (props.contacts?.facebook_url)
-        links.push({
-            icon: Facebook,
-            url: props.contacts.facebook_url,
-            label: "Facebook",
-            color: "hover:text-blue-600",
-        });
-    return links;
+    const socials = filterByType(props.contacts, ["instagram", "tiktok", "youtube", "facebook"]);
+    const iconMap = { instagram: Instagram, tiktok: Music2, youtube: Youtube, facebook: Facebook };
+    const colorMap = {
+        instagram: "hover:text-pink-500",
+        tiktok: "hover:text-gray-900",
+        youtube: "hover:text-red-600",
+        facebook: "hover:text-blue-600",
+    };
+    return socials.map((s) => ({
+        icon: iconMap[s.type] || Instagram,
+        url: s.value,
+        label: s.type.charAt(0).toUpperCase() + s.type.slice(1),
+        color: colorMap[s.type] || "hover:text-blue-600",
+    }));
 });
+
+const mapsEmbed = computed(() => findByType(props.contacts, "maps"));
 
 function toggleFaq(id) {
     openFaq.value = openFaq.value === id ? null : id;
@@ -125,6 +121,32 @@ function handleFileChange(e) {
 }
 
 const recaptchaWidgetId = ref(null);
+const showToast = ref(!!page.props.flash?.success);
+const toastMessage = ref(page.props.flash?.success || '');
+let toastTimer = null;
+
+function showSuccessToast(message) {
+    toastMessage.value = message;
+    showToast.value = true;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        showToast.value = false;
+    }, 5000);
+}
+
+function dismissToast() {
+    showToast.value = false;
+    if (toastTimer) clearTimeout(toastTimer);
+}
+
+watch(
+    () => page.props.flash?.success,
+    (val) => {
+        if (val) {
+            showSuccessToast(val);
+        }
+    },
+);
 
 onMounted(() => {
     AOS.init({
@@ -156,6 +178,9 @@ function submitForm() {
         onSuccess: () => {
             form.reset();
             openFaq.value = null;
+            if (window.grecaptcha && recaptchaWidgetId.value !== null) {
+                window.grecaptcha.reset(recaptchaWidgetId.value);
+            }
         },
     });
 }
@@ -379,13 +404,13 @@ const errors = computed(() => page.props.errors || {});
 
                                 <!-- Maps -->
                                 <div
-                                    v-if="contacts.maps_embed"
+                                    v-if="mapsEmbed"
                                     data-aos="fade-up"
                                     data-aos-delay="400"
                                     class="rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100"
                                 >
                                     <div
-                                        v-html="contacts.maps_embed"
+                                        v-html="mapsEmbed"
                                         class="w-full h-64"
                                     ></div>
                                 </div>
@@ -759,6 +784,58 @@ const errors = computed(() => page.props.errors || {});
                 </div>
             </section>
         </div>
+
+        <!-- Toast Notification -->
+        <teleport to="body">
+            <transition
+                enter-active-class="transition-all duration-500 ease-out"
+                enter-from-class="opacity-0 translate-y-4 scale-90"
+                enter-to-class="opacity-100 translate-y-0 scale-100"
+                leave-active-class="transition-all duration-300 ease-in"
+                leave-from-class="opacity-100 translate-y-0 scale-100"
+                leave-to-class="opacity-0 translate-y-4 scale-90"
+            >
+                <div
+                    v-if="showToast"
+                    class="fixed bottom-6 right-6 z-[9999] max-w-sm w-full"
+                >
+                    <div
+                        class="relative overflow-hidden rounded-2xl border border-green-200 bg-white shadow-2xl shadow-green-200/50"
+                    >
+                        <!-- Progress Bar -->
+                        <div
+                            class="absolute top-0 left-0 h-1 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 toast-progress"
+                        ></div>
+
+                        <div class="flex items-start gap-3 p-5">
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100"
+                            >
+                                <CheckCircle2 class="h-5 w-5 text-green-600" />
+                            </div>
+
+                            <div class="flex-1 min-w-0 pt-0.5">
+                                <p
+                                    class="text-sm font-bold text-green-800"
+                                >
+                                    Pesan Terkirim!
+                                </p>
+                                <p class="mt-0.5 text-xs text-green-600">
+                                    {{ toastMessage }}
+                                </p>
+                            </div>
+
+                            <button
+                                @click="dismissToast"
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-green-500 hover:bg-green-50 hover:text-green-700 transition-all duration-200 cursor-pointer"
+                            >
+                                <X class="h-3.5 w-3.5" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </teleport>
     </AppLayout>
 </template>
 
@@ -801,6 +878,19 @@ const errors = computed(() => page.props.errors || {});
     }
     100% {
         background-position: 0% 50%;
+    }
+}
+
+.toast-progress {
+    animation: toastProgress 5s linear forwards;
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
     }
 }
 </style>

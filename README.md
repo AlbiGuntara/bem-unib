@@ -1,73 +1,208 @@
 <p align="center">
-  <img src="/public/images/logo.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
-  <img src="/public/images/logo-kabinet.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
-  <img src="/public/images/log0-kps.png" width="200" style="margin: 0 8px;" alt="Logo BEM Unib">
+  <img src="/public/images/logo/logo.png" width="200" alt="Logo BEM Unib">
 </p>
 
 # BEM Universitas Ibrahimy
 
-Official website **Badan Eksekutif Mahasiswa Universitas Ibrahimy**.
-website ini dibangun bertujuan untuk memudahkan manajemen orgnasisai, pengelolaan arsip, serta menyediakan sistem informasi modern yang terintegrasi dengan kebutuhan mahasiswa.
+Official website **Badan Eksekutif Mahasiswa Universitas Ibrahimy** — sistem informasi manajemen organisasi kemahasiswaan berbasis web. Dibangun untuk memudahkan pengelolaan data pengurus, program kerja, dokumentasi, surat-menyurat, berita, serta komunikasi dengan mahasiswa.
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## Fitur
 
-- **Backend**: [Laravel 12](https://laravel.com/)
-- **Frontend**: [TailwindCSS](https://tailwindcss.com/) + [Inertia.js](https://inertiajs.com/) + [Vue 3](https://vuejs.org/)
-- **Database**: MySQL
-- **Server**: Apache (via Docker)
-- **Containerization**: Docker & Docker Compose
+- **Manajemen Pengurus** — Data pengurus lengkap dengan foto, jabatan, dan departemen
+- **Program Kerja** — Perencanaan, pelaporan, dan monitoring proker
+- **Dokumentasi** — Galeri foto kegiatan
+- **Berita & Informasi** — Publikasi berita organisasi
+- **Surat Menyurat** — Manajemen surat masuk dan keluar
+- **FAQ** — Pusat pertanyaan umum
+- **Kontak & Pesan** — Form kontak publik dan manajemen pesan
+- **Manajemen Role & Permission** — Kontrol akses berbasis peran (super-admin, admin, operator)
+- **Multi-level jabatan** — Pimpinan, Pengurus Inti, Kementerian
 
 ---
 
-## ⚙️ Instalasi & Setup
+## Teknologi
 
-### 1. Clone Repository
+| Bagian | Teknologi |
+|--------|-----------|
+| Backend | Laravel 12 |
+| Frontend | Vue 3 + Inertia.js |
+| Styling | TailwindCSS v4 |
+| Database | MySQL |
+| Server | Apache (Docker) |
+| Realtime | Laravel Reverb (WebSocket) |
+| Auth | Spatie Laravel Permission |
+
+---
+
+## Clone & Development
+
+### Prerequisites
+
+- PHP 8.2+
+- Composer
+- Node.js & npm
+- Docker & Docker Compose
+
+### Langkah-langkah
+
+```bash
+# 1. Clone repository
+git clone https://github.com/AlbiGuntara/bem-unib.git
+cd bem-unib
+
+# 2. Copy environment file
+cp .env.example .env
+
+# 3. Install dependencies
+composer install
+npm install
+
+# 4. Atur konfigurasi di .env
+#    - DB_HOST=mysql (untuk Docker) atau 127.0.0.1 (untuk local)
+#    - DB_DATABASE, DB_USERNAME, DB_PASSWORD sesuai kebutuhan
+
+# 5. Jalankan Docker (MySQL + App)
+docker compose up -d --build
+
+# 6. Generate app key
+docker compose exec app php artisan key:generate
+
+# 7. Jalankan migrasi & seeder
+docker compose exec app php artisan migrate --seed
+
+# 8. Storage link
+docker compose exec app php artisan storage:link
+
+# 9. Jalankan Vite dev server (di host, bukan container)
+npm run dev
+
+# 10. Akses aplikasi
+#     http://localhost:8001
+```
+
+### Default User (Seeder)
+
+| Role | Email | Username | Password |
+|------|-------|----------|----------|
+| Super Admin | albigoentara@gmail.com | alby | alby1234 |
+
+> **Penting:** Ubah password default setelah pertama login!
+
+---
+
+## Production Deployment
+
+### 1. Clone di Server
 
 ```bash
 git clone https://github.com/AlbiGuntara/bem-unib.git
 cd bem-unib
 ```
 
-### 2. Install TailwindCSS Vite
+### 2. Environment Setup
 
 ```bash
-npm install
+cp .env.example .env
 ```
 
-### 3. Tambahkan File Environment
+Ubah konfigurasi di `.env`:
+
+| Variable | Nilai Production |
+|----------|-----------------|
+| `APP_ENV` | `production` |
+| `APP_DEBUG` | `false` |
+| `APP_URL` | `https://domain-anda.com` |
+| `SESSION_SECURE_COOKIE` | `true` |
+| `DB_*` | Gunakan kredensial database production |
+| `MAIL_*` | Gunakan email khusus organisasi, bukan pribadi |
+| `RECAPTCHA_*` | Daftar site & secret key baru untuk domain anda |
+
+### 3. Generate APP_KEY
 
 ```bash
-composer install
+php artisan key:generate
 ```
 
-### 4. Konfigurasi Environment
+### 4. Install Dependencies
 
-Atur koneksi database di file .env sesuai kebutuhan:
+```bash
+composer install --optimize-autoloader --no-dev
+npm install && npm run build
+```
 
-### 5. Jalankan Docker
+### 5. Database
 
-Pastikan sudah meginstall docker di perangkat masing-masing. Lalu jalankan perintah:
+```bash
+php artisan migrate --seed
+```
+
+### 6. Storage Link
+
+```bash
+php artisan storage:link
+```
+
+### 7. Optimasi Cache
+
+```bash
+php artisan route:cache
+php artisan config:cache
+php artisan view:cache
+```
+
+### 8. Generate Route untuk Frontend
+
+```bash
+php artisan ziggy:generate
+```
+
+### 9. Web Server
+
+Arahkan document root ke folder `public/`.
+
+Jika menggunakan Docker untuk production:
 
 ```bash
 docker compose up -d --build
 ```
 
-### 6. Jalankan TailwindCSS vite
+> **Catatan:** Sesuaikan `docker-compose.yml` — jangan gunakan kredensial default untuk production. Gunakan file `.env` atau Docker secrets untuk menyimpan password.
 
-```bash
-npm run dev
+---
+
+## Struktur Direktori
+
+```
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/          # Controller untuk halaman admin
+│   │   │   └── ...             # Controller untuk halaman publik
+│   │   └── Requests/           # Form request validation
+│   ├── Models/                 # Eloquent models
+│   └── ...
+├── config/                     # Laravel config files
+├── database/
+│   ├── migrations/             # Skema database
+│   └── seeders/                # Data awal
+├── resources/
+│   ├── js/                     # Vue 3 components & pages
+│   │   ├── Components/         # Shared components (Tabel, dll)
+│   │   └── Pages/              # Halaman per route
+│   └── views/                  # Blade template (app layout)
+├── routes/
+│   └── web.php                 # Semua route aplikasi
+├── storage/
+│   └── app/public/             # File uploads
+├── docker-compose.yml
+├── Dockerfile
+└── ...
 ```
 
-### 7. Migrasi & Seeder
+---
 
-```bash
-docker compose exec app
-php artisan migrate --seed
-```
+## Lisensi
 
-### 8. Akses Aplikasi
-
-Buka browser:
-👉 http://localhost:8001
+Hak cipta milik BEM Universitas Ibrahimy.

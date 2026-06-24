@@ -11,7 +11,7 @@ class ContactController extends Controller
 {
     public function index(Request $request)
     {
-        $contacts = Contact::all();
+        $contacts = Contact::orderBy('type')->latest()->get();
 
         return Inertia::render('Admin/Contacts/Index', [
             'contacts' => $contacts,
@@ -21,14 +21,8 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'email' => 'required|email',
-            'phone' => 'required',
-            'address' => 'required',
-            'instagram_url' => 'nullable|url',
-            'tiktok_url' => 'nullable|url',
-            'youtube_url' => 'nullable|url',
-            'facebook_url' => 'nullable|url',
-            'maps_embed' => 'nullable',
+            'type' => 'required|in:email,phone,address,instagram,tiktok,youtube,facebook,maps',
+            'value' => 'required',
         ]);
 
         Contact::create($data);
@@ -39,14 +33,8 @@ class ContactController extends Controller
     public function update(Request $request, Contact $contact)
     {
         $data = $request->validate([
-            'email' => 'sometimes|email',
-            'phone' => 'sometimes',
-            'address' => 'sometimes',
-            'instagram_url' => 'nullable|url',
-            'tiktok_url' => 'nullable|url',
-            'youtube_url' => 'nullable|url',
-            'facebook_url' => 'nullable|url',
-            'maps_embed' => 'nullable',
+            'type' => 'required|in:email,phone,address,instagram,tiktok,youtube,facebook,maps',
+            'value' => 'required',
         ]);
 
         $contact->update($data);

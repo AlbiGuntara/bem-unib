@@ -40,7 +40,7 @@ const leaders = {
     presiden: {
         name: "Baitul Anam",
         position: "Presiden BEM UNIB",
-        photo: "/images/profile33.png",
+        photo: "/images/Presiden.png",
         message: `
             <p><strong>Assalamu’alaikum warahmatullahi wabarakatuh,</strong></p>
 
@@ -86,7 +86,7 @@ const leaders = {
     wapres: {
         name: "AINUR RAFIQI",
         position: "Wakil Presiden BEM UNIB",
-        photo: "/images/default-avatar.jpg",
+        photo: "/images/Wapres.JPG",
         message: `
             <p><strong>Assalamu’alaikum warahmatullahi wabarakatuh.</strong></p>
 
@@ -133,6 +133,16 @@ const props = defineProps({
     },
 
     latestNews: Array,
+
+    externalPartners: {
+        type: Array,
+        default: () => [],
+    },
+
+    internalPartners: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const countdown = ref({
@@ -144,12 +154,19 @@ const countdown = ref({
 
 const isOngoing = ref(false);
 
+function parseDate(str) {
+    const d = new Date(str.replace(" ", "T"));
+    return isNaN(d.getTime()) ? NaN : d.getTime();
+}
+
 const updateCountdown = () => {
     if (!props.nextEvent) return;
 
-    const now = new Date().getTime();
-    const start = new Date(props.nextEvent.targetDate).getTime();
-    const end = new Date(props.nextEvent.endDate).getTime();
+    const now = Date.now();
+    const start = parseDate(props.nextEvent.targetDate);
+    const end = parseDate(props.nextEvent.endDate);
+
+    if (isNaN(start) || isNaN(end)) return;
 
     if (now >= start && now <= end) {
         isOngoing.value = true;
@@ -193,24 +210,52 @@ onUnmounted(() => {
     }
 });
 
-// Data partners
-const externalPartners = ref([
-    "/images/logo/bem.png",
-    "/images/logo/iai.png",
-    "/images/logo/dema-iai.png",
-    "/images/logo/kabinet.png",
-    "/images/logo/bem-ti.png",
-    "/images/logo/mti.png",
-]);
+const origin = computed(() => {
+    if (typeof window !== "undefined") return window.location.origin;
+    return "https://bemunib.ac.id";
+});
 
-const internalPartners = ref([
-    "/images/logo/bem.png",
-    "/images/logo/iai.png",
-    "/images/logo/dema-iai.png",
-    "/images/logo/kabinet.png",
-    "/images/logo/bem-ti.png",
-    "/images/logo/mti.png",
-]);
+const seoSchema = computed(() => ({
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": `${origin.value}/#organization`,
+            name: "BEM Universitas Ibrahimy",
+            alternateName: "BEM UNIB",
+            url: origin.value,
+            logo: `${origin.value}/images/logo/bem.png`,
+            description:
+                "Badan Eksekutif Mahasiswa Universitas Ibrahimy - Kabinet Transformasi",
+            foundingDate: "2026",
+            contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "customer service",
+                email: "bem@ibrahimy.ac.id",
+            },
+            sameAs: [
+                "https://instagram.com/bemunib",
+                "https://facebook.com/bemunib",
+            ],
+        },
+        {
+            "@type": "WebSite",
+            "@id": `${origin.value}/#website`,
+            name: "BEM Universitas Ibrahimy",
+            url: origin.value,
+            publisher: { "@id": `${origin.value}/#organization` },
+        },
+        {
+            "@type": "WebPage",
+            "@id": `${origin.value}/#webpage`,
+            url: origin.value,
+            name: "Beranda | BEM Universitas Ibrahimy",
+            description:
+                "Website resmi BEM Universitas Ibrahimy Kabinet Transformasi",
+            isPartOf: { "@id": `${origin.value}/#website` },
+        },
+    ],
+}));
 
 onMounted(() => {
     AOS.init({
@@ -223,7 +268,12 @@ onMounted(() => {
 
 <template>
     <AppLayout>
-        <SeoHead title="Beranda" description="Website resmi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Informasi kegiatan, program kerja, berita, dan aspirasi mahasiswa Kabinet Transformasi." image="/images/bg/hero.png" />
+        <SeoHead
+            title="Beranda"
+            description="Website resmi BEM Universitas Ibrahimy (BEM UNIB) Kabinet Transformasi. Informasi program kerja, kegiatan, berita, dan aspirasi mahasiswa Universitas Ibrahimy Situbondo."
+            image="/images/bg/hero.png"
+            :jsonLd="seoSchema"
+        />
 
         <!-- HERO SECTION -->
         <section
@@ -328,7 +378,7 @@ onMounted(() => {
                             />
 
                             <div
-                                class="absolute inset-0 bg-gradient-to-t from-blue-900 via-blue-900/60 to-transparent"
+                                class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
                             ></div>
 
                             <div
@@ -890,7 +940,7 @@ onMounted(() => {
                     >
                         <!-- ORIGINAL -->
                         <div
-                            v-for="(logo, index) in externalPartners"
+                            v-for="(partner, index) in externalPartners"
                             :key="'ext1' + index"
                             class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
                         >
@@ -900,7 +950,7 @@ onMounted(() => {
                             ></div>
 
                             <img
-                                :src="logo"
+                                :src="partner.logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
                                 loading="lazy"
                             />
@@ -908,7 +958,7 @@ onMounted(() => {
 
                         <!-- DUPLICATE -->
                         <div
-                            v-for="(logo, index) in externalPartners"
+                            v-for="(partner, index) in externalPartners"
                             :key="'ext2' + index"
                             class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
                         >
@@ -918,7 +968,7 @@ onMounted(() => {
                             ></div>
 
                             <img
-                                :src="logo"
+                                :src="partner.logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
                                 loading="lazy"
                             />
@@ -935,7 +985,7 @@ onMounted(() => {
                     >
                         <!-- ORIGINAL -->
                         <div
-                            v-for="(logo, index) in internalPartners"
+                            v-for="(partner, index) in internalPartners"
                             :key="'int1' + index"
                             class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
                         >
@@ -945,7 +995,7 @@ onMounted(() => {
                             ></div>
 
                             <img
-                                :src="logo"
+                                :src="partner.logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
                                 loading="lazy"
                             />
@@ -953,7 +1003,7 @@ onMounted(() => {
 
                         <!-- DUPLICATE -->
                         <div
-                            v-for="(logo, index) in internalPartners"
+                            v-for="(partner, index) in internalPartners"
                             :key="'int2' + index"
                             class="group/card relative flex h-[150px] w-[150px] flex-shrink-0 items-center justify-center transition-all duration-500 hover:scale-110"
                         >
@@ -963,7 +1013,7 @@ onMounted(() => {
                             ></div>
 
                             <img
-                                :src="logo"
+                                :src="partner.logo"
                                 class="relative max-h-[105px] max-w-[105px] object-contain drop-shadow-[0_8px_25px_rgba(255,255,255,0.35)] transition-transform duration-500 group-hover/card:scale-110"
                                 loading="lazy"
                             />

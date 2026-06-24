@@ -80,10 +80,17 @@ function deleteData(id) {
     });
 }
 
+const positionTypeLabels = {
+    top_leader: 'Pimpinan',
+    core: 'Pengurus Inti',
+    ministry: 'Kementerian',
+};
+
 const columns = [
     { key: "name", label: "Pengurus", sortable: true },
     { key: "department", label: "Departemen" },
     { key: "position", label: "Jabatan" },
+    { key: "position_type", label: "Tipe" },
     { key: "email", label: "Email" },
 ];
 </script>
@@ -123,6 +130,23 @@ const columns = [
 
             <template #department="{ item }">
                 {{ item.department?.name ?? "-" }}
+            </template>
+
+            <template #position_type="{ item }">
+                <span v-if="item.position_type === 'top_leader'"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                    Pimpinan
+                </span>
+
+                <span v-else-if="item.position_type === 'core'"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                    Pengurus Inti
+                </span>
+
+                <span v-else
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    Kementerian
+                </span>
             </template>
 
             <template #photo="{ item }">

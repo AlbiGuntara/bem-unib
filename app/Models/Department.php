@@ -17,4 +17,9 @@ class Department extends Model
     {
         return $this->hasMany(ProgramKerja::class, 'departemen_id');
     }
+
+    public function pengurus()
+    {
+        return $this->hasMany(Pengurus::class);
+    }
 }

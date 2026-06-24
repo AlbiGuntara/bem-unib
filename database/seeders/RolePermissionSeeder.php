@@ -48,6 +48,12 @@ class RolePermissionSeeder extends Seeder
             'create faqs',
             'edit faqs',
             'delete faqs',
+
+            // Kolaborasi
+            'view kolaborasi',
+            'create kolaborasi',
+            'edit kolaborasi',
+            'delete kolaborasi',
         ];
 
         foreach ($permissions as $permission) {

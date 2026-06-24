@@ -10,6 +10,7 @@ import {
     Calendar,
     CalendarDays,
     Phone,
+    Handshake,
 } from "lucide-vue-next";
 
 import { ref, onMounted, onUnmounted, watch, watchEffect, computed } from "vue";
@@ -130,6 +131,14 @@ const layananMenuItems = [
     },
 ];
 
+const kolaborasiMenuItems = [
+    {
+        name: "Kolaborasi",
+        link: "/admin/kolaborasi",
+        permission: "view kolaborasi",
+    },
+];
+
 const PenggunaMenuItems = [
     {
         name: "Users",
@@ -183,6 +192,14 @@ const filteredSuratMenu = computed(() =>
 
 const filteredLayananMenu = computed(() =>
     layananMenuItems.filter(
+        (item) =>
+            (!item.permission || can(item.permission)) &&
+            (!item.role || hasRole(item.role)),
+    ),
+);
+
+const filteredKolaborasiMenu = computed(() =>
+    kolaborasiMenuItems.filter(
         (item) =>
             (!item.permission || can(item.permission)) &&
             (!item.role || hasRole(item.role)),
@@ -280,6 +297,7 @@ watchEffect(() => {
         ...kegiatanMenuItems,
         ...suratMenuItems,
         ...layananMenuItems,
+        ...kolaborasiMenuItems,
         ...PenggunaMenuItems,
     ];
 
@@ -428,6 +446,17 @@ function getAvatarUrl(avatar) {
                         label="Layanan"
                         :icon="Phone"
                         :items="filteredLayananMenu"
+                        :activeMenu="activeMenu"
+                        :collapsed="collapsed"
+                        :isDesktop="isDesktop"
+                        @select="handleSubMenuClick"
+                    />
+
+                    <SidebarDropdown
+                        v-if="filteredKolaborasiMenu.length"
+                        label="Kolaborasi"
+                        :icon="Handshake"
+                        :items="filteredKolaborasiMenu"
                         :activeMenu="activeMenu"
                         :collapsed="collapsed"
                         :isDesktop="isDesktop"

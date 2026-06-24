@@ -6,23 +6,16 @@ const props = defineProps({ show: Boolean });
 const emit = defineEmits(["close"]);
 
 const form = useForm({
-    type: "email",
-    value: "",
+    name: "",
+    type: "external",
+    url: "",
+    logo: null,
+    order: "",
 });
 
-const typeOptions = [
-    { value: "email", label: "Email" },
-    { value: "phone", label: "Telepon / WhatsApp" },
-    { value: "address", label: "Alamat" },
-    { value: "instagram", label: "Instagram" },
-    { value: "tiktok", label: "TikTok" },
-    { value: "youtube", label: "YouTube" },
-    { value: "facebook", label: "Facebook" },
-    { value: "maps", label: "Google Maps (Embed)" },
-];
-
 function submit() {
-    form.post(route("contacts.store"), {
+    form.post(route("kolaborasi.store"), {
+        forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
@@ -45,31 +38,48 @@ watch(() => props.show, (val) => {
                 class="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
                 <div
                     class="border-b border-slate-200 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 dark:border-slate-700">
-                    <h2 class="text-lg font-semibold text-white">Tambah Kontak</h2>
-                    <p class="mt-1 text-sm text-blue-100">Tambahkan satu kontak atau media sosial.</p>
+                    <h2 class="text-lg font-semibold text-white">Tambah Kolaborasi</h2>
+                    <p class="mt-1 text-sm text-blue-100">Tambahkan mitra kolaborasi baru.</p>
                 </div>
 
                 <form @submit.prevent="submit" class="modal-scroll flex-1 overflow-y-auto">
                     <div class="space-y-5 p-6">
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Tipe Kontak</label>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Nama Mitra</label>
+                            <input v-model="form.name" type="text"
+                                class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
+                            <p v-if="form.errors.name" class="mt-1 text-sm text-red-500">{{ form.errors.name }}</p>
+                        </div>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Logo</label>
+                            <input type="file" accept="image/*" @input="form.logo = $event.target.files[0]"
+                                class="block w-full rounded-lg border border-slate-300 bg-white text-sm text-slate-700 file:mr-4 file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-white file:rounded-lg hover:file:bg-blue-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300" />
+                            <p v-if="form.errors.logo" class="mt-1 text-sm text-red-500">{{ form.errors.logo }}</p>
+                        </div>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Tipe</label>
                             <select v-model="form.type"
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
-                                <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                                <option value="external">External</option>
+                                <option value="internal">Internal</option>
                             </select>
                             <p v-if="form.errors.type" class="mt-1 text-sm text-red-500">{{ form.errors.type }}</p>
                         </div>
 
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                Nilai
-                                <span v-if="form.type === 'maps'" class="text-xs text-slate-500">(tempel iframe embed)</span>
-                            </label>
-                            <textarea v-if="form.type === 'maps'" v-model="form.value" rows="4"
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">URL (opsional)</label>
+                            <input v-model="form.url" type="url" placeholder="https://..."
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            <input v-else v-model="form.value" :type="form.type === 'email' ? 'email' : 'text'"
+                            <p v-if="form.errors.url" class="mt-1 text-sm text-red-500">{{ form.errors.url }}</p>
+                        </div>
+
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Urutan (opsional)</label>
+                            <input v-model="form.order" type="number" min="0"
                                 class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 transition focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-600/10 dark:border-slate-600 dark:bg-slate-800 dark:text-white" />
-                            <p v-if="form.errors.value" class="mt-1 text-sm text-red-500">{{ form.errors.value }}</p>
+                            <p v-if="form.errors.order" class="mt-1 text-sm text-red-500">{{ form.errors.order }}</p>
                         </div>
                     </div>
 

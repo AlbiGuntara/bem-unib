@@ -1,6 +1,9 @@
 <template>
     <AppLayout>
-        <SeoHead title="Profil" description="Profil organisasi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Visi, misi, filosofi logo, dan struktur kepengurusan Kabinet Transformasi." />
+        <SeoHead
+            title="Profil"
+            description="Profil organisasi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Visi, misi, filosofi logo, dan struktur kepengurusan Kabinet Transformasi."
+        />
 
         <!-- HERO SECTION -->
         <section
@@ -551,17 +554,270 @@
         </section>
 
         <!-- STRUKTURAL SECTION -->
+        <section class="relative py-28 bg-gradient-to-b from-white to-slate-50">
+            <div
+                class="absolute top-0 right-0 w-[30rem] h-[30rem] bg-blue-400/5 rounded-full blur-3xl"
+            ></div>
+            <div
+                class="absolute bottom-0 left-0 w-96 h-96 bg-cyan-300/5 rounded-full blur-3xl"
+            ></div>
+
+            <div class="relative max-w-7xl mx-auto px-4">
+                <div class="text-center mb-20" data-aos="fade-up">
+                    <span
+                        class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-50/80 backdrop-blur-md border border-blue-100 text-blue-700 font-semibold tracking-widest text-xs uppercase shadow-sm"
+                    >
+                        <Users class="w-3.5 h-3.5" />
+                        Struktur Organisasi
+                    </span>
+                    <h2
+                        class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mt-6 tracking-tight"
+                    >
+                        Kepengurusan <span class="text-blue-600">BEM UNIB</span>
+                    </h2>
+                    <div
+                        class="w-28 h-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 mx-auto rounded-full mt-5"
+                    ></div>
+                    <p class="mt-6 text-slate-500 text-lg max-w-2xl mx-auto">
+                        Struktur kepengurusan Kabinet Transformasi BEM
+                        Universitas Ibrahimy periode 2026.
+                    </p>
+                </div>
+
+                <!-- ROW 1: Presiden & Wakil Presiden -->
+                <div class="mb-24" data-aos="fade-up">
+                    <h3
+                        class="text-2xl font-bold text-blue-900 text-center mb-10 flex items-center justify-center gap-3"
+                    >
+                        <Trophy class="w-6 h-6 text-yellow-500" />
+                        Pimpinan Tertinggi
+                    </h3>
+                    <div
+                        v-if="displayLeaders.length"
+                        class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"
+                    >
+                        <div
+                            v-for="leader in displayLeaders"
+                            :key="leader.id"
+                            class="group bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+                        >
+                            <div
+                                class="relative aspect-square overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800"
+                            >
+                                <img
+                                    :src="photoUrl(leader.photo)"
+                                    :alt="leader.name"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                                    loading="lazy"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"
+                                ></div>
+                            </div>
+                            <div class="p-6 text-center">
+                                <h4 class="text-xl font-bold text-slate-900">
+                                    {{ leader.name }}
+                                </h4>
+                                <p class="text-blue-600 font-semibold mt-1">
+                                    {{ leader.position }}
+                                </p>
+                                <p
+                                    v-if="leader.department"
+                                    class="text-slate-400 text-sm mt-1"
+                                >
+                                    {{ leader.department.name }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        v-else
+                        class="flex flex-col items-center justify-center py-16"
+                    >
+                        <Trophy class="w-16 h-16 text-slate-300 mb-4" />
+                        <p class="text-slate-400 text-lg">
+                            Data pimpinan belum tersedia
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ROW 2: Pengurus Inti -->
+                <div class="mb-24" data-aos="fade-up">
+                    <h3
+                        class="text-2xl font-bold text-blue-900 text-center mb-10 flex items-center justify-center gap-3"
+                    >
+                        <Users class="w-6 h-6 text-green-500" />
+                        Pengurus Inti
+                    </h3>
+                    <div
+                        v-if="displayCore.length"
+                        class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
+                        <div
+                            v-for="member in displayCore"
+                            :key="member.id"
+                            class="group bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
+                        >
+                            <div
+                                class="relative aspect-square overflow-hidden bg-gradient-to-br from-blue-500 to-blue-700"
+                            >
+                                <img
+                                    :src="photoUrl(member.photo)"
+                                    :alt="member.name"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                                    loading="lazy"
+                                />
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"
+                                ></div>
+                            </div>
+                            <div class="p-5 text-center">
+                                <h4 class="text-lg font-bold text-slate-900">
+                                    {{ member.name }}
+                                </h4>
+                                <p
+                                    class="text-blue-600 font-semibold text-sm mt-1"
+                                >
+                                    {{ member.position }}
+                                </p>
+                                <p
+                                    v-if="member.department"
+                                    class="text-slate-400 text-xs mt-1"
+                                >
+                                    {{ member.department.name }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        v-else
+                        class="flex flex-col items-center justify-center py-16"
+                    >
+                        <Users class="w-16 h-16 text-slate-300 mb-4" />
+                        <p class="text-slate-400 text-lg">
+                            Data pengurus inti belum tersedia
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ROW 3: Kementerian -->
+                <div data-aos="fade-up">
+                    <div v-if="displayDepartments.length" class="space-y-20">
+                        <!-- Per Departemen -->
+                        <div v-for="dept in displayDepartments" :key="dept.id">
+                            <!-- Header Departemen -->
+                            <div class="text-center mb-8">
+                                <div
+                                    class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-purple-50 border border-purple-100"
+                                >
+                                    <Building2
+                                        class="w-4 h-4 text-purple-600"
+                                    />
+
+                                    <span
+                                        class="text-sm font-semibold text-purple-700"
+                                    >
+                                        {{ dept.name }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Pengurus Departemen -->
+                            <div
+                                v-if="dept.pengurus?.length"
+                                class="flex flex-wrap justify-center gap-6"
+                            >
+                                <div
+                                    v-for="member in dept.pengurus"
+                                    :key="member.id"
+                                    class="w-full sm:w-[calc(50%-12px)] lg:w-[280px] group bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+                                >
+                                    <!-- Foto -->
+                                    <div
+                                        class="relative aspect-square overflow-hidden bg-gradient-to-br from-purple-600 via-blue-600 to-blue-800"
+                                    >
+                                        <img
+                                            :src="photoUrl(member.photo)"
+                                            :alt="member.name"
+                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                                            loading="lazy"
+                                        />
+
+                                        <div
+                                            class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"
+                                        ></div>
+
+                                        <!-- Badge Posisi -->
+                                        <div
+                                            class="absolute bottom-3 left-3 right-3"
+                                        >
+                                            <div
+                                                class="px-3 py-2 rounded-xl bg-white/15 backdrop-blur-md border border-white/20 text-white text-xs font-semibold text-center"
+                                            >
+                                                {{ member.position }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="p-5 text-center">
+                                        <h4
+                                            class="text-lg font-bold text-slate-900"
+                                        >
+                                            {{ member.name }}
+                                        </h4>
+
+                                        <p
+                                            class="text-purple-600 font-medium text-sm mt-1"
+                                        >
+                                            {{ dept.name }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Empty -->
+                            <div
+                                v-else
+                                class="text-center py-10 rounded-2xl bg-slate-50 border border-slate-100"
+                            >
+                                <p class="text-slate-400">
+                                    Belum ada anggota pada kementerian ini
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        v-else
+                        class="flex flex-col items-center justify-center py-16"
+                    >
+                        <Building2 class="w-16 h-16 text-slate-300 mb-4" />
+
+                        <p class="text-slate-400 text-lg">
+                            Data kementerian belum tersedia
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from "@/Layouts/Public/AppLayouts.vue";
 import SeoHead from "@/Components/SeoHead.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import {
     Building,
+    Building2,
     Target,
     Flag,
     ChevronLeft,
@@ -579,6 +835,21 @@ import {
     Camera,
     Laptop,
 } from "lucide-vue-next";
+
+const props = defineProps({
+    topLeaders: {
+        type: Array,
+        default: () => [],
+    },
+    coreManagement: {
+        type: Array,
+        default: () => [],
+    },
+    departments: {
+        type: Array,
+        default: () => [],
+    },
+});
 
 // Logo dan filosofi
 const logos = [
@@ -622,81 +893,32 @@ const changeLogo = (direction) => {
     }, 200);
 };
 
-// Struktur kepengurusan kementerian
-const organizationalStructure = [
-    {
-        name: "Kementerian Dalam Negeri",
-        coordinator: "M. Rizki Fadillah",
-        members: 8,
-        icon: Building,
-        bgColor: "bg-blue-600",
-    },
-    {
-        name: "Kementerian Akademik",
-        coordinator: "Siti Aisyah",
-        members: 7,
-        icon: GraduationCap,
-        bgColor: "bg-green-600",
-    },
-    {
-        name: "Kementerian Sosial Masyarakat",
-        coordinator: "Fajar Setiawan",
-        members: 6,
-        icon: Heart,
-        bgColor: "bg-red-500",
-    },
-    {
-        name: "Kementerian Komunikasi & Informasi",
-        coordinator: "Indah Permata",
-        members: 9,
-        icon: Megaphone,
-        bgColor: "bg-purple-600",
-    },
-    {
-        name: "Kementerian Kewirausahaan",
-        coordinator: "Budi Santoso",
-        members: 5,
-        icon: Briefcase,
-        bgColor: "bg-yellow-600",
-    },
-    {
-        name: "Kementerian Pengembangan SDM",
-        coordinator: "Dewi Kartika",
-        members: 7,
-        icon: Sparkles,
-        bgColor: "bg-pink-500",
-    },
-    {
-        name: "Kementerian Olahraga & Seni",
-        coordinator: "Randy Pratama",
-        members: 10,
-        icon: Trophy,
-        bgColor: "bg-orange-500",
-    },
-    {
-        name: "Kementerian Riset & Teknologi",
-        coordinator: "Nur Hidayat",
-        members: 6,
-        icon: Lightbulb,
-        bgColor: "bg-indigo-600",
-    },
-    {
-        name: "Kementerian Luar Negeri",
-        coordinator: "Laila Hasanah",
-        members: 5,
-        icon: Users,
-        bgColor: "bg-teal-600",
-    },
-];
+const displayLeaders = computed(() => props.topLeaders);
+const displayCore = computed(() => props.coreManagement);
 
-// Badan Semi Otonom
-const autonomousBodies = [
-    { name: "BPM", leader: "Ketua: Hasan Ali", icon: Users },
-    { name: "UKM Pers", leader: "Pimpinan: Rina Wati", icon: BookOpen },
-    { name: "Radio Kampus", leader: "Ketua: Dodi Saputra", icon: Mic },
-    { name: "Fotografi", leader: "Ketua: Aulia Rahman", icon: Camera },
-    { name: "LK Teknologi", leader: "Ketua: Fikri Hidayat", icon: Laptop },
-];
+const displayDepartments = computed(() => {
+    return props.departments.map((dept) => ({
+        ...dept,
+        pengurus: [...(dept.pengurus || [])].sort((a, b) => {
+            if (a.position?.toLowerCase().includes("menteri")) return -1;
+
+            if (b.position?.toLowerCase().includes("menteri")) return 1;
+
+            return 0;
+        }),
+    }));
+});
+
+function photoUrl(path) {
+    if (!path) return "/images/default-avatar.jpg";
+    if (
+        path.startsWith("http") ||
+        path.startsWith("/images/") ||
+        path.startsWith("/storage/")
+    )
+        return path;
+    return `/storage/${path}`;
+}
 
 onMounted(() => {
     AOS.init({
@@ -705,3 +927,63 @@ onMounted(() => {
     });
 });
 </script>
+
+<style scoped>
+.dept-swiper-wrapper {
+    position: relative;
+    padding: 0 50px;
+}
+
+.dept-nav.swiper-button-prev,
+.dept-nav.swiper-button-next {
+    width: auto !important;
+    height: auto !important;
+    color: #1f6dad !important;
+    transition: all 0.35s ease;
+}
+
+.dept-nav.swiper-button-prev::after,
+.dept-nav.swiper-button-next::after {
+    font-size: 26px !important;
+    font-weight: 300;
+}
+
+.dept-nav.swiper-button-prev:hover,
+.dept-nav.swiper-button-next:hover {
+    color: #0f3757 !important;
+    transform: scale(1.15);
+}
+
+.dept-nav.swiper-button-prev {
+    left: 0 !important;
+}
+
+.dept-nav.swiper-button-next {
+    right: 0 !important;
+}
+
+.dept-slide {
+    width: 300px;
+    transition: all 0.4s ease;
+    opacity: 0.5;
+    transform: scale(0.85);
+}
+
+.dept-slide.swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 10;
+}
+
+.dept-slide.swiper-slide-next,
+.dept-slide.swiper-slide-prev {
+    opacity: 0.7;
+    transform: scale(0.9);
+}
+
+@media (min-width: 1024px) {
+    .dept-slide {
+        width: 380px;
+    }
+}
+</style>

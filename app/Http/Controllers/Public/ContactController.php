@@ -14,7 +14,7 @@ class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::first();
+        $contacts = Contact::orderBy('type')->latest()->get();
         $faqs = Faq::latest()->get();
 
         return Inertia::render('Public/Contact', [

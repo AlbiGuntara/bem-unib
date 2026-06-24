@@ -17,6 +17,19 @@ class PengurusController extends Controller
 
         $query = Pengurus::with('department');
 
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('npm', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('position', 'like', "%{$search}%")
+                    ->orWhereHas('department', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         if ($sort === 'department') {
             $query->leftJoin(
                 'departments',
@@ -49,11 +62,12 @@ class PengurusController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'department_id' => ['required'],
+            'department_id' => ['nullable'],
             'name' => ['required'],
             'npm' => ['required'],
             'email' => ['required', 'email'],
             'position' => ['required'],
+            'position_type' => ['nullable', 'in:top_leader,core,ministry'],
             'photo' => ['nullable', 'image'],
             'instagram' => ['nullable'],
             'facebook' => ['nullable'],
@@ -64,6 +78,10 @@ class PengurusController extends Controller
             $validated['photo'] = $request
                 ->file('photo')
                 ->store('pengurus', 'public');
+        }
+
+        if (!isset($validated['position_type'])) {
+            $validated['position_type'] = 'ministry';
         }
 
         Pengurus::create($validated);
@@ -77,11 +95,12 @@ class PengurusController extends Controller
     public function update(Request $request, Pengurus $penguru)
     {
         $validated = $request->validate([
-            'department_id' => ['required'],
+            'department_id' => ['nullable'],
             'name' => ['required'],
             'npm' => ['required'],
             'email' => ['required', 'email'],
             'position' => ['required'],
+            'position_type' => ['nullable', 'in:top_leader,core,ministry'],
             'photo' => ['nullable', 'image'],
             'instagram' => ['nullable'],
             'facebook' => ['nullable'],
@@ -94,6 +113,10 @@ class PengurusController extends Controller
                 ->store('pengurus', 'public');
         } else {
             unset($validated['photo']);
+        }
+
+        if (!isset($validated['position_type'])) {
+            $validated['position_type'] = 'ministry';
         }
 
         $penguru->update($validated);

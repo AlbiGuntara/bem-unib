@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Contact extends Model
+class Kolaborasi extends Model
 {
     protected $fillable = [
+        'name',
+        'logo',
         'type',
-        'value',
+        'url',
+        'order',
+        'is_active',
     ];
 }

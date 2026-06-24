@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\KolaborasiController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
@@ -28,8 +29,23 @@ use Inertia\Inertia;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/profil', function () {
+    $departments = \App\Models\Department::with(['pengurus' => function ($q) {
+        $q->where('position_type', 'ministry');
+    }])->get();
+
+    $topLeaders = \App\Models\Pengurus::with('department')
+        ->where('position_type', 'top_leader')
+        ->get();
+
+    $coreManagement = \App\Models\Pengurus::with('department')
+        ->where('position_type', 'core')
+        ->get();
+
     return Inertia::render('Public/Profile', [
         'title' => 'Profil',
+        'departments' => $departments,
+        'topLeaders' => $topLeaders,
+        'coreManagement' => $coreManagement,
     ]);
 })->name('profil');
 
@@ -256,6 +272,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('messages/unread/count', [MessageController::class, 'unreadCount'])
         ->name('messages.unread-count');
+
+    // ================= KOLABORASI =================
+    Route::resource('kolaborasi', KolaborasiController::class)->middleware([
+        'index' => 'permission:view kolaborasi',
+        'store' => 'permission:create kolaborasi',
+        'update' => 'permission:edit kolaborasi',
+        'destroy' => 'permission:delete kolaborasi',
+    ])->except([
+        'create',
+        'show',
+        'edit'
+    ]);
 
     // ================= FAQS =================
     Route::resource('faqs', FaqController::class)->middleware([

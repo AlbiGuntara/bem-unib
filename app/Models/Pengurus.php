@@ -14,6 +14,7 @@ class Pengurus extends Model
         'npm',
         'email',
         'position',
+        'position_type',
         'photo',
         'instagram',
         'facebook',

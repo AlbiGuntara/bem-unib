@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\ProgramKerja;
 use App\Models\Berita;
+use App\Models\Kolaborasi;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
@@ -85,6 +86,28 @@ class HomeController extends Controller
                 ];
             });
 
+        $externalPartners = Kolaborasi::where('type', 'external')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(fn ($item) => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'logo' => asset('storage/' . $item->logo),
+                'url' => $item->url,
+            ]);
+
+        $internalPartners = Kolaborasi::where('type', 'internal')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(fn ($item) => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'logo' => asset('storage/' . $item->logo),
+                'url' => $item->url,
+            ]);
+
         return Inertia::render('Public/Home', [
             'pastEvents' => $pastEvents,
 
@@ -112,15 +135,17 @@ class HomeController extends Controller
 
                     'targetDate' => Carbon::parse(
                         $nextEvent->start_date
-                    )->format('Y-m-d 00:00:00'),
+                    )->format('Y-m-d\T00:00:00'),
 
                     'endDate' => Carbon::parse(
                         $nextEvent->end_date
-                    )->format('Y-m-d 23:59:59'),
+                    )->format('Y-m-d\T23:59:59'),
                 ]
                 : null,
 
             'latestNews' => $latestNews,
+            'externalPartners' => $externalPartners,
+            'internalPartners' => $internalPartners,
         ]);
     }
 }

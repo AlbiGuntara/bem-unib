@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="icon" type="image/png" href="{{ asset('images/logo/bem.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo/bem.png') }}">
+
+    <meta name="description"
+        content="Website resmi Badan Eksekutif Mahasiswa Universitas Ibrahimy. Informasi kegiatan, program kerja, berita, dan aspirasi mahasiswa." />
+    <meta name="keywords"
+        content="bem unib, bem universitas ibrahimy, kabinet transformasi, bem situbondo, universitas ibrahimy, organisasi mahasiswa, bem ibrahimy" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+
+    <meta property="og:site_name" content="BEM Universitas Ibrahimy" />
+    <meta property="og:locale" content="id_ID" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
